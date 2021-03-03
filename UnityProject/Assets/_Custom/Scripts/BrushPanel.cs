@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class BrushPanel : MonoBehaviour
 {
 	public RawImage previewImage;
+	public FormatText brushNameText;
 	public Slider selectionSlider;
 	
 	protected void OnEnable() {
@@ -22,5 +23,6 @@ public class BrushPanel : MonoBehaviour
 	public void UpdatePreview() {
 		var brush = BrushManager.brushes[Mathf.RoundToInt(selectionSlider.value)];
 		previewImage.texture = brush.texture;
+		brushNameText.SetString(brush.name);
 	}
 }

@@ -30,7 +30,8 @@ public class BrushManager : MonoBehaviour
 			int count = 0;
 			Debug.Log($"Attempting to load brushes from: {path}");
 			Object[] assets = Resources.LoadAll(path, typeof(TextAsset));
-			for (int i=0; i<assets.Length; i++) if (assets[i].name.EndsWith(".gbr")) {
+			for (int i=0; i<assets.Length; i++) {
+				if (!assets[i].name.EndsWith(".gbr") && !assets[i].name.EndsWith(".gih")) continue;
 				var brush = GimpBrushParser.LoadBrush(assets[i] as TextAsset);
 				if (brush.isValid) {
 					brushes.Add(brush);

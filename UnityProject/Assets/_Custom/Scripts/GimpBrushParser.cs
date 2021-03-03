@@ -14,9 +14,16 @@ using UnityEngine;
 
 public struct GimpBrush {
 	public string name;			// brush name
-	public Texture2D texture;
+	public List<Texture2D> textures;
 	public int spacing;			// default spacing to be used for brush, as % of brush width
-
+	public Texture2D texture {
+		get {
+			if (textures == null || textures.Count < 1) return null;
+			if (textures.Count == 1) return textures[0];
+			return textures[textures.Count/2];
+		}
+	}
+	
 	public bool isValid {
 		get { return texture != null && texture.width > 0 && texture.height > 0; }
 	}
@@ -44,7 +51,8 @@ public static class GimpBrushParser
 		byte[] nameBytes = br.ReadBytes((int)(headerSize - (version==1 ? 20 : 28)));
 		brush.name = System.Text.Encoding.UTF8.GetString(nameBytes).Trim('\0', '\n', ' ');
 		
-		brush.texture = new Texture2D((int)width, (int)height, TextureFormat.RGBA32, false);
+		brush.textures = new List<Texture2D>();
+		brush.textures.Add(new Texture2D((int)width, (int)height, TextureFormat.RGBA32, false));
 		Color32[] pixels = new Color32[(int)(width * height)];
 		int i=0;
 		for (int y=0; y<height; y++) {
@@ -54,19 +62,65 @@ public static class GimpBrushParser
 				pixels[i++] = c;
 			}
 		}
-		brush.texture.SetPixels32(pixels);
-		brush.texture.Apply();
+		brush.textures[0].SetPixels32(pixels);
+		brush.textures[0].Apply();
 		return brush;
 	}
 	
+	/// <summary>
+	/// Read a multi-image brush in Gimp Image Hose (.gih) format.
+	/// </summary>
+	public static GimpBrush ParseGih(BinaryReader br) {
+		// First line: name of brush.
+		string name = ReadUTF8TillDelimiter(br);
+		// Second line: number of gbr brushes, plus some other metadata
+		string[] info = ReadUTF8TillDelimiter(br).Split(' ');
+		int gbrCount;
+		if (!int.TryParse(info[0], out gbrCount)) return default(GimpBrush);
+		
+		var result = new GimpBrush();
+		result.name = name;
+		result.textures = new List<Texture2D>();
+		
+		// Now, just read a bunch of gbr files, catted together.
+		// As we go we'll total up the spacing value, so we can 
+		// use the average spacing as the spacing of the hose.
+		int totalSpacing = 0;
+		for (int i=0; i<gbrCount; i++) {
+			var gbr = ParseGbr(br);
+			if (gbr.isValid) {
+				result.textures.Add(gbr.texture);
+				totalSpacing += gbr.spacing;
+			}
+		}
+		result.spacing = totalSpacing / gbrCount;
+		return result;
+	}
+	
+	/// <summary>
+	/// Load a brush from a TextAsset in either .gbr or .gih format.
+	/// </summary>
 	public static GimpBrush LoadBrush(TextAsset brushAsset) {
 		Stream s = new MemoryStream(brushAsset.bytes);
 		var reader = new EndianAwareBinaryReader(s, EndianAwareBinaryReader.Endianness.Big);
-		var brush = GimpBrushParser.ParseGbr(reader);
+		GimpBrush brush;
+		if (brushAsset.name.EndsWith(".gih")) brush = ParseGih(reader);
+		else brush = GimpBrushParser.ParseGbr(reader);
 		reader.Close();
 		s.Close();
 		return brush;
 	}
+	
+	public static string ReadUTF8TillDelimiter(BinaryReader br, char delim='\n') {
+		var bytes = new List<byte>();
+		while (true) {
+			byte b = br.ReadByte();
+			if (b == '\n') break;
+			bytes.Add(b);
+		}
+		return System.Text.Encoding.UTF8.GetString(bytes.ToArray());
+	}
+
 }
 
 // Amazingly, .NET does not include an endian-aware binary reader.  Wowzers.
@@ -144,4 +198,5 @@ public class EndianAwareBinaryReader : BinaryReader
 
 		return bytesRead;
 	}
+	
 }
