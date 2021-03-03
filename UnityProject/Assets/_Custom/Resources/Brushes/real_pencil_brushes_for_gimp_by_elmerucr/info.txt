@@ -1,0 +1,6 @@
+- 3 pencil-like brushes for The Gimp (7x7, 10x10 and 16x16)
+- place the *.gih files into ~/.gimp-2.x/brushes/ (linux/unix)
+- start The Gimp, and find them under "Real Pencil..."
+- Have fun drawing
+- look at sample.jpg for a preview
+

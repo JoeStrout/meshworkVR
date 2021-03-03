@@ -1,0 +1,126 @@
+2/26/21
+=======
+Starting a project to make a mesh editing/finishing app in VR.  Calling it Meshwork VR for now, in homage to my old Meshwork app (and to avoid having to think up another name).
+
+My UI is inspired by GravitySketch, which does a really good job with the UI.  But GS does not support polygon mesh creation very well, and it doesn't do UV mapping, painting, rigging, or posing at all.  So my app will focus on those things.
+
+The plan is to make this app open-source (except for any commercial assets used), and scriptable/extensible via MiniScript.
+
+
+2/27/21
+=======
+Much more progress on the prototype has been made.  Testing with the Spaceship model that came with Paint in 3D has been useful.  It's not a large model (880 verts, 612 tris), yet it seems to have thousands of edges, and implementing those as individual little meshes tanked my framerate.  Even using Vectrosity for those is hurting a bit.
+
+I now realize, though, that I'm rendering too many edges, probably by a factor of 2.  I need to ensure that each edge is unique.  ...But even with that, I'm finding 5480 edges.  How can that be?!
+
+Well, for one thing, though the mesh in Unity has 612 tris, when I look at it in code I find 1850 tris (a little more than 3X).  This appears to be because of "Seam Fixer".  Hmm.
+
+OK, if I switch from the "fixed seams" version to the original mesh, then my MeshDisplay loads 1836 edges, which is exactly 3 per triangle.  I'd expect less than that, because of shared edges.
+
+Ah, but the shared edges don't always share the same vertices.  Where there is a seam (or a crease), we could have multiple vertices with the same index.  Really we should sort out the overlapping vertices first, and *then* use that to identify edges.
+
+Got that working.  Need to start thinking more about the big picture.  The major operations a user is likely to do are:
+
+0. Sketching
+1. Sculpting (modeling)
+2. UV mapping
+3. Painting
+4. Rigging
+5. Posing/animating
+
+To avoid alienating Gravity Sketch users, I want to deemphasize 0 and 1 initially.  I've got a good demo of 3 (Painting), so I think next I want to do 2 (UV mapping).  Initially that could be simply a "UV Adjustment" tool: use it to grab a vertex (on the model or on the UV display), and drag to change its UV coordinates.
+
+I have this UV Tweak tool sort-of working, for grabbing on the model.  The problem is, I don't know which way to shift the UV when moving the tool around; the correct answer varies depending on how the triangle hit is oriented in UV space.  Need to ponder.
+
+For the future: I will probably need some automatic UV mapping code.  Possible references:
+	https://dl.acm.org/doi/pdf/10.1145/3130800.3130845 (Autocuts)
+	https://www.cs.jhu.edu/~misha/Fall09/Levy02.pdf (LSCM)
+	
+	
+2/28/21
+=======
+I have my own idea for UV unwrapping.  Iterate over the six orthognal directions (+X, -X, +Y, etc.).  Select all the triangles which face more in that direction than any other, and sort them along that axis.  Now simply project each one onto that orthogonal plane, building a patch with some rectangular bounds.  If you reach a triangle that can't project into the current patch without overlapping, start a new patch; henceforth consider triangles in each of the open patches (starting with the most recent).  After doing this for all six directions, you have a bunch of patches; now arrange these into a square, and finally scale the square into the unit UV square.
+
+Arranging rectangular boxes into a square is its own problem, but I suspect one that's not too hard.  I would sort them by area, and consider each one in two orientations 90° apart, adding them wherever we can to keep the growing collection as square as possible.
+
+I think this approach would work great for something like a spaceship or globe; not so great for something like a character, where the fingers would produce lots of little patches.  Probably we'll need to offer several different UV unwrap methods.
+
+I also have an idea for a cool "modifier volume" tool.  You would place a cylindrical cage in the environment, adjusting it until it encloses a set of vertices of interest.  (Or maybe it could automatically enclose the selection?)  Then you could grab either end and adjust position, rotation, and scale; these changes would be linearly interpolated along the length of the cylinder and applied to all vertices in the cage.  This provides an effective way to stretch or twist a limb, or even change scale gradually over a part.
+
+Added a low-poly human figure "Kira" from Akishaqs (Akishaqs@outlook.com).  (Actually just selected parts of the full model, combined into one mesh in Cheetah3D.)  It shows in Unity as about 2500 verts and 2100 tris.  This causes the framerate on the Quest to drop, even though I'm still showing only about 20 draw calls.
+
+Turning off the second directional light reduced this to 14 draw calls.  I also tried turning off the mesh display, though that is kind of important.  With those changes, the framerate seems good again.  I need to install a good FPS counter widget, and figure out exactly where the problem is.  Possibly it has to do with the Vectrosity edges and points being transparent, causing a lot of sorting and blending?  Would a cutout shader work better, performance-wise?  Need to experiment.
+
+Also high on the to-do list: an off-hand mode menu that pops up when you hold Y, as in GS.  There are enough tools now to make that worthwhile.
+
+Added the Graphy FPS meter.  With Kira's MeshDisplay off I get a solid FPS, but with it on I get 33 or 27 FPS (with the vertex points off or on respectively).  So that won't do.  Maybe Vectrosity is just too expensive — I might need to build a custom mesh that simply lives in 3D space, and (unlike Vectrosity) is not constantly updated whenever the camera moves.
+
+Might look at
+https://assetstore.unity.com/packages/vfx/shaders/wireframe-shader-181386
+or if I want to roll my own:
+https://forum.unity.com/threads/shadergraph-highlighting-edges.557005
+
+3/01/21
+=======
+Got the Wireframe Shader asset.  Eager to test it out!  ...Looks like it supports both pre-baked "inside mesh" (which grows the vertex count to triangles*3), and a "dynamic shader" which does not require prebaking.  But it requires shader model 5, and does not appear to work on Quest.
+
+Hmm, well it looks like you can bake at runtime.  This returns a new mesh with the needed extra data in uv4.  Made a new MeshDisplay class to use this.  Seems to work great!  Looks good and doesn't make the Quest break a sweat.
+
+Had a problem for a while getting Paintable to play nice with the wireframe MeshDisplay.  It's important to make Paintable activate in Start, so it happens *after* the mesh baking that goes on in MeshDisplay.Awake.
+
+And it's not quite true that it's a solid 72 fps.  I'm seeing occasional multi-frame stutters.  Possibly this is from the UV panels, which are displaying 2X as many edges as they really need to.  Added some code to UVMapPanel to avoid creating duplicate edges.
+
+UI idea: instead of a close box, once we implement stretch-scaling, close a floating panel by simply squashing it down below some minimum size, at which point it should disappear with a pop.
+
+Set up a simple survey: https://forms.gle/Ck9UB5xKaynXrRCa6
+
+I feel I need a better intro to the project, though.  Maybe I'll try to record and cut a short video.
+
+3/02/21
+=======
+Fixed a problem noticed in the video: I couldn't tweak the spaceship vertices.  Turned out to be another order-of-initialization problem: MeshModel was grabbing the pre-baked model instead of the version actually displayed by MeshDisplay.
+
+I asked in the Paint-in-3d forum thread (https://forum.unity.com/threads/539782/) about the problem of paint leaking onto other faces, even ones facing away from the camera.  The author (Darkcoder) replied:
+
+> You can use the P3dPaintDecal component for this with the Normal settings. If you set
+> a circle shape and set Wrapping to 1 then it will look like P3dPaintSphere, but with 
+> more options. 
+
+So this is definitely something I should try.  Last night I installed Procreate on my phone, a popular painting program recommended by Emily.  It has a huge number of brushes, but most of them appear to be simply applying color through a mask texture.  I bet I can do that with P3dPaintDecal.  So it won't be hard for MeshworkVR to have a huge number of brushes, too (if I can find artists to develop these brush textures, or some open-license source for same).
+
+Ooh, looks like there are some:
+	https://opengameart.org/content/60-free-gimp-krita-brushes
+Format info: https://docs.gimp.org/en/gimp-using-brushes.html
+https://www.gimp.org/tutorials/Image_Pipes/
+https://gitlab.gnome.org/GNOME/gimp/-/blob/master/devel-docs/gih.txt
+https://gitlab.gnome.org/GNOME/gimp/-/blob/master/devel-docs/gbr.txt
+
+I should definitely add support for GBR and GIH format brushes directly to MeshworkVR, and make these trivial for users to add to extend the app.
+
+Apparently PhotoShop also has a .abr format, which GIMP can also read, but I haven't yet looked into how complex that is.
+
+Those brushes are essentially sets of decals applied at the brush position.  I think there's also a concept of "texture brushes" where the brush applies a portion of a repeating texture, like https://opengameart.org/content/woodland-animals-texture-pack.
+
+Wrote some code to parse a .gbr file, and produced my first textured brush in MVR!  Still need to add support for .gih files (animated brushes), and better integrate these brushes with the overall pipeline.  But as a tech demo, it's there.
+
+Regarding layers, the other major tech we need, Darkcoder wrote:
+
+> To paint multiple layers I recommend you use multiple P3dPaintableTextures. To pick 
+> which texture gets painted to you can use the P3dPaintableTexture.Group setting (works 
+> just like layers), where each painting component also has a Groups setting that must 
+> match. If you don't want to use groups then you can just enable and disable the 
+> P3dPaintableTexture components depending on which layers you wish to paint. 
+
+For displaying them, he adds:
+
+> As long as your mesh has no submeshes (besides the default), you can add as many 
+> material 'layers' as you like, provided they're transparent. This would require a bit of 
+> code to manage, but it's probably the easiest and most flexible system. 
+
+Sounds easy enough.  So, I guess that's how we'll do that.
+
+A Reddit user suggested some possible competition:
+
+> Have you looked at masterpiece? It's pretty janky, but does defined if this stuff. Its 
+> rigging feature is really neat.
+
