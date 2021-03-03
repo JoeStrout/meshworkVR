@@ -16,9 +16,13 @@ public struct GimpBrush {
 	public string name;			// brush name
 	public Texture2D texture;
 	public int spacing;			// default spacing to be used for brush, as % of brush width
+
+	public bool isValid {
+		get { return texture != null && texture.width > 0 && texture.height > 0; }
+	}
 }
 
-public class GimpBrushParser
+public static class GimpBrushParser
 {
 	/// <summary>
 	/// Read a single Gimp brush from the given file, starting at the
@@ -32,7 +36,6 @@ public class GimpBrushParser
 		uint width = br.ReadUInt32();
 		uint height = br.ReadUInt32();
 		uint colorDepth = br.ReadUInt32();	// 1 = greyscale, 4 = RGBA
-		Debug.Log($"{headerSize} {version} {width} {height} {colorDepth}");
 		GimpBrush brush = new GimpBrush();
 		if (version > 1) {
 			uint magicNum = br.ReadUInt32();
@@ -40,7 +43,6 @@ public class GimpBrushParser
 		} else brush.spacing = 10;
 		byte[] nameBytes = br.ReadBytes((int)(headerSize - (version==1 ? 20 : 28)));
 		brush.name = System.Text.Encoding.UTF8.GetString(nameBytes).Trim('\0', '\n', ' ');
-		Debug.Log($"Reading brush {brush.name.Length} {brush.name}, a {width}x{height} brush of depth {colorDepth}");
 		
 		brush.texture = new Texture2D((int)width, (int)height, TextureFormat.RGBA32, false);
 		Color32[] pixels = new Color32[(int)(width * height)];
@@ -54,6 +56,15 @@ public class GimpBrushParser
 		}
 		brush.texture.SetPixels32(pixels);
 		brush.texture.Apply();
+		return brush;
+	}
+	
+	public static GimpBrush LoadBrush(TextAsset brushAsset) {
+		Stream s = new MemoryStream(brushAsset.bytes);
+		var reader = new EndianAwareBinaryReader(s, EndianAwareBinaryReader.Endianness.Big);
+		var brush = GimpBrushParser.ParseGbr(reader);
+		reader.Close();
+		s.Close();
 		return brush;
 	}
 }
