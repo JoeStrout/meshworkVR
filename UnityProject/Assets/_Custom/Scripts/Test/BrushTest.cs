@@ -22,4 +22,5 @@ public class BrushTest : MonoBehaviour
 		display.texture = brush.texture;
 		onBrushLoaded.Invoke(brush.texture);
 	}
+
 }

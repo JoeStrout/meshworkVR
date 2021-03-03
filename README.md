@@ -1,4 +1,4 @@
-# meshworkVR
+# Meshwork VR
 
 Meshwork VR is a 3D modeling, texturing, and finishing app for VR platforms (including Oculus Quest).
 
