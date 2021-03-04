@@ -18,6 +18,8 @@ public class PaintSprayTool : Tool
 	
 	public bool forceApply = false;
 	
+	public BrushPanel brushPanel;
+	
 	P3dHitBetween hitBetweenComponent;
 	P3dPaintDecal paintDecalComponent;
 	HandTracker handTracker;
@@ -142,4 +144,10 @@ public class PaintSprayTool : Tool
 	
 	public void SetTypeBeam() { sprayType = SprayType.Beam; }
 	public void SetTypeCone() { sprayType = SprayType.Cone; }
+	
+	public void UpdateBrush() {
+		var br = brushPanel.currentBrush;
+		paintDecalComponent.Shape = br.texture;
+		hitBetweenComponent.HitSpacing = beamWidth * br.spacing * 0.01f;
+	}
 }

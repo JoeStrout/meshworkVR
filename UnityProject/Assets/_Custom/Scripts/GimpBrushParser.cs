@@ -12,7 +12,8 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public struct GimpBrush {
+[System.Serializable]
+public class GimpBrush {
 	public string name;			// brush name
 	public List<Texture2D> textures;
 	public int spacing;			// default spacing to be used for brush, as % of brush width
@@ -76,7 +77,7 @@ public static class GimpBrushParser
 		// Second line: number of gbr brushes, plus some other metadata
 		string[] info = ReadUTF8TillDelimiter(br).Split(' ');
 		int gbrCount;
-		if (!int.TryParse(info[0], out gbrCount)) return default(GimpBrush);
+		if (!int.TryParse(info[0], out gbrCount)) return null;
 		
 		var result = new GimpBrush();
 		result.name = name;
@@ -88,7 +89,7 @@ public static class GimpBrushParser
 		int totalSpacing = 0;
 		for (int i=0; i<gbrCount; i++) {
 			var gbr = ParseGbr(br);
-			if (gbr.isValid) {
+			if (gbr != null && gbr.isValid) {
 				result.textures.Add(gbr.texture);
 				totalSpacing += gbr.spacing;
 			}

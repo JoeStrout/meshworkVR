@@ -8,6 +8,8 @@ using UnityEngine;
 
 public class BrushManager : MonoBehaviour
 {
+	public List<GimpBrush> defaultBrushes;
+	
 	public static BrushManager instance { get; private set; }
 	
 	public string[] brushFolders;
@@ -25,7 +27,7 @@ public class BrushManager : MonoBehaviour
 	}
 	
 	void LoadBrushes() {
-		brushes = new List<GimpBrush>();
+		brushes = new List<GimpBrush>(defaultBrushes);
 		foreach (string path in brushFolders) {
 			int count = 0;
 			Debug.Log($"Attempting to load brushes from: {path}");
@@ -33,7 +35,7 @@ public class BrushManager : MonoBehaviour
 			for (int i=0; i<assets.Length; i++) {
 				if (!assets[i].name.EndsWith(".gbr") && !assets[i].name.EndsWith(".gih")) continue;
 				var brush = GimpBrushParser.LoadBrush(assets[i] as TextAsset);
-				if (brush.isValid) {
+				if (brush != null && brush.isValid) {
 					brushes.Add(brush);
 					count++;
 				}
