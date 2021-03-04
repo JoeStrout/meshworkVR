@@ -30,4 +30,10 @@ public class ToolColorManager : MonoBehaviour
 		color.b = blue / 255f;
 		onColorChanged.Invoke(color);
 	}
+	
+	public void SetAlpha(float alpha) {
+		color.b = alpha / 255f;
+		onColorChanged.Invoke(color);
+	}
+	
 }

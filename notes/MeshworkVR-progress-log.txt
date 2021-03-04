@@ -125,7 +125,7 @@ A Reddit user suggested some possible competition:
 > rigging feature is really neat.
 
 
-3/05/21
+3/04/21
 =======
 I've installed GIMP so that I can be certain what these brushes are supposed to look like in their native environment.  The animated brushes seem to just pick a random frame on each hit.  I think that won't be too hard to do.
 
