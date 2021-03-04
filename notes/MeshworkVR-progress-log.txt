@@ -62,7 +62,7 @@ https://forum.unity.com/threads/shadergraph-highlighting-edges.557005
 
 3/01/21
 =======
-Got the Wireframe Shader asset.  Eager to test it out!  ...Looks like it supports both pre-baked "inside mesh" (which grows the vertex count to triangles*3), and a "dynamic shader" which does not require prebaking.  But it requires shader model 5, and does not appear to work on Quest.
+Got the Wireframe Shader asset.  Eager to test it out!  ...Looks like it supports both pre-baked "inside mesh" (which grows the vertex count to triangles*3), and a "dynamic shader" which does not require prebaking.  But that requires shader model 5, and does not appear to work on Quest.
 
 Hmm, well it looks like you can bake at runtime.  This returns a new mesh with the needed extra data in uv4.  Made a new MeshDisplay class to use this.  Seems to work great!  Looks good and doesn't make the Quest break a sweat.
 

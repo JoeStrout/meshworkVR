@@ -55,8 +55,8 @@ public static class GimpBrushParser
 		brush.textures = new List<Texture2D>();
 		brush.textures.Add(new Texture2D((int)width, (int)height, TextureFormat.RGBA32, false));
 		Color32[] pixels = new Color32[(int)(width * height)];
-		int i=0;
-		for (int y=0; y<height; y++) {
+		for (int y=(int)height-1; y>=0; y--) {
+			int i=(int)(y * width);
 			for (int x=0; x<width; x++) {
 				Color32 c = (colorDepth == 1 ? new Color32(255,255,255,br.ReadByte()) 
 					: new Color32(br.ReadByte(), br.ReadByte(), br.ReadByte(), br.ReadByte()));

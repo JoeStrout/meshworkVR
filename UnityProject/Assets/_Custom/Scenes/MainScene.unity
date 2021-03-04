@@ -3976,7 +3976,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitSpacing: 0.01
   hitLimit: 30
-  connectHits: 1
+  connectHits: 0
   paintIn: 0
   interval: 0.1
   pointA: {fileID: 422211251}
