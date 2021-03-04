@@ -3961,7 +3961,11 @@ MonoBehaviour:
   tileOpacity: 1
   tileTransition: 4
   modifiers:
-    modifierDatas: []
+    modifierDatas:
+    - typeName: PaintIn3D.P3dModifyTextureRandom
+      jsonData: '{"preview":true,"unique":true}'
+      objects:
+      - {fileID: 0}
 --- !u!114 &660192215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3985,8 +3989,8 @@ MonoBehaviour:
   layers:
     serializedVersion: 2
     m_Bits: 4294967291
-  orientation: 0
-  _camera: {fileID: 0}
+  orientation: 1
+  _camera: {fileID: 963194227}
   normal: 0
   offset: 0
   preview: 0

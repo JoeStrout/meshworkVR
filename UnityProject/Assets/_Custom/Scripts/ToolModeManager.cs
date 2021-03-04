@@ -48,6 +48,7 @@ public class ToolModeManager : MonoBehaviour
 	
 	void Activate(Tool tool) {
 		if (activeTool == tool) return;
+		Debug.Log($"{gameObject.name}: Switching from {activeTool} to {tool}", gameObject);
 		if (activeTool != null) activeTool.Deactivate();
 		activeTool = tool;
 		if (activeTool != null) activeTool.Activate();

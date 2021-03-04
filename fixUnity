@@ -1,0 +1,12 @@
+#!/usr/local/bin/miniscript
+
+// The current version of Unity has some bug where it fails to load the window
+// layout, and then gets stuck unable to proceed.  The only working option is
+// to quit.  The only work-around I know is to delete the following file.
+
+file.delete "UnityProject/Library/CurrentLayout-default.dwlt"
+
+// Incidentally, if you're curious, this script is written in MiniScript:
+// https://miniscript.org
+
+// (This is the same language Meshwork VR will use for extensions.)

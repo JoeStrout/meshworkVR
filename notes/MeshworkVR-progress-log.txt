@@ -124,3 +124,19 @@ A Reddit user suggested some possible competition:
 > Have you looked at masterpiece? It's pretty janky, but does defined if this stuff. Its 
 > rigging feature is really neat.
 
+
+3/05/21
+=======
+I've installed GIMP so that I can be certain what these brushes are supposed to look like in their native environment.  The animated brushes seem to just pick a random frame on each hit.  I think that won't be too hard to do.
+
+We have an issue currently where when you first apply the brush, it doesn't hit right away.  Instead you have to drag a ways before it hits (if the brush has significant spacing).  I asked @Darkcoder (author of PaintIn3D) about it, and he said:
+
+> It's possible I made a mistake and so it doesn't paint on the first frame your 
+> finger/mouse goes down, when it should.
+>
+> I'm currently rewriting the way P3dHitScreen and the hit connection stuff works to more 
+> easily allow for more advanced tools. If it still doesn't work in the next update please 
+> let me know! 
+
+...which is not too helpful.  I may dig into this more myself.
+

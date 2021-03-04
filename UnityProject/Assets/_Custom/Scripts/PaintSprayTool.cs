@@ -131,6 +131,8 @@ public class PaintSprayTool : Tool
 			// Beam: constant width
 			lineRenderer.startWidth = lineRenderer.endWidth = beamWidth;
 			paintDecalComponent.Radius = beamWidth * 0.5f;
+			var br = brushPanel.currentBrush;
+			if (br != null) hitBetweenComponent.HitSpacing = beamWidth * br.spacing * 0.01f;
 		} else {
 			// Cone: starts at zero width; increases with distance, up to beam width * 2
 			float dist = hitParticles.transform.localPosition.z;
@@ -138,6 +140,8 @@ public class PaintSprayTool : Tool
 			lineRenderer.startWidth = 0;
 			lineRenderer.endWidth = beamWidth * widthFactor;
 			paintDecalComponent.Radius = beamWidth * widthFactor;
+			var br = brushPanel.currentBrush;
+			if (br != null) hitBetweenComponent.HitSpacing = beamWidth * widthFactor * br.spacing * 0.01f;
 		}
 		
 	}
@@ -148,6 +152,12 @@ public class PaintSprayTool : Tool
 	public void UpdateBrush() {
 		var br = brushPanel.currentBrush;
 		paintDecalComponent.Shape = br.texture;
-		hitBetweenComponent.HitSpacing = beamWidth * br.spacing * 0.01f;
+		UpdateLineWidth();
+		
+		P3dModifyTextureRandom randTexMod = paintDecalComponent.Modifiers[0] as P3dModifyTextureRandom;
+		randTexMod.Textures.Clear();
+		for (int i=0; i<br.textures.Count; i++) {
+			randTexMod.Textures.Add(br.textures[i]);
+		}
 	}
 }
