@@ -17,6 +17,8 @@ public class MeshModel : MonoBehaviour
 
 	MeshDisplay display;
 
+	MeshCollider meshCollider;
+
 	public struct MeshEdge {
 		public int index0;
 		public int index1;
@@ -36,6 +38,10 @@ public class MeshModel : MonoBehaviour
 		if (mf == null) Debug.LogError("MeshFilter needed on " + gameObject.name, gameObject);
 		else if (mf.sharedMesh == null) Debug.LogError($"Meshfilter on " +gameObject.name + " needs a mesh", gameObject);
 		else if (!mf.sharedMesh.isReadable)  Debug.LogError($"Meshfilter on " +gameObject.name + " needs Read/Write Enabled", gameObject);
+	}
+	
+	protected void Awake() {
+		meshCollider = GetComponent<MeshCollider>();
 	}
 	
 	protected void Start() {
@@ -123,6 +129,7 @@ public class MeshModel : MonoBehaviour
 			}
 		}
 		mesh.vertices = vertices;
+		meshCollider.sharedMesh = mesh;	// (forces collider to re-cook)
 		if (display != null) display.ShiftVertexTo(oldPos, newPos);
 	}
 }
