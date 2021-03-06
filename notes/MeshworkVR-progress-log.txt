@@ -151,3 +151,5 @@ Creating some community discussion areas:
 	https://discord.gg/s4WUwn2tjR
 
 Also, this morning I added a basic tools panel that allows you to select a tool in each hand.  Working well.  But it really needs a tab for each mode; this will both make it less cluttered, and make it clear when you're changing modes (so we can change the way the models are rendered or whatever).
+
+Trying to set up a Discord<-GitHub integration.
