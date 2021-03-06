@@ -1668,6 +1668,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 165585583}
   m_CullTransparentMesh: 0
+--- !u!114 &182167630 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1362330173874813641, guid: 19507e72e707b421cbf8449bd999dd18,
+    type: 3}
+  m_PrefabInstance: {fileID: 230431022}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d61b56eb0424199a1767dda3e73ff5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &191943895
 GameObject:
   m_ObjectHideFlags: 0
@@ -4276,6 +4288,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 587833041}
   m_CullTransparentMesh: 0
+--- !u!114 &588526185 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1362330173874813641, guid: 19507e72e707b421cbf8449bd999dd18,
+    type: 3}
+  m_PrefabInstance: {fileID: 866378853}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d61b56eb0424199a1767dda3e73ff5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &633987594
 GameObject:
   m_ObjectHideFlags: 0
@@ -6895,7 +6919,40 @@ MonoBehaviour:
   onBrushChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 182167630}
+        m_MethodName: UpdateBrush
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1542092275}
+        m_MethodName: UpdateBrush
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 588526185}
+        m_MethodName: UpdateBrush
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1350294275}
         m_MethodName: UpdateBrush
         m_Mode: 1
         m_Arguments:
@@ -12623,6 +12680,18 @@ MonoBehaviour:
   m_EnableXRInput: 1
   m_EnableMouseInput: 1
   m_EnableTouchInput: 1
+--- !u!114 &1350294275 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1362330173874813641, guid: 7c2c3de22167e4224a486eb09992ce2d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1144971684}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d61b56eb0424199a1767dda3e73ff5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1364313004
 GameObject:
   m_ObjectHideFlags: 0
@@ -13470,6 +13539,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftRayInteractor: {fileID: 68933717}
   rightRayInteractor: {fileID: 1203404727}
+--- !u!114 &1542092275 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1362330173874813641, guid: 7c2c3de22167e4224a486eb09992ce2d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1138797317}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d61b56eb0424199a1767dda3e73ff5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1560124565
 GameObject:
   m_ObjectHideFlags: 0
