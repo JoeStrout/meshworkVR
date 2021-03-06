@@ -18,6 +18,8 @@ public class JetTool : Tool
 	public float stopAccel = 10f;
 	public float flipSpeed = 720f;
 	
+	public float turnSpeed = 180f;
+	
 	Vector3 velocity;
 	
 	protected void Update() {
@@ -27,6 +29,7 @@ public class JetTool : Tool
 		if (Input.GetKey(KeyCode.Tab)) targetAng = 180;
 		engine.localEulerAngles = new Vector3(0, Mathf.MoveTowards(ang, targetAng, flipSpeed * Time.deltaTime), 0);
 		
+		// Apply thrust
 		float thrust = handTracker.trigger;
 		if (forceApply) thrust = 1;
 		UpdateFX(thrust);
@@ -35,6 +38,23 @@ public class JetTool : Tool
 		velocity -= engine.forward * thrust * accel * Time.deltaTime;
 		
 		if (velocity != Vector3.zero) xrRig.position += velocity;
+		
+		// Turn with left/right on joystick.
+		float joyx = handTracker.thumbStick.x;
+		float turnRate = 0;
+		if (joyx > 0.1f) turnRate = Mathf.InverseLerp(0.1f, 1f, joyx) * turnSpeed;
+		else if (-joyx > 0.1f) turnRate = Mathf.InverseLerp(0.1f, 1f, -joyx) * (-turnSpeed);
+		if (turnRate != 0) {
+			Transform camT = Camera.main.transform;
+			Debug.Log(string.Format("cam:{0} camoff:{1} xrrig:{2}", 
+				camT.position.ToString("0.0"), camT.parent.position.ToString("0.0"), xrRig.position.ToString("0.0")));
+			// A little tricky -- we need to move the XRRig so that the camera stays put.
+			// So, just do the rotation, then adjust position accordingly.
+			Vector3 camPos = camT.position;
+			xrRig.Rotate(0, turnRate * Time.deltaTime, 0, Space.Self);
+			xrRig.position += camPos - camT.position;
+		}
+		
 	}
 	
 	void UpdateFX(float thrust) {
