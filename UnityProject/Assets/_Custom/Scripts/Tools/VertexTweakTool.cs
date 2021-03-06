@@ -24,6 +24,8 @@ public class VertexTweakTool : Tool
 	Vector3 lastToolWorldPos;
 
 	protected void Update() {
+		base.Update();
+		
 		bool isDown = forceApply || (handTracker.trigger > (wasDown ? 0.4f : 0.6f));
 		if (isDown && !wasDown) BeginDrag();
 		else if (wasDown && !isDown) EndDrag();

@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1362330173123612576}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.000000007450581, y: 0, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1362330173874813636}
@@ -4834,8 +4834,8 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Positions:
-  - {x: 0.158, y: 0.201, z: 0.446}
-  - {x: 0.14864574, y: 0.201, z: 0.53499997}
+  - {x: 0, y: 0, z: 0}
+  - {x: -0.10452834, y: 0, z: 0.9945219}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.025
@@ -4905,12 +4905,12 @@ GameObject:
   - component: {fileID: 1362330173874813637}
   - component: {fileID: 1362330173874813642}
   m_Layer: 2
-  m_Name: Paint Tool
+  m_Name: Paint Beam Tool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1362330173874813636
 Transform:
   m_ObjectHideFlags: 0
@@ -4926,6 +4926,7 @@ Transform:
   - {fileID: 1362330174920159151}
   - {fileID: 1362330173123612577}
   - {fileID: 1362330174820613175}
+  - {fileID: 610410692509653240}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -6, z: 0}
@@ -4948,7 +4949,7 @@ MonoBehaviour:
   interval: 0.1
   pointA: {fileID: 1362330174920159151}
   pointB: {fileID: 1362330174820613175}
-  fraction: 0.08949016
+  fraction: 1
   layers:
     serializedVersion: 2
     m_Bits: 4294967291
@@ -5182,3 +5183,93 @@ Transform:
   m_Father: {fileID: 1362330173874813636}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &3799371737979058852
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1362330173874813636}
+    m_Modifications:
+    - target: {fileID: 4169005703536492387, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_text
+      value: Paint Beam
+      objectReference: {fileID: 0}
+    - target: {fileID: 4378212684282536540, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4378212684282536540, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4378212684282536540, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.11
+      objectReference: {fileID: 0}
+    - target: {fileID: 4378212684282536540, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4378212684282536540, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4378212684282536540, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4378212684282536540, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4378212684282536540, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4378212684282536540, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4378212684282536540, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4378212684282536540, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926671430326766339, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_Name
+      value: Tool Info Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 8887693913291518620, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_text
+      value: 'Trigger: Apply paint.
+
+        Stick L/R: Adjust size.
+
+        Stick
+        U/D: Adjust beam length.'
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4, type: 3}
+--- !u!4 &610410692509653240 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4378212684282536540, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+    type: 3}
+  m_PrefabInstance: {fileID: 3799371737979058852}
+  m_PrefabAsset: {fileID: 0}

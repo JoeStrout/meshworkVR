@@ -278,6 +278,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Jet Tool
       objectReference: {fileID: 0}
+    - target: {fileID: 5003491163698752235, guid: afef962d6c66748358c4384806edde67,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5309340876968499841, guid: afef962d6c66748358c4384806edde67,
         type: 3}
       propertyPath: xrRig
@@ -311,37 +316,42 @@ PrefabInstance:
     - target: {fileID: 5630669520678006865, guid: afef962d6c66748358c4384806edde67,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.007875344
+      value: -0.023178674
       objectReference: {fileID: 0}
     - target: {fileID: 5630669520678006865, guid: afef962d6c66748358c4384806edde67,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.4327184
+      value: -0.41659644
       objectReference: {fileID: 0}
     - target: {fileID: 5630669520678006865, guid: afef962d6c66748358c4384806edde67,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.898891
+      value: -0.90507704
       objectReference: {fileID: 0}
     - target: {fileID: 5630669520678006865, guid: afef962d6c66748358c4384806edde67,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.068467446
+      value: 0.08213272
       objectReference: {fileID: 0}
     - target: {fileID: 5630669520678006865, guid: afef962d6c66748358c4384806edde67,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 6.6770005
+      value: 9.6710005
       objectReference: {fileID: 0}
     - target: {fileID: 5630669520678006865, guid: afef962d6c66748358c4384806edde67,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -175.761
+      value: -178.46101
       objectReference: {fileID: 0}
     - target: {fileID: 5630669520678006865, guid: afef962d6c66748358c4384806edde67,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 51.659004
+      value: 49.562004
+      objectReference: {fileID: 0}
+    - target: {fileID: 9094715509781455511, guid: afef962d6c66748358c4384806edde67,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: -1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: afef962d6c66748358c4384806edde67, type: 3}
@@ -2040,6 +2050,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 532060172}
     m_Modifications:
+    - target: {fileID: 1362330173424417238, guid: 19507e72e707b421cbf8449bd999dd18,
+        type: 3}
+      propertyPath: m_Positions.Array.data[0].y
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1362330173424417238, guid: 19507e72e707b421cbf8449bd999dd18,
+        type: 3}
+      propertyPath: m_Positions.Array.data[1].x
+      value: 0.10452834
+      objectReference: {fileID: 0}
+    - target: {fileID: 1362330173424417238, guid: 19507e72e707b421cbf8449bd999dd18,
+        type: 3}
+      propertyPath: m_Positions.Array.data[1].y
+      value: 0.12
+      objectReference: {fileID: 0}
     - target: {fileID: 1362330173874813636, guid: 19507e72e707b421cbf8449bd999dd18,
         type: 3}
       propertyPath: m_RootOrder
@@ -2099,6 +2124,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Paint Beam Tool
+      objectReference: {fileID: 0}
+    - target: {fileID: 1362330173874813640, guid: 19507e72e707b421cbf8449bd999dd18,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1362330173874813641, guid: 19507e72e707b421cbf8449bd999dd18,
         type: 3}
@@ -6395,6 +6425,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 382698868}
     m_Modifications:
+    - target: {fileID: 1362330173424417238, guid: 19507e72e707b421cbf8449bd999dd18,
+        type: 3}
+      propertyPath: m_Positions.Array.data[0].y
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1362330173424417238, guid: 19507e72e707b421cbf8449bd999dd18,
+        type: 3}
+      propertyPath: m_Positions.Array.data[1].y
+      value: 0.12
+      objectReference: {fileID: 0}
     - target: {fileID: 1362330173874813636, guid: 19507e72e707b421cbf8449bd999dd18,
         type: 3}
       propertyPath: m_RootOrder
@@ -6454,6 +6494,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Paint Beam Tool
+      objectReference: {fileID: 0}
+    - target: {fileID: 1362330173874813640, guid: 19507e72e707b421cbf8449bd999dd18,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1362330173874813641, guid: 19507e72e707b421cbf8449bd999dd18,
         type: 3}
@@ -8721,6 +8766,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 532060172}
     m_Modifications:
+    - target: {fileID: 1362330173424417238, guid: 7c2c3de22167e4224a486eb09992ce2d,
+        type: 3}
+      propertyPath: m_Positions.Array.data[0].y
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1362330173424417238, guid: 7c2c3de22167e4224a486eb09992ce2d,
+        type: 3}
+      propertyPath: m_Positions.Array.data[1].x
+      value: 0.10452834
+      objectReference: {fileID: 0}
+    - target: {fileID: 1362330173424417238, guid: 7c2c3de22167e4224a486eb09992ce2d,
+        type: 3}
+      propertyPath: m_Positions.Array.data[1].y
+      value: 0.12
+      objectReference: {fileID: 0}
     - target: {fileID: 1362330173874813636, guid: 7c2c3de22167e4224a486eb09992ce2d,
         type: 3}
       propertyPath: m_RootOrder
@@ -8781,6 +8841,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Paint Cone Tool
       objectReference: {fileID: 0}
+    - target: {fileID: 1362330173874813640, guid: 7c2c3de22167e4224a486eb09992ce2d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1362330173874813641, guid: 7c2c3de22167e4224a486eb09992ce2d,
         type: 3}
       propertyPath: brushPanel
@@ -8795,6 +8860,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 382698868}
     m_Modifications:
+    - target: {fileID: 1362330173424417238, guid: 7c2c3de22167e4224a486eb09992ce2d,
+        type: 3}
+      propertyPath: m_Positions.Array.data[0].y
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1362330173424417238, guid: 7c2c3de22167e4224a486eb09992ce2d,
+        type: 3}
+      propertyPath: m_Positions.Array.data[1].y
+      value: 0.12
+      objectReference: {fileID: 0}
     - target: {fileID: 1362330173874813636, guid: 7c2c3de22167e4224a486eb09992ce2d,
         type: 3}
       propertyPath: m_RootOrder
@@ -8854,6 +8929,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Paint Cone Tool
+      objectReference: {fileID: 0}
+    - target: {fileID: 1362330173874813640, guid: 7c2c3de22167e4224a486eb09992ce2d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1362330173874813641, guid: 7c2c3de22167e4224a486eb09992ce2d,
         type: 3}
@@ -13973,6 +14053,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Vertex Tweak Tool
       objectReference: {fileID: 0}
+    - target: {fileID: 5716694575013769571, guid: 56e670edd4a18472f94b8fac0a4e21be,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
       propertyPath: m_RootOrder
@@ -13996,7 +14081,7 @@ PrefabInstance:
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9986295
       objectReference: {fileID: 0}
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
@@ -14006,7 +14091,7 @@ PrefabInstance:
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.052335896
       objectReference: {fileID: 0}
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
@@ -14021,7 +14106,7 @@ PrefabInstance:
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
@@ -15987,6 +16072,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: UV Tweak Tool
       objectReference: {fileID: 0}
+    - target: {fileID: 65507627308642864, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
       propertyPath: m_RootOrder
@@ -16010,7 +16100,7 @@ PrefabInstance:
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9986295
       objectReference: {fileID: 0}
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
@@ -16020,7 +16110,7 @@ PrefabInstance:
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.052335896
       objectReference: {fileID: 0}
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
@@ -16035,7 +16125,7 @@ PrefabInstance:
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
@@ -16784,6 +16874,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: UV Tweak Tool
       objectReference: {fileID: 0}
+    - target: {fileID: 65507627308642864, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
       propertyPath: m_RootOrder
@@ -16807,7 +16902,7 @@ PrefabInstance:
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9986295
       objectReference: {fileID: 0}
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
@@ -16817,7 +16912,7 @@ PrefabInstance:
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.052335896
       objectReference: {fileID: 0}
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
@@ -16832,7 +16927,7 @@ PrefabInstance:
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -6
       objectReference: {fileID: 0}
     - target: {fileID: 65507627308642867, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
@@ -18084,6 +18179,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Jet Tool
       objectReference: {fileID: 0}
+    - target: {fileID: 5003491163698752235, guid: afef962d6c66748358c4384806edde67,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5309340876968499841, guid: afef962d6c66748358c4384806edde67,
         type: 3}
       propertyPath: xrRig
@@ -18158,6 +18258,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Vertex Tweak Tool
       objectReference: {fileID: 0}
+    - target: {fileID: 5716694575013769571, guid: 56e670edd4a18472f94b8fac0a4e21be,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
       propertyPath: m_RootOrder
@@ -18181,7 +18286,7 @@ PrefabInstance:
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9986295
       objectReference: {fileID: 0}
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
@@ -18191,7 +18296,7 @@ PrefabInstance:
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.052335896
       objectReference: {fileID: 0}
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
@@ -18206,7 +18311,7 @@ PrefabInstance:
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -6
       objectReference: {fileID: 0}
     - target: {fileID: 5716694575013769596, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}

@@ -14,10 +14,17 @@ public class Tool : MonoBehaviour
 	protected HandTracker handTracker;
 	protected AudioSource audio;
 	
+	protected GameObject infoCanvas;
+	
 	protected virtual void Awake() {
 		handTracker = transform.parent.GetComponentInChildren<Grabber>().handTracker;
 		Debug.Assert(handTracker != null);		
 		audio = GetComponent<AudioSource>();
+		Transform t = transform.Find("Tool Info Canvas");
+		if (t != null) {
+			infoCanvas = t.gameObject;
+			infoCanvas.SetActive(false);
+		}
 	}
 
 	public void Activate() {
@@ -26,5 +33,13 @@ public class Tool : MonoBehaviour
 	
 	public void Deactivate() {
 		gameObject.SetActive(false);
+	}
+	
+	protected virtual void Update() {
+		if (handTracker.GetButtonDown(HandTracker.Button.Y) && infoCanvas != null) {
+			infoCanvas.SetActive(true);
+		} else if (handTracker.GetButtonUp(HandTracker.Button.Y) && infoCanvas != null) {
+			infoCanvas.SetActive(false);
+		}
 	}
 }

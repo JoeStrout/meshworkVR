@@ -23,6 +23,8 @@ public class JetTool : Tool
 	Vector3 velocity;
 	
 	protected void Update() {
+		base.Update();
+		
 		// When A/X button is pressed, reverse the engine; otherwise point it normally
 		float ang = engine.localEulerAngles.y;
 		float targetAng = handTracker.GetButton(HandTracker.Button.X) ? 180 : 0;

@@ -74,6 +74,8 @@ public class PaintSprayTool : Tool
 	}
 	
 	protected void Update() {
+		base.Update();
+		
 		hitBetweenComponent.Pressure = handTracker.trigger * handTracker.trigger;
 		if (forceApply) hitBetweenComponent.Pressure = 1;
 		

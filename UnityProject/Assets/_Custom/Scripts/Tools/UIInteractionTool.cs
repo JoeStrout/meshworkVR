@@ -17,6 +17,9 @@ public class UIInteractionTool : Tool
 	// Return whether this tool can currently apply, i.e., we are pointed at
 	// some UI object.
 	public bool CanApply() {
-		return Physics.Raycast(transform.position, transform.forward, canApplyDistance, uiLayerMask, QueryTriggerInteraction.Collide);
+		bool hit = Physics.Raycast(transform.position, transform.forward, canApplyDistance, uiLayerMask, QueryTriggerInteraction.Collide);
+		Debug.DrawLine(transform.position, transform.position + transform.forward * canApplyDistance,
+			hit ? Color.green : Color.cyan, 0.1f);
+		return hit;		
 	}
 }
