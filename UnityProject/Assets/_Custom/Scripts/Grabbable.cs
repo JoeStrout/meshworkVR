@@ -19,8 +19,10 @@ public class Grabbable : MonoBehaviour
 	protected Grabber primaryGrab;			// hand that actually grabbed us
 	protected Vector3 primaryGrabLocalPos;	// local position of the grabber when grabbed
 	protected Quaternion grabRotOffset;		// rotation offset from primary grabber
-	protected Grabber secondaryGrab;			// other hand that may be used for stretching
-
+	protected Grabber secondaryGrab;		// other hand that may be used for stretching
+	protected float secondaryDist;			// distance between primary and secondary grabbers at start of stretch
+	protected Vector3 baseScale;			// local scale of transform at start of stretch
+	
 	protected bool isGrabbed { get { return primaryGrab != null; } }
 
 	protected Dictionary<Grabber, bool> currentGrabbersTouching;
@@ -58,6 +60,27 @@ public class Grabbable : MonoBehaviour
 		Vector3 dPos = primaryGrab.transform.position - transform.TransformPoint(primaryGrabLocalPos);
 		transform.position += dPos;
 		
+		// check for stretching
+		if (secondaryGrab == null) {
+			foreach (Grabber g in Grabber.instances) {
+				if (g == primaryGrab) continue;
+				if (g.justGrabbed) {
+					// Start stretching with this other grabber
+					secondaryGrab = g;
+					secondaryDist = Vector3.Distance(primaryGrab.transform.position, secondaryGrab.transform.position);
+					baseScale = transform.localScale;
+					break;
+				}
+			}
+		} else if (!secondaryGrab.isGrabbing) {
+			secondaryGrab = null;
+		} else {
+			float curDist = Vector3.Distance(primaryGrab.transform.position, secondaryGrab.transform.position);
+			float factor = curDist / secondaryDist;
+			if (factor > 0.99f && factor < 1.01f) factor = 1f;	// snap
+			transform.localScale = baseScale * factor;
+		}
+		
 		AfterGrabbedUpdate();
 	}
 	
@@ -93,6 +116,7 @@ public class Grabbable : MonoBehaviour
 	void GrabBy(Grabber grabber) {
 		Debug.Log($"Grabbed by {grabber.gameObject.name}");
 		primaryGrab = grabber;
+		secondaryGrab = null;
 		primaryGrabLocalPos = transform.InverseTransformPoint(grabber.center);
 		grabRotOffset = Quaternion.Inverse(grabber.transform.rotation) * transform.rotation;
 	}

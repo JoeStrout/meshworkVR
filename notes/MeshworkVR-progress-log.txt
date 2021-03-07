@@ -164,4 +164,9 @@ I also updated the UV Tweak tool so that the UV map display is updated.  Eventua
 Right now I need to consider what else needs to go into this before distributing a first build.  Maybe two-hand scaling?  I also considered a basic menu system, but I think we can live without that until Week 3 (UI).
 
 
+3/07/21
+=======
+Added model scaling.  I guess it's about time to post the first build!
+
+
 

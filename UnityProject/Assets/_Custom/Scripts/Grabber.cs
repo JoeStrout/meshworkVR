@@ -20,8 +20,7 @@ public class Grabber : MonoBehaviour
 	public bool justGrabbed { get; private set; }
 	public bool justReleased { get; private set; }
 	
-	bool forcedGrab;
-	
+	bool forcedGrab;	
 	float lastGrabValue;
 	SphereCollider collider;
 	
