@@ -48,8 +48,6 @@ public class JetTool : Tool
 		else if (-joyx > 0.1f) turnRate = Mathf.InverseLerp(0.1f, 1f, -joyx) * (-turnSpeed);
 		if (turnRate != 0) {
 			Transform camT = Camera.main.transform;
-			Debug.Log(string.Format("cam:{0} camoff:{1} xrrig:{2}", 
-				camT.position.ToString("0.0"), camT.parent.position.ToString("0.0"), xrRig.position.ToString("0.0")));
 			// A little tricky -- we need to move the XRRig so that the camera stays put.
 			// So, just do the rotation, then adjust position accordingly.
 			Vector3 camPos = camT.position;

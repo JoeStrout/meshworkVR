@@ -1,5 +1,5 @@
 ﻿/*
-
+Represents several kinds of paint tools: beam, cone, and brush.
 */
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +10,8 @@ public class PaintSprayTool : Tool
 {
 	public enum SprayType {
 		Beam,
-		Cone
+		Cone,
+		Brush		// (which is really just inverted cone
 	}
 	public SprayType sprayType = SprayType.Beam;
 
@@ -23,6 +24,7 @@ public class PaintSprayTool : Tool
 	P3dHitBetween hitBetweenComponent;
 	P3dPaintDecal paintDecalComponent;
 	LineRenderer lineRenderer;
+	Transform hitPoint;
 	ParticleSystem hitParticles;
 	Transform beamEndPoint;
 	
@@ -34,7 +36,7 @@ public class PaintSprayTool : Tool
 		set {
 			if (hitBetweenComponent == null) Awake();
 			paintDecalComponent.Color = value;
-			if (sprayType == SprayType.Beam) {
+			if (sprayType == SprayType.Beam && sprayType == SprayType.Brush) {
 				lineRenderer.SetColors(value, value);
 			} else {
 				Color clear = value;
@@ -42,10 +44,12 @@ public class PaintSprayTool : Tool
 				lineRenderer.SetColors(value, clear);
 			}
 			paintDecalComponent.Color = value;
-			hitParticles.startColor = value;
-			var startColorModule = hitParticles.main.startColor;
-			startColorModule.colorMin = value;
-			startColorModule.colorMax = Color.Lerp(value, Color.white, 0.5f);
+			if (hitParticles != null) {
+				hitParticles.startColor = value;
+				var startColorModule = hitParticles.main.startColor;
+				startColorModule.colorMin = value;
+				startColorModule.colorMax = Color.Lerp(value, Color.white, 0.5f);
+			}
 		}
 	}
 	
@@ -68,6 +72,7 @@ public class PaintSprayTool : Tool
 		lineRenderer = GetComponentInChildren<LineRenderer>();
 		Debug.Assert(lineRenderer != null);
 		
+		hitPoint = transform.Find("Hit Point");
 		hitParticles = GetComponentInChildren<ParticleSystem>();
 
 		UpdateLineWidth();
@@ -83,11 +88,11 @@ public class PaintSprayTool : Tool
 		hitBetweenComponent.Preview = (hitBetweenComponent.Pressure < 0.0025f);
 		Color c = paintDecalComponent.Color;
 		if (hitBetweenComponent.Preview) {
-			if (hitParticles.isEmitting) hitParticles.Stop();
+			if (hitParticles != null && hitParticles.isEmitting) hitParticles.Stop();
 			c.a	= 0.1f;
 			if (audio) audio.Stop();
 		} else {
-			if (!hitParticles.isEmitting) hitParticles.Play();
+			if (hitParticles != null && !hitParticles.isEmitting) hitParticles.Play();
 			c.a = Mathf.Lerp(0.1f, 1f, hitBetweenComponent.Pressure);
 			if (audio) {
 				audio.volume = hitBetweenComponent.Pressure;
@@ -95,13 +100,13 @@ public class PaintSprayTool : Tool
 			}
 		}
 		
-		if (sprayType == SprayType.Beam) {
-			// Beam spray is constant opacity, dependent only upon trigger pressure
+		if (sprayType == SprayType.Beam || sprayType == SprayType.Brush) {
+			// Beam/brush spray is constant opacity, dependent only upon trigger pressure
 			paintDecalComponent.Opacity = hitBetweenComponent.Pressure;
 			lineRenderer.startColor = lineRenderer.endColor = c;
 		} else {
 			// With a cone spray, the opacity of the paint attenuates with distance
-			float dist = hitParticles.transform.localPosition.z;
+			float dist = hitPoint.localPosition.z;
 			float attenuation = 1f - (dist / beamLength);
 			paintDecalComponent.Opacity = attenuation * hitBetweenComponent.Pressure;
 			lineRenderer.startColor = c;
@@ -116,7 +121,11 @@ public class PaintSprayTool : Tool
 		}
 		float dLen = handTracker.thumbStick.y;
 		if (Mathf.Abs(dLen) > 0.1f) {
-			beamLength = Mathf.Clamp(beamLength + dLen * 0.5f * Time.deltaTime, 0.05f, 3f);
+			if (sprayType == SprayType.Brush) {
+				beamLength = Mathf.Clamp(beamLength + dLen * 0.05f * Time.deltaTime, 0.01f, 0.2f);				
+			} else {
+				beamLength = Mathf.Clamp(beamLength + dLen * 0.5f * Time.deltaTime, 0.05f, 3f);
+			}
 		}
 		UpdateLineWidth();
 	}
@@ -129,11 +138,20 @@ public class PaintSprayTool : Tool
 			paintDecalComponent.Radius = beamWidth * 0.5f;
 			var br = brushPanel.currentBrush;
 			if (br != null) hitBetweenComponent.HitSpacing = beamWidth * br.spacing * 0.01f;
-		} else {
+		} else if (sprayType == SprayType.Cone) {
 			// Cone: starts at zero width; increases with distance, up to beam width * 2
-			float dist = hitParticles.transform.localPosition.z;
+			float dist = hitPoint.localPosition.z;
 			float widthFactor = 2f * dist / beamLength;
 			lineRenderer.startWidth = 0;
+			lineRenderer.endWidth = beamWidth * widthFactor;
+			paintDecalComponent.Radius = beamWidth * widthFactor;
+			var br = brushPanel.currentBrush;
+			if (br != null) hitBetweenComponent.HitSpacing = beamWidth * widthFactor * br.spacing * 0.01f;
+		} else {
+			// Brush: starts at beam width; decreases to 0 at beam length
+			float dist = hitPoint.localPosition.z;
+			float widthFactor = Mathf.Clamp01(1f - dist / beamLength);
+			lineRenderer.startWidth = beamWidth;
 			lineRenderer.endWidth = beamWidth * widthFactor;
 			paintDecalComponent.Radius = beamWidth * widthFactor;
 			var br = brushPanel.currentBrush;
