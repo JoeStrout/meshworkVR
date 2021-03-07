@@ -154,3 +154,14 @@ Also, this morning I added a basic tools panel that allows you to select a tool 
 
 Trying to set up a Discord<-GitHub integration.  I forgot to append /github to the webhook URL (not sure why this is necessary, but apparently it is).
 
+
+3/06/21
+=======
+Added info panels that appear over the tools when you hold B/Y.  Ultimately this is also where we will put tool options, if any are needed.  For now I'm digging this general approach: A/X is a "modifier" button (something like holding Option on desktop), and B/Y is tool help/options.
+
+I also updated the UV Tweak tool so that the UV map display is updated.  Eventually I need to make it so you can also use this tool directly on the UV display, in addition to using it on the model.  But I can revisit that in Week 5 (UV Mapping).
+
+Right now I need to consider what else needs to go into this before distributing a first build.  Maybe two-hand scaling?  I also considered a basic menu system, but I think we can live without that until Week 3 (UI).
+
+
+
