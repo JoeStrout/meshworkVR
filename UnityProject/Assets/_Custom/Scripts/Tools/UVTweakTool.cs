@@ -68,7 +68,6 @@ public class UVTweakTool : Tool
 	
 	void Drag() {
 		Vector2 newPos = MathUtils.ProjectTo2D(dragPlaneUp, dragPlaneRight, endPoint.position);
-		Debug.Log($"Tool moved from {dragStartPos} to {newPos} in drag plane");
 		Vector2 drag = newPos - dragStartPos;
 		Vector2 newUV = dragStartUV + drag;	// <-- here is where we are making assumptions about UV axis direction!
 		Vector2 uvDelta = newUV - dragMesh.UV(dragIndex);

@@ -9,6 +9,8 @@ using UnityEngine;
 
 public class MeshModel : MonoBehaviour
 {
+	public IntEvent onUVChanged;
+	
 	// For now, we'll just wrap a Unity mesh.
 	Mesh mesh;
 	Vector3[] vertices;
@@ -111,7 +113,7 @@ public class MeshModel : MonoBehaviour
 		for (int i=0; i<uv.Length; i++) {
 			if (i == index || (vertices[i] == vpos && uv[i] == oldUV)) {
 				uv[i] = newUV;
-				Debug.Log($"Shifted uv[{i}] to {newUV}");
+				onUVChanged.Invoke(i);
 			}
 		}
 		mesh.uv = uv;

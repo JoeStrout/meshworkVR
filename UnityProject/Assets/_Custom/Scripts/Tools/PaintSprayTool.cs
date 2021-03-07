@@ -147,6 +147,7 @@ public class PaintSprayTool : Tool
 	
 	public void UpdateBrush() {
 		var br = brushPanel.currentBrush;
+		if (br == null || paintDecalComponent == null) return;
 		paintDecalComponent.Shape = br.texture;
 		UpdateLineWidth();
 		

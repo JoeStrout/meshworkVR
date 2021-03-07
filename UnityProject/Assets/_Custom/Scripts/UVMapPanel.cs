@@ -24,6 +24,8 @@ public class UVMapPanel : MonoBehaviour
 	
 	RawImage image;
 	
+	Dictionary<int, RectTransform> edgeMap;	// key: EdgeKey; value: UI element displaying that edge
+	
 	protected void Awake() {
 		image = GetComponentInChildren<RawImage>();
 		Debug.Assert(image != null, "RawImage component not found in " + gameObject.name, gameObject);
@@ -34,6 +36,15 @@ public class UVMapPanel : MonoBehaviour
 		quad.sharedMaterial = meshRenderer.sharedMaterial;
 		Invoke("LateStart", 0.01f);
 	}
+	
+	protected void OnEnable() {
+		meshModel.onUVChanged.AddListener(NoteUVChanged);
+	}
+	
+	protected void OnDisable() {
+		meshModel.onUVChanged.RemoveListener(NoteUVChanged);
+	}
+	
 	void LateStart() {
 		BuildDisplay();
 		foreach (var pt in meshRenderer.GetComponent<P3dPaintable>().PaintableTextures) {
@@ -50,27 +61,59 @@ public class UVMapPanel : MonoBehaviour
 	}
 	
 	/// <summary>
+	/// Return a unique key for the given pair of vertices (regardless of order).
+	/// </summary>
+	/// <param name="vertIndex0"></param>
+	/// <param name="vertIndex1"></param>
+	/// <returns></returns>
+	int EdgeKey(MeshModel.MeshEdge edge) {
+		int key = (edge.index0 < edge.index1 ? edge.index0 << 16 + edge.index1 : edge.index1 << 16 + edge.index0);
+		return key;
+	}
+	
+	void ClearDisplay() {
+		if (edgeMap == null) return;
+		foreach (RectTransform e in edgeMap.Values) {
+			Destroy(e.gameObject);
+		}
+		edgeMap.Clear();
+	}
+	
+	/// <summary>
 	/// Rebuild our display of vertices and lines from the mesh in UV space.
 	/// </summary>
 	void BuildDisplay() {
-		var alreadyDone = new HashSet<int>();
-		Vector2 containerSize = (edgePrototype.transform.parent as RectTransform).sizeDelta;
+		if (edgeMap == null) edgeMap = new Dictionary<int, RectTransform>();
+		else edgeMap.Clear();
 		for (int i=0; i<meshModel.edgeCount; i++) {
-			var edge = meshModel.Edge(i);
-			
-			int key = (edge.index0 < edge.index1 ? edge.index0 << 16 + edge.index1 : edge.index1 << 16 + edge.index0);
-			if (alreadyDone.Contains(key)) continue;
-			alreadyDone.Add(key);
+			var edge = meshModel.Edge(i);			
+			int key = EdgeKey(edge);
+			if (edgeMap.ContainsKey(key)) continue;
 			
 			var line = Instantiate(edgePrototype, edgePrototype.parent);
-			var uv0 = meshModel.UV(edge.index0);
-			var uv1 = meshModel.UV(edge.index1);
-			float uvDist = Vector2.Distance(uv0, uv1);
-			line.anchoredPosition = new Vector2(uv0.x * containerSize.x, uv0.y * containerSize.y);
-			line.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(uv1.y - uv0.y, uv1.x - uv0.x) * Mathf.Rad2Deg);
-			line.sizeDelta = new Vector2(uvDist * containerSize.x, line.sizeDelta.y);
+			ArrangeEdgeLine(edge, line);
 			line.gameObject.SetActive(true);
-			line.gameObject.name = $"Edge from {uv0} to {uv1}";
+			edgeMap[key] = line;
+		}
+	}
+	
+	void ArrangeEdgeLine(MeshModel.MeshEdge edge, RectTransform line) {
+		Vector2 containerSize = (edgePrototype.transform.parent as RectTransform).sizeDelta;
+		var uv0 = meshModel.UV(edge.index0);
+		var uv1 = meshModel.UV(edge.index1);
+		float uvDist = Vector2.Distance(uv0, uv1);
+		line.anchoredPosition = new Vector2(uv0.x * containerSize.x, uv0.y * containerSize.y);
+		line.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(uv1.y - uv0.y, uv1.x - uv0.x) * Mathf.Rad2Deg);
+		line.sizeDelta = new Vector2(uvDist * containerSize.x, line.sizeDelta.y);
+		line.gameObject.name = $"Edge from {uv0} to {uv1}";
+	}
+	
+	void NoteUVChanged(int vertexNum) {
+		for (int i=0; i<meshModel.edgeCount; i++) {
+			var edge = meshModel.Edge(i);			
+			if (edge.index0 != vertexNum && edge.index1 != vertexNum) continue;
+			var line = edgeMap[EdgeKey(edge)];
+			ArrangeEdgeLine(edge, line);
 		}
 	}
 }
