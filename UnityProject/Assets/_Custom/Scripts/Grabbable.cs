@@ -4,10 +4,11 @@ and manipulated by the user.
 */
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
+using UnityEngine;
 public class Grabbable : MonoBehaviour
 {
+	
 	public StringEvent onGrabOver;
 	public StringEvent onGrabExit;
 
@@ -19,11 +20,12 @@ public class Grabbable : MonoBehaviour
 	protected Grabber primaryGrab;			// hand that actually grabbed us
 	protected Vector3 primaryGrabLocalPos;	// local position of the grabber when grabbed
 	protected Quaternion grabRotOffset;		// rotation offset from primary grabber
+	protected bool requiresTwoHands = false;// if true, position/rotation also requires a second hand
 	protected Grabber secondaryGrab;		// other hand that may be used for stretching
 	protected float secondaryDist;			// distance between primary and secondary grabbers at start of stretch
 	protected Vector3 baseScale;			// local scale of transform at start of stretch
 	
-	protected bool isGrabbed { get { return primaryGrab != null; } }
+	public bool isGrabbed { get { return primaryGrab != null; } }
 
 	protected Dictionary<Grabber, bool> currentGrabbersTouching;
 	protected Dictionary<Grabber, bool> previousGrabbersTouching;
@@ -53,12 +55,14 @@ public class Grabbable : MonoBehaviour
 		
 		BeforeGrabbedUpdate();
 		
-		// update rotation
-		transform.rotation = primaryGrab.transform.rotation * grabRotOffset;
-		
-		// update position
-		Vector3 dPos = primaryGrab.transform.position - transform.TransformPoint(primaryGrabLocalPos);
-		transform.position += dPos;
+		if (!requiresTwoHands || secondaryGrab != null) {
+			// update rotation
+			transform.rotation = primaryGrab.transform.rotation * grabRotOffset;
+			
+			// update position
+			Vector3 dPos = primaryGrab.transform.position - transform.TransformPoint(primaryGrabLocalPos);
+			transform.position += dPos;
+		}
 		
 		// check for stretching
 		if (secondaryGrab == null) {
@@ -66,9 +70,7 @@ public class Grabbable : MonoBehaviour
 				if (g == primaryGrab) continue;
 				if (g.justGrabbed) {
 					// Start stretching with this other grabber
-					secondaryGrab = g;
-					secondaryDist = Vector3.Distance(primaryGrab.transform.position, secondaryGrab.transform.position);
-					baseScale = transform.localScale;
+					StretchWith(g);
 					break;
 				}
 			}
@@ -113,12 +115,19 @@ public class Grabbable : MonoBehaviour
 		}
 	}
 	
-	void GrabBy(Grabber grabber) {
+	public void GrabBy(Grabber grabber, bool requireTwoHands=false) {
 		Debug.Log($"Grabbed by {grabber.gameObject.name}");
 		primaryGrab = grabber;
 		secondaryGrab = null;
+		this.requiresTwoHands = requireTwoHands;
 		primaryGrabLocalPos = transform.InverseTransformPoint(grabber.center);
 		grabRotOffset = Quaternion.Inverse(grabber.transform.rotation) * transform.rotation;
+	}
+	
+	public void StretchWith(Grabber grabber) {
+		secondaryGrab = grabber;
+		secondaryDist = Vector3.Distance(primaryGrab.transform.position, secondaryGrab.transform.position);
+		baseScale = transform.localScale;
 	}
 	
 	void Release() {

@@ -171,5 +171,16 @@ Added model scaling.  Almost time to post the first build!
 First though I want to prototype one more tool: the "brush" tool as Emily described, where the effective diameter varies with how far you are from the surface.  I realized this is basically the same as the existing cone tool, except the cone is shorter and inverted, and we don't let distance affect opacity (we'll control that soley with the trigger).
 
 
+3/08/21
+=======
+Got some great feedback from users on the first build.  Some take-aways:
+	- brush beam/cone needs to be more clear, especially when resizing
+	- probably need to adjust the cone size/shape limits
+	- grab ball needs visual/haptic feedback
+	- need a way to grab empty space to transform the entire scene
+	- Brush panel is distracting when showing an animated brush
+
+I'm not sure yet what, if anything, to do about that last one; but the others are all pretty straightforward.  With regard to two-hand grabbing: right now we use the second hand for scale, but still take position and rotation entirely from the primary grab.  I think it'd be better to calculate the best 2-hand transform fit for position and rotation, too.
+
 
 

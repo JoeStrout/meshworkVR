@@ -48,6 +48,18 @@ public class Grabber : MonoBehaviour
 			var grabbable = tempColliders[i].GetComponentInParent<Grabbable>();
 			if (grabbable != null) grabbable.NoteGrabberOverThis(this);
 		}
+		
+		// Note that actual grabbing of grabbables is handled in Grabbable itself
+		// (which allows us to grab multiple objects at once if they are close together).
+		// But if you grab empty space, possibly manipulating the scene, we handle
+		// that here.
+		if (count == 0 && justGrabbed) {
+			if (GlobalRefs.instance.scene.isGrabbed) {
+				GlobalRefs.instance.scene.StretchWith(this);
+			} else {
+				GlobalRefs.instance.scene.GrabBy(this, true);	// require second hand in this case
+			}
+		}
 	}
 	
 	[ContextMenu("Force Grab")]
