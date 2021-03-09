@@ -541,7 +541,7 @@ public static class MathUtils {
 	/// Find a quaternion that rotates from the start orientation to the end orientation.
 	/// </summary>
 	public static Quaternion FromToRotation(Quaternion start, Quaternion end) {
-		return Quaternion.Inverse(start)* end;
+		return Quaternion.Inverse(start) * end;
 	}
 	
 	/// <summary>

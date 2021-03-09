@@ -11,6 +11,7 @@ public class GlobalRefs : MonoBehaviour
 	public static GlobalRefs instance { get; private set; }
 	
 	public Grabbable scene;
+	public Transform debugAxes;
 	
 	protected void Awake() {
 		instance = this;
