@@ -182,5 +182,7 @@ Got some great feedback from users on the first build.  Some take-aways:
 
 I'm not sure yet what, if anything, to do about that last one; but the others are all pretty straightforward.  With regard to two-hand grabbing: right now we use the second hand for scale, but still take position and rotation entirely from the primary grab.  I think it'd be better to calculate the best 2-hand transform fit for position and rotation, too.
 
+Reworked the two-hand manipulator code substantially.  It still has a couple of issues: sometimes the object gets "stuck" to one hand until you squeeze the grip again, and a couple times, the whole scene has winked out of existence (with complaints in the logs about a negative scale).  But the basic functionality is pretty much what we want.
+
 
 

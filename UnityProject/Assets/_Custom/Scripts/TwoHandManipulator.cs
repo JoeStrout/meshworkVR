@@ -62,7 +62,7 @@ public class TwoHandManipulator
 		// scale
 		float scaleFactor = Vector3.Distance(grabbers[0].position, grabbers[1].position)
 			/ Vector3.Distance(grabPos[0], grabPos[1]);
-		if (float.IsFinite(scaleFactor) && !float.IsNaN(scaleFactor)) {
+		if (!float.IsInfinity(scaleFactor) && !float.IsNaN(scaleFactor)) {
 			if (scaleFactor > 0.99f && scaleFactor < 1.01f) scaleFactor = 1;
 			obj.localScale = objStartScale * scaleFactor;
 		}
