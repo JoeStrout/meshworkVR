@@ -28,6 +28,11 @@ public class PaintSprayTool : Tool
 	ParticleSystem hitParticles;
 	Transform beamEndPoint;
 	
+	bool _eraseMode;
+	bool eraseMode {
+		get { return _eraseMode; }
+		set { _eraseMode = value; UpdateBrush(); }
+	}
 	
 	public Color color {
 		get {
@@ -81,18 +86,22 @@ public class PaintSprayTool : Tool
 	protected void Update() {
 		base.Update();
 		
+		if (handTracker.GetButton(HandTracker.Button.X)) {
+			if (!eraseMode) eraseMode = true;
+		} else if (eraseMode) eraseMode = false;
+		
 		hitBetweenComponent.Pressure = handTracker.trigger * handTracker.trigger;
 		if (forceApply) hitBetweenComponent.Pressure = 1;
 		
 		//hitBetweenComponent.Interval = (handTracker.trigger > 0.05f ? 0 : -1);
 		hitBetweenComponent.Preview = (hitBetweenComponent.Pressure < 0.0025f);
-		Color c = paintDecalComponent.Color;
+		Color c = eraseMode ? Color.white : paintDecalComponent.Color;
 		if (hitBetweenComponent.Preview) {
 			if (hitParticles != null && hitParticles.isEmitting) hitParticles.Stop();
 			c.a	= 0.1f;
 			if (audio) audio.Stop();
 		} else {
-			if (hitParticles != null && !hitParticles.isEmitting) hitParticles.Play();
+			if (hitParticles != null && !hitParticles.isEmitting && !eraseMode) hitParticles.Play();
 			c.a = Mathf.Lerp(0.1f, 1f, hitBetweenComponent.Pressure);
 			if (audio) {
 				audio.volume = hitBetweenComponent.Pressure;
@@ -168,6 +177,12 @@ public class PaintSprayTool : Tool
 		if (br == null || paintDecalComponent == null) return;
 		paintDecalComponent.Shape = br.texture;
 		UpdateLineWidth();
+		
+		if (eraseMode) {
+			paintDecalComponent.BlendMode = P3dBlendMode.Subtractive(new Vector4(0,0,0,1));
+		} else {
+			paintDecalComponent.BlendMode = P3dBlendMode.AlphaBlend(Vector4.one);
+		}
 		
 		P3dModifyTextureRandom randTexMod = paintDecalComponent.Modifiers[0] as P3dModifyTextureRandom;
 		randTexMod.Textures.Clear();

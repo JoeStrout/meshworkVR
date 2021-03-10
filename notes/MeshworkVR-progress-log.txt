@@ -195,3 +195,6 @@ So instead, I've set up a RawImage to directly use the material on the model, wh
 
 Also, I had alpha on the color panel incorrectly hooked up to the blue channel.  Now it's hooked up to alpha.  By turning alpha down, you can really reduce the opacity of the paint you apply.  This is all working exactly as it should... but (combined with layering) makes me realize that we need an eraser mode or tool.  I'm tempted to just pop all the paint tools into erase mode when you hold the A/X button.  But that does mean we lose that button for color selection.  Hmm.  Maybe that's OK though, as you could just dock the color panel to your off arm.
 
+I should note that there are a whole slew of other blend modes that may be useful.  I should think about which of these to expose, and how.  They are nicely illustrated in the P3D documentation.  For now, I just switch to Subtractive mode (alpha only) when you press A/X to erase, and that seems to be working fine.
+
+
