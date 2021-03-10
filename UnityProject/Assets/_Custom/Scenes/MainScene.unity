@@ -1380,10 +1380,10 @@ RectTransform:
   - {fileID: 1803399028}
   - {fileID: 302988619}
   - {fileID: 1985308837}
+  - {fileID: 1702786799}
   - {fileID: 1844891518}
   - {fileID: 1716638526}
   - {fileID: 2002747482}
-  - {fileID: 1702786799}
   m_Father: {fileID: 1745987997}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3781,81 +3781,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 434144300}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51e87dd9e959d431d81ffe1beaa765c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 5035a11f48744407b8585ca1834f6ba7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  previewImage: {fileID: 0}
-  brushNameText: {fileID: 0}
-  selectionSlider: {fileID: 0}
-  onBrushChanged:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 182167630}
-        m_MethodName: UpdateBrush
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1542092275}
-        m_MethodName: UpdateBrush
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 588526185}
-        m_MethodName: UpdateBrush
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1350294275}
-        m_MethodName: UpdateBrush
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 210713903}
-        m_MethodName: UpdateBrush
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1354235731}
-        m_MethodName: UpdateBrush
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  listContent: {fileID: 44135582}
+  rowPrototype: {fileID: 1068868928}
+  model: {fileID: 990076445}
 --- !u!114 &434144302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8573,6 +8504,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 47cb6b2cece85435da2b13a1d38c6f6e, type: 2}
+  - {fileID: 2100000, guid: 987e8ac52a9bc4533b251023760034da, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8614,7 +8546,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slot:
-    Index: 0
+    Index: 1
     Name: _MainTex
   coord: 0
   group:
@@ -8882,6 +8814,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1068868927}
+  - component: {fileID: 1068868928}
   m_Layer: 5
   m_Name: Layer Row Prototype
   m_TagString: Untagged
@@ -8911,6 +8844,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 64}
   m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &1068868928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1068868926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cd68f50f7cde4f6d8f40354443806b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  image: {fileID: 1806987613}
+  nameText: {fileID: 1182106168}
+  visToggle: {fileID: 1535315728}
 --- !u!1 &1068970826
 GameObject:
   m_ObjectHideFlags: 0
@@ -10753,6 +10701,7 @@ GameObject:
   - component: {fileID: 1182106165}
   - component: {fileID: 1182106167}
   - component: {fileID: 1182106166}
+  - component: {fileID: 1182106168}
   m_Layer: 5
   m_Name: Name
   m_TagString: Untagged
@@ -10875,6 +10824,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182106164}
   m_CullTransparentMesh: 0
+--- !u!114 &1182106168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1182106164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f669e5e29b1b4d7ca85f69139388a70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  format: '{0}'
+  textChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1193129594
 GameObject:
   m_ObjectHideFlags: 0
@@ -15491,7 +15456,7 @@ RectTransform:
   - {fileID: 517333634}
   - {fileID: 757776157}
   m_Father: {fileID: 92662908}
-  m_RootOrder: 7
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -15544,7 +15509,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 255
   m_WholeNumbers: 1
-  m_Value: 0
+  m_Value: 255
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -15843,7 +15808,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 92662908}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -16623,7 +16588,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1806987611}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -16633,16 +16598,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_Texture: {fileID: 0}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
 --- !u!222 &1806987614
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16758,7 +16720,7 @@ RectTransform:
   m_Children:
   - {fileID: 1519461189}
   m_Father: {fileID: 92662908}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -17902,7 +17864,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 92662908}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}

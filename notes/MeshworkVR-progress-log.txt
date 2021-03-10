@@ -185,4 +185,13 @@ I'm not sure yet what, if anything, to do about that last one; but the others ar
 Reworked the two-hand manipulator code substantially.  It still has a couple of issues: sometimes the object gets "stuck" to one hand until you squeeze the grip again, and a couple times, the whole scene has winked out of existence (with complaints in the logs about a negative scale).  But the basic functionality is pretty much what we want.
 
 
+3/09/21
+=======
+Started work on supporting layers today.  Multiple transparent materials on one model does appear to work (though I'll need to change how the wireframe is applied, so that it applies to the last material rather than the first -- if we want it on at all during painting).
+
+Note that it seems like PaintIn3D is using a render texture, not directly editing the original material texture.  There are methods to get a copy of this as a Texture2D, but that's an expensive operation.
+
+So instead, I've set up a RawImage to directly use the material on the model, which is using the render texture being updated by the paint.  This works fine on the second layer; the first layer is looking a little haywire.  This might be because of the wireframe shader, so if we decide to remove wireframe while painting, that would become a non-issue.
+
+Also, I had alpha on the color panel incorrectly hooked up to the blue channel.  Now it's hooked up to alpha.  By turning alpha down, you can really reduce the opacity of the paint you apply.  This is all working exactly as it should... but (combined with layering) makes me realize that we need an eraser mode or tool.  I'm tempted to just pop all the paint tools into erase mode when you hold the A/X button.  But that does mean we lose that button for color selection.  Hmm.  Maybe that's OK though, as you could just dock the color panel to your off arm.
 
