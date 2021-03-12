@@ -27,13 +27,24 @@ public class PaintLayersPanel : MonoBehaviour
 	
 	public void LoadMaterials(Material[] mats) {
 		rowPrototype.gameObject.SetActive(false);
+		rows = new List<TexLayerRow>();
 		
 		for (int i=0; i<mats.Length; i++) {
 			var noob = Instantiate(rowPrototype, rowPrototype.transform.parent);
-			noob.Configure(mats[i], $"Layer {i+1}");
+			string layerName = "Layer " + (i+1);
+			noob.Configure(mats[i], layerName);
 			var rt = noob.transform as RectTransform;
 			rt.anchoredPosition = -rt.sizeDelta * i;
 			noob.gameObject.SetActive(true);
+			rows.Add(noob);
 		}
+	}
+	
+	public void UpdateMaterials() {
+		List<Material> materials = new List<Material>();
+		foreach (var row in rows) {
+			if (row.isVisible) materials.Add(row.material);
+		}
+		model.materials = materials.ToArray();
 	}
 }

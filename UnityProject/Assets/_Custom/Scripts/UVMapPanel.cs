@@ -54,6 +54,7 @@ public class UVMapPanel : MonoBehaviour
 	
 	protected void Update() {
 		// Ensure we're displaying the correct texture, and quad is referencing the correct material
+		if (meshRenderer.sharedMaterial == null) return;
 		if (image.texture != meshRenderer.sharedMaterial.mainTexture) {
 			image.texture = meshRenderer.sharedMaterial.mainTexture;
 		}

@@ -198,3 +198,8 @@ Also, I had alpha on the color panel incorrectly hooked up to the blue channel. 
 I should note that there are a whole slew of other blend modes that may be useful.  I should think about which of these to expose, and how.  They are nicely illustrated in the P3D documentation.  For now, I just switch to Subtractive mode (alpha only) when you press A/X to erase, and that seems to be working fine.
 
 
+3/10/21
+=======
+Just realized that our two-hand manipulation still isn't quite right, with regard to rotation: we should be using Transform.RotateAround to ensure that we're rotating the object around the point between our hands, rather than around its own axis.
+
+
