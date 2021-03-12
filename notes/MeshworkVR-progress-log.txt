@@ -203,3 +203,6 @@ I should note that there are a whole slew of other blend modes that may be usefu
 Just realized that our two-hand manipulation still isn't quite right, with regard to rotation: we should be using Transform.RotateAround to ensure that we're rotating the object around the point between our hands, rather than around its own axis.
 
 
+3/11/21
+=======
+A bit more work on layers today.  I have them showing/hiding nicely.  I started work on directing the paint to the selected layer, by enabling/disabling P3dPaintableTexture components on the model as suggested by @Darkcoder.  But this did not work for me: when I switch layers, previous painting suddenly appeared on the newly enabled texture.  I've posted to https://forum.unity.com/threads/539782/ about it.

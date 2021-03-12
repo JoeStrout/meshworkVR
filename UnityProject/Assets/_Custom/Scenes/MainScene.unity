@@ -8798,7 +8798,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slot:
-    Index: 1
+    Index: 0
     Name: _MainTex
   coord: 0
   group:
@@ -8943,6 +8943,7 @@ GameObject:
   - component: {fileID: 990076445}
   - component: {fileID: 991970947}
   - component: {fileID: 991970943}
+  - component: {fileID: 992067806}
   - component: {fileID: 991970945}
   - component: {fileID: 991970946}
   - component: {fileID: 991970949}
@@ -8954,6 +8955,48 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &992067806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992067805}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6329a951f597a0488f4e1158c8f8c39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slot:
+    Index: 1
+    Name: _MainTex
+  coord: 0
+  group:
+    index: 0
+  undoRedo: 0
+  stateLimit: 10
+  saveLoad: 0
+  saveName: 
+  width: 512
+  height: 512
+  texture: {fileID: 0}
+  color: {r: 1, g: 1, b: 1, a: 1}
+  format: 0
+  mipMaps: 0
+  filter: -1
+  aniso: -1
+  wrapU: -1
+  wrapV: -1
+  existing: 2
+  conversion: 0
+  localMaskTexture: {fileID: 0}
+  localMaskChannel: 0
+  shaderKeyword: 
+  isDummy: 0
+  output: 
+  activated: 0
+  current: {fileID: 0}
+  preview: {fileID: 0}
 --- !u!4 &992369917
 Transform:
   m_ObjectHideFlags: 0
