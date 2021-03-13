@@ -206,3 +206,16 @@ Just realized that our two-hand manipulation still isn't quite right, with regar
 3/11/21
 =======
 A bit more work on layers today.  I have them showing/hiding nicely.  I started work on directing the paint to the selected layer, by enabling/disabling P3dPaintableTexture components on the model as suggested by @Darkcoder.  But this did not work for me: when I switch layers, previous painting suddenly appeared on the newly enabled texture.  I've posted to https://forum.unity.com/threads/539782/ about it.
+
+
+3/13/21
+=======
+@Darkcoder has kindly prepared a new build of his PaintIn3D plugin, with an example showing how to do layers (a bit different from what he advised before).
+
+OK, his example is overcomplicated, but it boils down to this: rather than directly  enabling/disabling the P3dPaintableTextures, set their Group to -1 to turn them off, and to 0 (matching the group on the paint Paint Decal component) to turn them on.
+
+But I see the new version of P3dPaintDecal also has targetModel and targetTexture properties, which allow me to restrict painting to a specific target.  That might work too.
+
+However, other changes in this build are troubling me. P3dHitBetween previously derived from P3dConnectablePoints; I was using the HitSpacing component of that to control the hit spacing as for the brush size and type. (Though this didn't work perfectly as noted in the forum — often I would not get a hit on the initial pointer-down.)
+
+But in the new build, P3dHitBetween derives directly from MonoBehaviour, and has no HitSpacing component. How do we control the hit spacing now? 

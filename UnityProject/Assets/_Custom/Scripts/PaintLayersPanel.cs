@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using PaintIn3D;
 
 public class PaintLayersPanel : MonoBehaviour
 {
@@ -23,6 +24,12 @@ public class PaintLayersPanel : MonoBehaviour
 	
 	public void LoadFromRenderer(MeshRenderer mr) {
 		LoadMaterials(mr.sharedMaterials);
+		int i=0;
+		foreach (var pt in mr.GetComponents<P3dPaintableTexture>()) {
+			rows[i].paintable = pt;
+			i++;
+		}
+		SelectLayer(rows.Count - 1);
 	}
 	
 	public void LoadMaterials(Material[] mats) {
@@ -46,5 +53,18 @@ public class PaintLayersPanel : MonoBehaviour
 			if (row.isVisible) materials.Add(row.material);
 		}
 		model.materials = materials.ToArray();
+	}
+	
+	public void SelectLayer(int layer) {
+		for (int i=0; i<rows.Count; i++) {
+			rows[i].isSelected = (i == layer);
+		}
+		NoteSelectionChanged();
+	}
+	
+	public void NoteSelectionChanged() {
+		for (int i=0; i<rows.Count; i++) {
+			rows[i].paintable.Group = new P3dGroup(rows[i].isSelected ? 0 : -1);
+		}
 	}
 }

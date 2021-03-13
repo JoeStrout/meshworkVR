@@ -146,7 +146,7 @@ public class PaintSprayTool : Tool
 			lineRenderer.startWidth = lineRenderer.endWidth = beamWidth;
 			paintDecalComponent.Radius = beamWidth * 0.5f;
 			var br = brushPanel.currentBrush;
-			if (br != null) hitBetweenComponent.HitSpacing = beamWidth * br.spacing * 0.01f;
+			//if (br != null) hitBetweenComponent.HitSpacing = beamWidth * br.spacing * 0.01f;
 		} else if (sprayType == SprayType.Cone) {
 			// Cone: starts at zero width; increases with distance, up to beam width * 2
 			float dist = hitPoint.localPosition.z;
@@ -155,7 +155,7 @@ public class PaintSprayTool : Tool
 			lineRenderer.endWidth = beamWidth * widthFactor;
 			paintDecalComponent.Radius = beamWidth * widthFactor;
 			var br = brushPanel.currentBrush;
-			if (br != null) hitBetweenComponent.HitSpacing = beamWidth * widthFactor * br.spacing * 0.01f;
+			//if (br != null) hitBetweenComponent.HitSpacing = beamWidth * widthFactor * br.spacing * 0.01f;
 		} else {
 			// Brush: starts at beam width; decreases to 0 at beam length
 			float dist = hitPoint.localPosition.z;
@@ -164,7 +164,7 @@ public class PaintSprayTool : Tool
 			lineRenderer.endWidth = beamWidth * widthFactor;
 			paintDecalComponent.Radius = beamWidth * widthFactor;
 			var br = brushPanel.currentBrush;
-			if (br != null) hitBetweenComponent.HitSpacing = beamWidth * widthFactor * br.spacing * 0.01f;
+			//if (br != null) hitBetweenComponent.HitSpacing = beamWidth * widthFactor * br.spacing * 0.01f;
 		}
 		
 	}

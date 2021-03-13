@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using PaintIn3D;
 
 public class TexLayerRow : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class TexLayerRow : MonoBehaviour
 	public FormatText nameText;
 	public Toggle visToggle;
 	public Material material;
+	public P3dPaintableTexture paintable;
 	
 	Toggle selToggle;
 	
