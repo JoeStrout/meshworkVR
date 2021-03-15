@@ -23,6 +23,8 @@ public class PaintSprayTool : Tool
 	
 	public static List<PaintSprayTool> instances = new List<PaintSprayTool>();
 	
+	public P3dModel tempHackModel;
+	
 	P3dHitBetween hitBetweenComponent;
 	P3dPaintDecal paintDecalComponent;
 	LineRenderer lineRenderer;
@@ -93,6 +95,8 @@ public class PaintSprayTool : Tool
 	protected void Update() {
 		base.Update();
 		
+		UpdateTargetModel();
+		
 		if (handTracker.GetButton(HandTracker.Button.X)) {
 			if (!eraseMode) eraseMode = true;
 		} else if (eraseMode) eraseMode = false;
@@ -144,6 +148,23 @@ public class PaintSprayTool : Tool
 			}
 		}
 		UpdateLineWidth();
+	}
+	
+	void UpdateTargetModel() {
+		// In order to manage painting to the correct layer, we use the targetTexture of 
+		// our P3dPaintDecal component.  But using that means that we can no longer paint
+		// on alternate models, like the UV Map, unless we also set targetModel.
+		
+		// Sadly, P3dHitBetween offers no way to get at the full result of its raycast.
+		// So, we cast our own (hopefully identical) ray here, to look for a P3dModel.
+		var vector        = hitBetweenComponent.PointB.position - hitBetweenComponent.PointA.position;
+		var maxDistance   = vector.magnitude;
+		var ray           = new Ray(hitBetweenComponent.PointA.position, vector);
+		var hit3D         = default(RaycastHit);
+
+		if (Physics.Raycast(ray, out hit3D, maxDistance, hitBetweenComponent.Layers)) {
+			paintDecalComponent.TargetModel = hit3D.collider.GetComponentInChildren<P3dModel>();
+		}
 	}
 	
 	void UpdateLineWidth() {

@@ -17,11 +17,17 @@ public class PaintLayersPanel : MonoBehaviour
 
 	public MeshRenderer model;
 
+	public MaterialEvent onMaterialSelected;
+
 	List<TexLayerRow> rows;
 	int nextNewLayerNum;
 	
 	protected void Start() {
-		LoadFromRenderer(model);
+		Invoke("LateStart", 0.11f);
+	}
+	
+	void LateStart() {
+		LoadFromRenderer(model);		
 	}
 	
 	public void LoadFromRenderer(MeshRenderer mr) {
@@ -75,18 +81,21 @@ public class PaintLayersPanel : MonoBehaviour
 	}
 	
 	public void NoteSelectionChanged() {
-		// set the group to 0 for the selected PaintableTexture, and -1 for all others
 		int selIdx = -1;
-		for (int i=0; i<rows.Count; i++) {
-			rows[i].paintable.Group = new P3dGroup(rows[i].isSelected ? 0 : -1);
-			if (rows[i].isSelected) selIdx = i;
+		for (int i=0; i<rows.Count; i++) if (rows[i].isSelected) {
+			selIdx = i;
+			break;
 		}
+		if (selIdx < 0) return;
 		
-		// ...which isn't working great.  So let's try:
+		// Direct the painter (actually *all* painters) to the correct paintable.
 		foreach (var tool in PaintSprayTool.instances) {
 			var painter = tool.GetComponent<P3dPaintDecal>();
 			painter.TargetTexture = rows[selIdx].paintable;
 		}
+		
+		// And fire the event for any other observers (like the UV map panel).
+		onMaterialSelected.Invoke(rows[selIdx].material);
 	}
 	
 	public void AddLayer() {

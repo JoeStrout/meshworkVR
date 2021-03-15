@@ -214,8 +214,55 @@ A bit more work on layers today.  I have them showing/hiding nicely.  I started 
 
 OK, his example is overcomplicated, but it boils down to this: rather than directly  enabling/disabling the P3dPaintableTextures, set their Group to -1 to turn them off, and to 0 (matching the group on the paint Paint Decal component) to turn them on.
 
-But I see the new version of P3dPaintDecal also has targetModel and targetTexture properties, which allow me to restrict painting to a specific target.  That might work too.
+But I see the new version of P3dPaintDecal also has targetModel and targetTexture properties, which allow me to restrict painting to a specific target.  That might work too.  (Later edit: yes, this seems to work better, so I'm using that now.)
 
 However, other changes in this build are troubling me. P3dHitBetween previously derived from P3dConnectablePoints; I was using the HitSpacing component of that to control the hit spacing as for the brush size and type. (Though this didn't work perfectly as noted in the forum — often I would not get a hit on the initial pointer-down.)
 
-But in the new build, P3dHitBetween derives directly from MonoBehaviour, and has no HitSpacing component. How do we control the hit spacing now? 
+But in the new build, P3dHitBetween derives directly from MonoBehaviour, and has no HitSpacing component. How do we control the hit spacing now?  ...Turns out we now get to it via a new .Connector intermediary.
+
+
+3/14/21
+=======
+Still struggling to get layers working reliably.  Much progress has been made, but everything with this P3d asset seems much more complicated than I would expect.
+
+Had a long time just now when nothing would draw on the first layer, though it would draw on subsequent layers just fine.  This even after turning off almost all the code.  It turned out to be: I had changed MeshDisplay to make all of its work to set up a wireframe display optional.  But something about that work makes P3d function; without it, I can't paint on the material at all.  Probably I need to clone the material or something.
+
+So for now, I'll just leave the wireframe on.
+
+Next issue: I need to keep PaintableTextures on the painting quad (on the UV map panel) in sync with those on the model.  This is important to making sure you can paint on the UV map as well as on the model itself.
+
+And, it turns out, turning the wireframe back on means that this layer no longer displays on the UV map or Layers panel.  Argh.
+
+OK, the UV map and Layers are showing a big blue panel because of the wireframe shader.  I can see that the solid color of the RawImage matches the color of the wireframe, and this draws even when I turn the wireframe width all the way down to 0.  Of course any changes here also affect it on the model.
+
+So I need to find a way to use a different material, that nonetheless shows the same texture.  Or no material, and just show the texture using RawTexture.texture.  ...OK, that works, as long as you have the timing right: it needs to show the temp buffer texture created by the P3d system, not the original texture.
+
+Now the UV map is showing the right texture, but I can't paint on it.  Experimenting shows that this is caused by the new code in PaintLayersPanel that assigns a TargetTexture to the P3dPaintDecal.  But I'm surprised that doesn't work, since the Quad and the model should be using the *same* PaintableTexture.
+
+Ah.  But I think I see: P3dPaintableManager:65 says, when we have a targetTexture, submit the painting command to its Paintable.  And that Paintable would refer to the wrong component in this case (i.e. the one on the model, not the UV Map quad).  Dang.
+
+Well.  You can also assign a targetModel (P3dModel), and if set, that will be used instead.  I haven't been using this component, but maybe I should?  Ah yes: the docs actually mention this:
+
+> Atlas Painting
+>
+> This shows you how to paint multiple separate objects that share the same texture. This 
+> is done by setting up one paintable object normally, and then dragging and dropping the 
+> other objects into the P3dPaintable component's Advanced / OtherRenderers list. You must 
+> then add the P3dModel component to the other objects, and drag and drop the first object > into the P3dModel.Paintable setting.
+
+I'll attempt to hook it up just as described.  It displays fine, but it's still not painting, no doubt still because of the targetTexture.  If using that, I think I need to use targetModel too.  But P3dHitBetween doesn't offer any way to get the object that was hit, or to hook into the processing thereof.
+
+But I have verified (through a test hack) that correctly setting the targetModel makes this work.  So I'll just have to cast my own ray in PaintSprayTool.  (The alternative would be to hack P3dHitBetween, but I'm not prepared to do that just yet.)
+
+OK, this is working.  But to make it work, I had to do an unfortunate hack: it's hitting the canvas collider, not the quad collider.  So I'm having to use GetComponentinChildren to find the P3dModel.  This appears to work, but seems fragile.  However I can't easily resolve it with layers, since in this case the grabbable and paintable objects are separate, but in other cases (like the 3D model) they are the same GameObject, and a GameObject can't be in two layers.
+
+But I suppose I could have a special layer for paintable-but-not-grababble, and then have the grab raycast ignore those, while the paint tools cast for that as well as normal (paintable/grabbable) objects.  I'm leaving this as a to-do item for the future.
+
+So!  We *finally* have the basic functionality of layers and painting on both the model and the atlas working.  One thing I need to fix before doing this week's build: right now erasing on the bottommost layer looks wrong, because it's clearing the alpha channel, but it's not a transparent shader.  I think we need to either switch that layer to allow transparency, or erase to white (on this layer only).
+
+
+
+
+
+
+

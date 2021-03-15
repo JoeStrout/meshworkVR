@@ -47,18 +47,6 @@ public class UVMapPanel : MonoBehaviour
 	
 	void LateStart() {
 		BuildDisplay();
-		foreach (var pt in meshRenderer.GetComponent<P3dPaintable>().PaintableTextures) {
-			quad.GetComponent<P3dPaintable>().PaintableTextures.Add(pt);
-		}
-	}
-	
-	protected void Update() {
-		// Ensure we're displaying the correct texture, and quad is referencing the correct material
-		if (meshRenderer.sharedMaterial == null) return;
-		if (image.texture != meshRenderer.sharedMaterial.mainTexture) {
-			image.texture = meshRenderer.sharedMaterial.mainTexture;
-		}
-		quad.sharedMaterial = meshRenderer.sharedMaterial;
 	}
 	
 	/// <summary>
@@ -116,5 +104,11 @@ public class UVMapPanel : MonoBehaviour
 			var line = edgeMap[EdgeKey(edge)];
 			ArrangeEdgeLine(edge, line);
 		}
+	}
+	
+	public void NoteMaterialSelected(Material mat) {
+		quad.sharedMaterial = mat;
+		//image.material = mat;
+		image.texture = mat.mainTexture;
 	}
 }

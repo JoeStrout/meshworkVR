@@ -24,3 +24,6 @@ public class GameObjectEvent : UnityEvent<GameObject> {}
 
 [System.Serializable]
 public class ColorEvent : UnityEvent<Color> {}
+
+[System.Serializable]
+public class MaterialEvent : UnityEvent<Material> {}
