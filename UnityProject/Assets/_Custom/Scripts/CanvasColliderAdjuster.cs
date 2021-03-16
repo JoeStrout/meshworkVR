@@ -14,6 +14,9 @@ public class CanvasColliderAdjuster : MonoBehaviour
 	
 	protected void Start() {
 		AdjustColliders();
+		
+		Canvas canv = GetComponent<Canvas>();
+		if (canv.worldCamera == null) canv.worldCamera = Camera.main;
 	}
 	
 	[ContextMenu("Adjust Colliders")]

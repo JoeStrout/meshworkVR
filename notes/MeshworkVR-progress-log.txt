@@ -260,6 +260,18 @@ But I suppose I could have a special layer for paintable-but-not-grababble, and 
 
 So!  We *finally* have the basic functionality of layers and painting on both the model and the atlas working.  One thing I need to fix before doing this week's build: right now erasing on the bottommost layer looks wrong, because it's clearing the alpha channel, but it's not a transparent shader.  I think we need to either switch that layer to allow transparency, or erase to white (on this layer only).
 
+3/15/19
+=======
+Trying to wrap up the week-o-painting, one day late.  Hooking up the spaceship to its panels.  Doing this manually for now; later, when we have UI, obviously we'll need to do this from code.  The required steps are:
+
+1. On the model's PaintableTexture component, drag the Painting Quad (of the UVMap Canvas) into the Other Renderers list.
+2. Conversely, on the Painting Quad, drag the model into the Model component's Paintable slot.
+3. On the Paint Layers Panel, hook up the Model.
+4. On the same panel, hook up the onMaterialSelected event to call UVMapPanel.NoteMaterialSelected.
+
+I've run into a snag wherein the second Paint Layers Canvas, set up for the Ship, is not usable as UI with the XR Interaction rays.  It works fine in the editor with the mouse, but with the XR interactors the controls do not highlight or react.   ...Ah.  The canvas did not have its worldCamera set.  I've added something to CanvasColliderAdjuster to automatically assign Camera.main in Start, if no other value is set.
+
+
 
 
 

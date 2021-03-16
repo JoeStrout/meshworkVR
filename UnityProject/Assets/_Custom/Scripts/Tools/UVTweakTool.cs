@@ -61,7 +61,7 @@ public class UVTweakTool : Tool
 			dragPlaneRight = transform.right;
 			dragStartPos = MathUtils.ProjectTo2D(dragPlaneUp, dragPlaneRight, endPoint.position);
 			dragStartUV = dragMesh.UV(dragIndex);
-			audio.Play();
+			if (audio != null) audio.Play();
 		}
 		
 	}
@@ -73,11 +73,11 @@ public class UVTweakTool : Tool
 		Vector2 uvDelta = newUV - dragMesh.UV(dragIndex);
 				
 		dragMesh.ShiftUV(dragIndex, uvDelta);
-		audio.volume = Mathf.MoveTowards(audio.volume, Mathf.Clamp01(uvDelta.magnitude/Time.deltaTime), 5*Time.deltaTime);
+		if (audio != null) audio.volume = Mathf.MoveTowards(audio.volume, Mathf.Clamp01(uvDelta.magnitude/Time.deltaTime), 5*Time.deltaTime);
 	}
 	
 	void EndDrag() {
-		audio.Stop();
+		if (audio != null) audio.Stop();
 		isDragging = false;
 	}
 }

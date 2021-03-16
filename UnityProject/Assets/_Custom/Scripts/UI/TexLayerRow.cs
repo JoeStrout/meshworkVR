@@ -33,7 +33,8 @@ public class TexLayerRow : MonoBehaviour
 	
 	public void Configure(Material mat, string name, bool visible=true) {
 		gameObject.name = name;
-		image.material = this.material = mat;
+		this.material = mat;
+		image.texture = mat.mainTexture;
 		nameText.SetString(name);
 		visToggle.isOn = visible;
 	}

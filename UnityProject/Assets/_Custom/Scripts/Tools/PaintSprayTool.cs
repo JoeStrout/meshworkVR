@@ -163,7 +163,13 @@ public class PaintSprayTool : Tool
 		var hit3D         = default(RaycastHit);
 
 		if (Physics.Raycast(ray, out hit3D, maxDistance, hitBetweenComponent.Layers)) {
-			paintDecalComponent.TargetModel = hit3D.collider.GetComponentInChildren<P3dModel>();
+			var model = hit3D.collider.GetComponentInChildren<P3dModel>();
+			paintDecalComponent.TargetModel = model;
+			if (model != null) {
+				if (!(model is P3dPaintable) && model.Paintable != null) model = model.Paintable;
+				var disp = model.GetComponent<MeshDisplay>();	// (OFI: cache this)
+				if (disp != null) paintDecalComponent.TargetTexture = disp.selectedTexture;
+			}
 		}
 	}
 	

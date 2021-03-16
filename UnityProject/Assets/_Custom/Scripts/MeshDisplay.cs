@@ -5,12 +5,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using AmazingAssets.WireframeShader;
+using PaintIn3D;
 
 public class MeshDisplay : MonoBehaviour
 {
 	public Material wireframeMaterial;
 	
 	public bool showWireframe;
+	
+	// keeps track of which texture layer is currently selected for painting:
+	public P3dPaintableTexture selectedTexture;
 	
 	protected void Awake() {
 		if (showWireframe) {

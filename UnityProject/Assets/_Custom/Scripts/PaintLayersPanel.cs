@@ -88,11 +88,9 @@ public class PaintLayersPanel : MonoBehaviour
 		}
 		if (selIdx < 0) return;
 		
-		// Direct the painter (actually *all* painters) to the correct paintable.
-		foreach (var tool in PaintSprayTool.instances) {
-			var painter = tool.GetComponent<P3dPaintDecal>();
-			painter.TargetTexture = rows[selIdx].paintable;
-		}
+		// Update the MeshDisplay with the selected texture.
+		var disp = model.GetComponent<MeshDisplay>();	// (OFI: cache this)
+		disp.selectedTexture = rows[selIdx].paintable;
 		
 		// And fire the event for any other observers (like the UV map panel).
 		onMaterialSelected.Invoke(rows[selIdx].material);

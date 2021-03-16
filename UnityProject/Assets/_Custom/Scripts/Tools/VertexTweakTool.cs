@@ -57,7 +57,7 @@ public class VertexTweakTool : Tool
 			lastToolWorldPos = endPoint.position;
 			dragStartToolPos = dragMesh.transform.InverseTransformPoint(endPoint.position);
 			dragStartVPos = dragMesh.Vertex(dragIndex);
-			audio.Play();
+			if (audio != null) audio.Play();
 			Debug.Log($"dragging {dragIndex} of {dragMesh}, starting at {dragStartVPos}");
 		}
 		
@@ -79,7 +79,7 @@ public class VertexTweakTool : Tool
 	void EndDrag() {
 		Debug.Log($"dragged {dragIndex} of {dragMesh} to {dragMesh.Vertex(dragIndex)}");
 
-		audio.Stop();
+		if (audio != null) audio.Stop();
 		isDragging = false;
 	}
 }
