@@ -13,6 +13,8 @@ public class GlobalRefs : MonoBehaviour
 	
 	public Grabbable scene;
 	public Transform debugAxes;
+	public HandTracker leftHandTracker;
+	public HandTracker rightHandTracker;
 	public XRRayInteractor leftRayInteractor;
 	public XRRayInteractor rightRayInteractor;
 	

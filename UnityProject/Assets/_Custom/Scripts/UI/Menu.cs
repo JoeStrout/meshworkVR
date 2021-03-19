@@ -19,6 +19,8 @@ public class Menu : MonoBehaviour
 	
 	public float width { get; private set; }
 	
+	public bool isOpen { get { return gameObject.activeInHierarchy; } }
+	
 	Canvas canvas;
 	List<MenuItem> items;
 	
@@ -27,6 +29,7 @@ public class Menu : MonoBehaviour
 	protected void Awake() {
 		canvas = GetComponentInChildren<Canvas>();
 		if (canvas.worldCamera == null) canvas.worldCamera = Camera.main;
+		items = new List<MenuItem>();
 	}
 	
 	protected void Update() {

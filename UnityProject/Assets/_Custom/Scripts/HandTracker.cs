@@ -170,7 +170,6 @@ public class HandTracker : MonoBehaviour
 	/// Yeah, this code is hacky.  It's only for testing and varies with my test hardware.
 	/// </summary>
 	void DoGameControllerStandin() {
-		return;		// LATER!
 		
 		//Debug.Log("DoGameControllerStandin; left grip "+ Input.GetAxis("Left Grip") + ", stick " + Input.GetAxis("Left Thumb Stick Vertical"));
 		if (!appHasFocus) return;	// only for the focused app!

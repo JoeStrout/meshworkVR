@@ -10,8 +10,15 @@ public class MeshworkMenus : MonoBehaviour
 {
 	public Menu menuPrefab;
 	
-	public Menu mainMenu;
-	
+	protected Menu mainMenu { get {
+		if (_mainMenu == null) {
+			_mainMenu = Instantiate(menuPrefab, null);
+			LoadMainMenu(_mainMenu);
+		}
+		return _mainMenu;
+	}}
+	Menu _mainMenu = null;
+
 	protected Menu sceneMenu { get {
 		if (_sceneMenu == null) {
 			_sceneMenu = Instantiate(menuPrefab, mainMenu.transform);
@@ -67,13 +74,33 @@ public class MeshworkMenus : MonoBehaviour
 	Menu _modifyMenu = null;
 	
 	protected void Start() {
-		PrepareMenu(mainMenu, "Main Menu Test", false);
-		mainMenu.AddItem("Scene", true, (item,left) => { item.ShowSubmenu(sceneMenu); } );
-		mainMenu.AddItem("Edit", true, (item,left) => { item.ShowSubmenu(editMenu); } );
-		mainMenu.AddItem("Selection", true, (item,left) => { item.ShowSubmenu(selectionMenu); });
-		mainMenu.AddItem("Create", true, (item,left) => { item.ShowSubmenu(createMenu); });
-		mainMenu.AddItem("Modify", true, (item,left) => { item.ShowSubmenu(modifyMenu); });
-		mainMenu.AddItem("Tools...", false);
+		mainMenu.Close();
+	}
+	
+	protected void Update() {
+		if (GlobalRefs.instance.leftHandTracker.GetButtonDown(HandTracker.Button.Start)) {
+			// Show/hide the main menu.
+			// Start by calculating where the menu should be.
+			Vector3 pos = GlobalRefs.instance.leftHandTracker.handTransform.position;
+			Vector3 camPos = Camera.main.transform.position;
+			Vector3 dpos = pos - camPos;
+			dpos.y = 0;
+			dpos = dpos.normalized * 0.5f;
+			pos = camPos + dpos - Vector3.up * 0.35f;
+			
+			// If it's open and within 1.5 meters of that, close it.  Otherwise,
+			// open it (if needed) and move it to that spot.
+			if (Vector3.Distance(mainMenu.transform.position, pos) < 1.5f && mainMenu.isOpen) {
+				Debug.Log("Closing main menu");
+				mainMenu.Close();
+			} else {
+				Debug.Log("Opening main menu");
+				mainMenu.transform.position = pos;
+				mainMenu.transform.rotation = Quaternion.LookRotation(dpos, Vector3.up);
+				mainMenu.CloseSubmenus();
+				mainMenu.Show();
+			}
+		}
 	}
 	
 	void PrepareMenu(Menu menu, string title, bool showTitle=false) {
@@ -83,6 +110,15 @@ public class MeshworkMenus : MonoBehaviour
 		menu.ShowTitle(showTitle);
 	}
 	
+	protected void LoadMainMenu(Menu menu) {
+		PrepareMenu(menu, "Main Menu", false);
+		menu.AddItem("Scene", true, (item,left) => { item.ShowSubmenu(sceneMenu); } );
+		menu.AddItem("Edit", true, (item,left) => { item.ShowSubmenu(editMenu); } );
+		menu.AddItem("Selection", true, (item,left) => { item.ShowSubmenu(selectionMenu); });
+		menu.AddItem("Create", true, (item,left) => { item.ShowSubmenu(createMenu); });
+		menu.AddItem("Modify", true, (item,left) => { item.ShowSubmenu(modifyMenu); });
+		menu.AddItem("Tools...", false);
+	}
 	
 	protected void LoadSceneMenu(Menu menu) {
 		PrepareMenu(menu, "Scene");
