@@ -10,9 +10,6 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class ToolsPanel : MonoBehaviour
 {
-	public XRRayInteractor leftRayInteractor;
-	public XRRayInteractor rightRayInteractor;
-
 	List<ToolOption> options;
 	
 	protected void Awake() {
@@ -38,7 +35,7 @@ public class ToolsPanel : MonoBehaviour
 	}
 	
 	void ApplyTool(ToolOption toolOption, bool leftHand) {
-		ToolModeManager mgr = (leftHand ? leftRayInteractor : rightRayInteractor)
+		ToolModeManager mgr = (leftHand ? GlobalRefs.instance.leftRayInteractor : GlobalRefs.instance.rightRayInteractor)
 			.GetComponentInParent<ToolModeManager>();
 		Tool tool = null;
 		Transform toolT = mgr.transform.Find(toolOption.name);

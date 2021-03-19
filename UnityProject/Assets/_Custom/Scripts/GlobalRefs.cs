@@ -5,6 +5,7 @@ or in the project hierarchy.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class GlobalRefs : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class GlobalRefs : MonoBehaviour
 	
 	public Grabbable scene;
 	public Transform debugAxes;
+	public XRRayInteractor leftRayInteractor;
+	public XRRayInteractor rightRayInteractor;
 	
 	protected void Awake() {
 		instance = this;

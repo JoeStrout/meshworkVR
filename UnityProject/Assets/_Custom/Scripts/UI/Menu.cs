@@ -17,6 +17,8 @@ public class Menu : MonoBehaviour
 	public FormatText titleText;
 	public MenuItem menuItemPrototype;
 	
+	public float width { get; private set; }
+	
 	Canvas canvas;
 	List<MenuItem> items;
 	
@@ -47,9 +49,9 @@ public class Menu : MonoBehaviour
 		needsResize = true;
 	}
 	
-	public MenuItem AddItem(string itemText, bool hasSubmenu=false) {
+	public MenuItem AddItem(string itemText, bool hasSubmenu=false, MenuItem.Action action=null) {
 		var noob = Instantiate(menuItemPrototype, menuItemPrototype.transform.parent);
-		noob.Configure(itemText, hasSubmenu);
+		noob.Configure(itemText, hasSubmenu, action);
 		float y = 0;
 		if (titleText.gameObject.activeSelf) y -= titleText.RectTransform().sizeDelta.y;
 		foreach (var item in items) {
@@ -63,17 +65,37 @@ public class Menu : MonoBehaviour
 	}
 	
 	void Resize() {
+		width = 0;
 		float y = 0;
 		if (titleText.gameObject.activeSelf) {
 			y -= titleText.RectTransform().sizeDelta.y;
 		}
 		foreach (var item in items) {
+			width = Mathf.Max(width, item.PreferredWidth());
 			y -= item.RectTransform().sizeDelta.y;
 		}
 		var rt = canvas.RectTransform();
-		rt.sizeDelta = rt.sizeDelta.WithY(-y);
+		rt.sizeDelta = new Vector3(width, -y);
+		width = width * rt.localScale.x;	// publicly, width is always in world coordinates
+		
 		canvas.GetComponent<CanvasColliderAdjuster>().AdjustColliders();
 		needsResize = false;
+	}
+	
+	public void Close() {
+		CloseSubmenus();
+		gameObject.SetActive(false);
+	}
+	
+	public void Show() {
+		gameObject.SetActive(true);
+	}
+	
+	public void CloseSubmenus() {
+		for (int i=0; i<transform.childCount; i++) {
+			var submenu = transform.GetChild(i).GetComponent<Menu>();
+			if (submenu != null) submenu.Close();
+		}
 	}
 	
 }

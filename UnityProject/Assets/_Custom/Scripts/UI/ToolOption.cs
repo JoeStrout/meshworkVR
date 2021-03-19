@@ -53,7 +53,7 @@ public class ToolOption : MonoBehaviour, IPointerDownHandler
 	public void OnPointerDown(PointerEventData p) {
 		//Debug.Log($"PointerDown on {gameObject.name}", gameObject);
 		var evtData = p as UnityEngine.XR.Interaction.Toolkit.UI.TrackedDeviceEventData;
-		bool isLeft = (evtData != null && evtData.interactor == owner.leftRayInteractor);
+		bool isLeft = (evtData != null && evtData.interactor == GlobalRefs.instance.leftRayInteractor);
 		if (evtData == null && Input.GetKey(KeyCode.LeftShift)) isLeft = true;
 		owner.NoteClicked(this, isLeft);
 	}
