@@ -49,7 +49,9 @@ namespace Meshwork.UI {
 		
 		submenuT.SetParent(parentT);
 		submenuT.localRotation = Quaternion.identity;
-		submenuT.localPosition = Vector3.right * parentMenu.width;
+		Vector3 pos = Vector3.right * parentMenu.width;
+		pos.y = transform.position.y - parentT.position.y - 0.02f;
+		submenuT.localPosition = pos;
 		submenu.gameObject.SetActive(true);
 	}
 
