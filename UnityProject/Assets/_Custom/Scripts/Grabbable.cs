@@ -151,6 +151,18 @@ public class Grabbable : MonoBehaviour
 		AfterRelease();
 	}
 	
+	/// <summary>
+	/// Move instantly to the given position, facing the given point (probably
+	/// rotating around Y only), and become active  This is used when a panel 
+	/// is summoned via a menu.
+	/// </summary>
+	public void TeleportTo(Vector3 position, Vector3 facingPoint) {
+		transform.position = position;
+		Quaternion q = Quaternion.LookRotation(facingPoint - position);
+		transform.eulerAngles = new Vector3(0, q.eulerAngles.y, 0);
+		gameObject.SetActive(true);
+	}
+	
 	protected virtual void BeforeRelease() {}
 	protected virtual void AfterRelease() {}
 	

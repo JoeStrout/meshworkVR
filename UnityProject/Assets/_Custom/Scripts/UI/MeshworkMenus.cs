@@ -9,6 +9,7 @@ using Meshwork.UI;
 public class MeshworkMenus : MonoBehaviour
 {
 	public Menu menuPrefab;
+	public Grabbable toolsPanel;
 	
 	protected Menu mainMenu { get {
 		if (_mainMenu == null) {
@@ -117,7 +118,7 @@ public class MeshworkMenus : MonoBehaviour
 		menu.AddItem("Selection", true, (item,left) => { item.ShowSubmenu(selectionMenu); });
 		menu.AddItem("Create", true, (item,left) => { item.ShowSubmenu(createMenu); });
 		menu.AddItem("Modify", true, (item,left) => { item.ShowSubmenu(modifyMenu); });
-		menu.AddItem("Tools...", false);
+		menu.AddItem("Tools...", false, (item,left) => { item.ShowPanel(toolsPanel); });
 	}
 	
 	protected void LoadSceneMenu(Menu menu) {

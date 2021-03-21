@@ -40,6 +40,9 @@ namespace Meshwork.UI {
 		return tmPro.preferredWidth + 40;
 	}
 	
+	/// <summary>
+	/// Show a submenu under this menu item.
+	/// </summary>
 	public void ShowSubmenu(Menu submenu) {
 		var parentMenu = GetComponentInParent<Menu>();
 		parentMenu.CloseSubmenus();
@@ -53,6 +56,21 @@ namespace Meshwork.UI {
 		pos.y = transform.position.y - parentT.position.y - 0.02f;
 		submenuT.localPosition = pos;
 		submenu.gameObject.SetActive(true);
+	}
+
+	/// <summary>
+	/// Close this menu and show a UI panel in its place.
+	/// </summary>
+	public void ShowPanel(Grabbable panel) {
+		// Find a position to the right and slightly further away than this menu item.
+		Vector3 pos = transform.position;
+		Vector3 camPos = Camera.main.transform.position;
+		Vector3 dpos = pos - camPos;
+		dpos.y = 0;
+		dpos = dpos.normalized * 0.2f;
+		var parentMenu = GetComponentInParent<Menu>();
+		parentMenu.Close();
+		panel.TeleportTo(pos, camPos);
 	}
 
 }
