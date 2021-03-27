@@ -17,6 +17,7 @@ public class GlobalRefs : MonoBehaviour
 	public HandTracker rightHandTracker;
 	public XRRayInteractor leftRayInteractor;
 	public XRRayInteractor rightRayInteractor;
+	public Transform[] typingTips;
 	
 	protected void Awake() {
 		instance = this;
