@@ -15,6 +15,7 @@ public class VRKeyboardKey : MonoBehaviour
 		Shift,
 		Return,
 		Backspace,
+		Clear,
 		Suggestion
 	}
 	
@@ -68,7 +69,11 @@ public class VRKeyboardKey : MonoBehaviour
 		case Function.Return:
 			button.keyboardKey = KeyCode.Return;
 			break;
-			
+		
+		case Function.Clear:
+			button.keyboardKey = KeyCode.Clear;
+			break;
+		
 		case Function.Backspace:
 			button.keyboardKey = KeyCode.Backspace;
 			break;
@@ -82,12 +87,14 @@ public class VRKeyboardKey : MonoBehaviour
 		button.onButtonUp.RemoveAllListeners();
 	}
 	
+	[ContextMenu("Press")]
 	void HandlePress() {
 		switch (function) {
 		case Function.CharKey:		keyboard.HandleCharKey(label.text, this);		break;
 		case Function.Return:		keyboard.HandleReturn(this);					break;
 		case Function.Backspace:	keyboard.HandleBackspace(this);					break;
 		case Function.Suggestion:	keyboard.HandleSuggestion(label.text, this);	break;
+		case Function.Clear:		keyboard.HandleClear(this);						break;
 		}
 	}
 	

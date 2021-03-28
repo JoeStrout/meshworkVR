@@ -24,6 +24,7 @@ public class VRKeyboard : MonoBehaviour
 	[Header("Events")]
 	public StringEvent onCharKey;
 	public UnityEvent onBackspace;
+	public UnityEvent onClear;
 	public UnityEvent onReturn;
 	public StringEvent onSuggestion;
 	
@@ -69,6 +70,17 @@ public class VRKeyboard : MonoBehaviour
 			GameObject currentObj = EventSystem.current.currentSelectedGameObject;
 			if (currentObj != null) field = currentObj.GetComponent<TMP_InputField>();
 			if (field != null) field.ReplaceSelectedText("\n");
+		}
+	}
+	
+	public void HandleClear(VRKeyboardKey key) {
+		PlaySound(keyClickBackspace, key);
+		onClear.Invoke();
+		if (applyToFocusedField) {
+			TMP_InputField field = null;
+			GameObject currentObj = EventSystem.current.currentSelectedGameObject;
+			if (currentObj != null) field = currentObj.GetComponent<TMP_InputField>();
+			if (field != null) field.text = "";			
 		}
 	}
 	

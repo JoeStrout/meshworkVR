@@ -74,6 +74,7 @@ public class VRPushButton : MonoBehaviour
 		Press();	// (this is just a hack for while testing in the IDE)
 	}
 	
+	[ContextMenu("Press")]
 	void Press() {
 		onPressed.Invoke();
 		if (repeatPeriod > 0) nextRepeatTime = Time.time + repeatPeriod;
