@@ -31,11 +31,14 @@ public class CanvasColliderAdjuster : MonoBehaviour
 		var bc = GetComponent<BoxCollider>();
 		if (bc == null) bc = gameObject.AddComponent<BoxCollider>();
 		bc.size = new Vector3(rt.sizeDelta.x, rt.sizeDelta.y, 10);
-		bc.center = Vector3.zero;
+		
+		if (rt.pivot.x < 0.001f) bc.center = new Vector3(bc.size.x/2, 0, 0);
+		else bc.center = Vector3.zero;
+		Vector3 canvBoxCenter = bc.center;
 		
 		bc = transform.parent.GetComponent<BoxCollider>();
 		if (bc == null) return;	// (this is OK)
 		bc.size = new Vector3(rt.sizeDelta.x * rt.localScale.x, rt.sizeDelta.y * rt.localScale.y, 10 * rt.localScale.z);
-		bc.center = Vector3.zero;		
+		bc.center = transform.parent.InverseTransformPoint(rt.TransformPoint(canvBoxCenter));
 	}
 }

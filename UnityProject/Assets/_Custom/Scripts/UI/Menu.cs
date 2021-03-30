@@ -21,6 +21,23 @@ public class Menu : MonoBehaviour
 	
 	public bool isOpen { get { return gameObject.activeInHierarchy; } }
 	
+	public Menu parent { get { 
+		if (transform.parent == null) return null;
+		return transform.parent.GetComponentInParent<Menu>(); 
+	} }
+	
+	public Menu topLevelMenu {
+		get {
+			Menu menu = this;
+			Menu parent = menu.parent;
+			while (parent != null) {
+				menu = parent;
+				parent = menu.parent;
+			}
+			return menu;
+		}
+	}
+
 	Canvas canvas;
 	List<MenuItem> items;
 	

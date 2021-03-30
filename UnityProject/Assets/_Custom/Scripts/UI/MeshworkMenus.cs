@@ -10,6 +10,7 @@ public class MeshworkMenus : MonoBehaviour
 {
 	public Menu menuPrefab;
 	public Grabbable toolsPanel;
+	public Grabbable sceneTransformPanel;
 	
 	protected Menu mainMenu { get {
 		if (_mainMenu == null) {
@@ -80,27 +81,32 @@ public class MeshworkMenus : MonoBehaviour
 	
 	protected void Update() {
 		if (GlobalRefs.instance.leftHandTracker.GetButtonDown(HandTracker.Button.Start)) {
-			// Show/hide the main menu.
-			// Start by calculating where the menu should be.
-			Vector3 pos = GlobalRefs.instance.leftHandTracker.handTransform.position;
-			Vector3 camPos = Camera.main.transform.position;
-			Vector3 dpos = pos - camPos;
-			dpos.y = 0;
-			dpos = dpos.normalized * 0.5f;
-			pos = camPos + dpos - Vector3.up * 0.35f;
-			
-			// If it's open and within 1.5 meters of that, close it.  Otherwise,
-			// open it (if needed) and move it to that spot.
-			if (Vector3.Distance(mainMenu.transform.position, pos) < 1.5f && mainMenu.isOpen) {
-				Debug.Log("Closing main menu");
-				mainMenu.Close();
-			} else {
-				Debug.Log("Opening main menu");
-				mainMenu.transform.position = pos;
-				mainMenu.transform.rotation = Quaternion.LookRotation(dpos, Vector3.up);
-				mainMenu.CloseSubmenus();
-				mainMenu.Show();
-			}
+			ToggleMenu();
+		}
+	}
+	
+	[ContextMenu("Toggle Menu")]
+	public void ToggleMenu() {
+		// Show/hide the main menu.
+		// Start by calculating where the menu should be.
+		Vector3 pos = GlobalRefs.instance.leftHandTracker.handTransform.position;
+		Vector3 camPos = Camera.main.transform.position;
+		Vector3 dpos = pos - camPos;
+		dpos.y = 0;
+		dpos = dpos.normalized * 0.5f;
+		pos = camPos + dpos - Vector3.up * 0.35f;
+		
+		// If it's open and within 1.5 meters of that, close it.  Otherwise,
+		// open it (if needed) and move it to that spot.
+		if (Vector3.Distance(mainMenu.transform.position, pos) < 1.5f && mainMenu.isOpen) {
+			Debug.Log("Closing main menu");
+			mainMenu.Close();
+		} else {
+			Debug.Log("Opening main menu");
+			mainMenu.transform.position = pos;
+			mainMenu.transform.rotation = Quaternion.LookRotation(dpos, Vector3.up);
+			mainMenu.CloseSubmenus();
+			mainMenu.Show();
 		}
 	}
 	
@@ -123,7 +129,7 @@ public class MeshworkMenus : MonoBehaviour
 	
 	protected void LoadSceneMenu(Menu menu) {
 		PrepareMenu(menu, "Scene");
-		menu.AddItem("Transform...");
+		menu.AddItem("Transform...", false, (item,left) => { item.ShowPanel(sceneTransformPanel); });
 		menu.AddItem("Background...");
 	}
 	

@@ -23,6 +23,7 @@ public class ToolModeManager : MonoBehaviour
 	
 	// Special context-activated tools:
 	public UIInteractionTool uiTool;
+	public TypingStick typingStick;
 
 	protected void Start() {
 		uiTool.Deactivate();
@@ -32,18 +33,21 @@ public class ToolModeManager : MonoBehaviour
 	protected void Update() {
 		// check whether the UI tool is pointed at a UI
 		bool doUI = uiTool.CanApply();
-		if (doUI && activeTool != uiTool) {
+		if (doUI) {
 			// Enable UI interaction
-			Activate(uiTool);
-		} else if (!doUI && activeTool == uiTool) {
-			// Disable UI interaction, by activating the selected tool instead
-			Activate(selectedTool);
+			if (activeTool != uiTool) Activate(uiTool);
+		} else if (typingStick.CanApply()) {
+			// Enable typing
+			if (activeTool != typingStick) Activate(typingStick);
+		} else {
+			// Disable UI interaction or typing, by activating the selected tool instead
+			if (activeTool != selectedTool) Activate(selectedTool);
 		}
 	}
 
 	public void SelectTool(Tool tool) {
 		selectedTool = tool;
-		if (activeTool != uiTool) Activate(tool);
+		if (activeTool != uiTool && activeTool != typingStick) Activate(tool);
 	}
 	
 	void Activate(Tool tool) {

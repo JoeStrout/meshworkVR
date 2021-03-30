@@ -17,6 +17,10 @@ namespace Meshwork.UI {
 	public GameObject submenuIndicator;
 	public Action action;
 	
+	public Menu container {
+		get { return GetComponentInParent<Menu>(); }
+	}
+
 	TextMeshProUGUI tmPro;
 	
 	public void Configure(string text, bool hasSubmenu, Action action=null) {
@@ -68,8 +72,8 @@ namespace Meshwork.UI {
 		Vector3 dpos = pos - camPos;
 		dpos.y = 0;
 		dpos = dpos.normalized * 0.2f;
-		var parentMenu = GetComponentInParent<Menu>();
-		parentMenu.Close();
+		var topMenu = container.topLevelMenu;
+		topMenu.Close();
 		panel.TeleportTo(pos, camPos);
 	}
 

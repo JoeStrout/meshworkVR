@@ -10,34 +10,72 @@ using TMPro;
 
 public class TransformPanel : MonoBehaviour
 {
-	public TMP_InputField posXFld;
-	public TMP_InputField posYFld;
-	public TMP_InputField posZFld;
+	public Transform target;
+	
+	public FormatText title;
 	
 	[Space(10)]
-	public TMP_InputField rotXFld;
-	public TMP_InputField rotYFld;
-	public TMP_InputField rotZFld;
+	public NumericField posXFld;
+	public NumericField posYFld;
+	public NumericField posZFld;
 	
 	[Space(10)]
-	public TMP_InputField scaleFld;
+	public NumericField rotXFld;
+	public NumericField rotYFld;
+	public NumericField rotZFld;
+	
+	[Space(10)]
+	public NumericField scaleFld;
 
-	protected void Awake() {
-		ResetPosition(); ResetRotation(); ResetScale();
+	bool internalChange;
+
+	protected void OnEnable() {		
+		if (target == null) {
+			ResetPosition(); ResetRotation(); ResetScale();
+			title.SetString("Transform");
+		} else {
+			LoadFieldsFromTransform();
+		}
 	}
 
 	[ContextMenu("Reset Position")]
 	public void ResetPosition() {
-		posXFld.text = posYFld.text = posZFld.text = "0";
+		posXFld.value = posYFld.value = posZFld.value = 0;
 	}
 
 	[ContextMenu("Reset Rotation")]
 	public void ResetRotation() {
-		rotXFld.text = rotYFld.text = rotZFld.text = "0";
+		rotXFld.value = rotYFld.value = rotZFld.value = 0;
 	}
 
 	[ContextMenu("Reset Scale")]
 	public void ResetScale() {
-		scaleFld.text = "1";
+		scaleFld.value = 1;
+	}
+	
+	public void ApplyValuesFromFields() {
+		if (target == null || internalChange) return;
+		target.localPosition = new Vector3(posXFld.value, posYFld.value, posZFld.value);
+		target.localEulerAngles = new Vector3(rotXFld.value, rotYFld.value, rotZFld.value);
+		target.localScale = Vector3.one * scaleFld.value;
+		Debug.Log($"Updated transform of {target} with scale {scaleFld.value} -> {target.localScale}");
+	}
+	
+	public void LoadFieldsFromTransform() {
+		internalChange = true;
+		
+		posXFld.value = target.localPosition.x;
+		posYFld.value = target.localPosition.y;
+		posZFld.value = target.localPosition.z;
+		
+		Vector3 rotation = target.localEulerAngles;
+		rotXFld.value = rotation.x;
+		rotYFld.value = rotation.y;
+		rotZFld.value = rotation.z;
+		
+		scaleFld.value = target.localScale.x;
+
+		title.SetString($"{target.name} Transform");
+		internalChange = false;
 	}
 }

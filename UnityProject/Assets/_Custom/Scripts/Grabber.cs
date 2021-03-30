@@ -21,7 +21,7 @@ public class Grabber : MonoBehaviour
 	public bool justReleased { get; private set; }
 	
 	bool forcedGrab;	
-	float lastGrabValue;
+	float lastGrabValue = 0.5f;
 	SphereCollider collider;
 	
 	Collider[] tempColliders = new Collider[32];
