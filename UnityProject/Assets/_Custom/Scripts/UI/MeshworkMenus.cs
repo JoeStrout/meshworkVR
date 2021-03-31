@@ -11,6 +11,9 @@ public class MeshworkMenus : MonoBehaviour
 	public Menu menuPrefab;
 	public Grabbable toolsPanel;
 	public Grabbable sceneTransformPanel;
+	public Grabbable loadReference2DPanel;
+	public Grabbable loadReference3DPanel;
+	public Grabbable loadRefFromFilePanel;
 	
 	protected Menu mainMenu { get {
 		if (_mainMenu == null) {
@@ -29,6 +32,15 @@ public class MeshworkMenus : MonoBehaviour
 		return _sceneMenu;
 	}}
 	Menu _sceneMenu = null;
+	
+	protected Menu loadRefMenu { get {
+		if (_loadRefMenu == null) {
+			_loadRefMenu = Instantiate(menuPrefab, mainMenu.transform);
+			LoadReferenceMenu(_loadRefMenu);
+		}
+		return _loadRefMenu;
+	}}
+	Menu _loadRefMenu = null;
 	
 	protected Menu editMenu { get {
 		if (_editMenu == null) {
@@ -131,6 +143,15 @@ public class MeshworkMenus : MonoBehaviour
 		PrepareMenu(menu, "Scene");
 		menu.AddItem("Transform...", false, (item,left) => { item.ShowPanel(sceneTransformPanel); });
 		menu.AddItem("Background...");
+		menu.AddItem("Load Model...");
+		menu.AddItem("Add Reference", true, (item,left) => { item.ShowSubmenu(loadRefMenu); });
+	}
+	
+	protected void LoadReferenceMenu(Menu menu) {
+		PrepareMenu(menu, "Load Reference");
+		menu.AddItem("2D Image...", false, (item,left) => { item.ShowPanel(loadReference2DPanel); });
+		menu.AddItem("3D Model...", false, (item,left) => { item.ShowPanel(loadReference3DPanel); });
+		menu.AddItem("From File...", false, (item,left) => { item.ShowPanel(loadRefFromFilePanel); });
 	}
 	
 	protected void LoadEditMenu(Menu menu) {
