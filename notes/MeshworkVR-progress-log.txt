@@ -271,6 +271,21 @@ Trying to wrap up the week-o-painting, one day late.  Hooking up the spaceship t
 
 I've run into a snag wherein the second Paint Layers Canvas, set up for the Ship, is not usable as UI with the XR Interaction rays.  It works fine in the editor with the mouse, but with the XR interactors the controls do not highlight or react.   ...Ah.  The canvas did not have its worldCamera set.  I've added something to CanvasColliderAdjuster to automatically assign Camera.main in Start, if no other value is set.
 
+4/06/19
+=======
+Initial painting is done.  Working now on UI and file I/O.
+
+My original plan was to support OBJ, but a user has (quite sensibly) requested support for GLTF/GLB.  The Khronos Group has a decent Unity GLTF library (https://github.com/KhronosGroup/UnityGLTF).
+
+As for OBJ, I thought I had some code lying around for reading it, but it appears this is not true.  I have custom code for writing OBJ, but for reading it, I've been using a commercial asset.  However I found a free, liberally-licensed library for it in this thread: https://forum.unity.com/threads/free-runtime-obj-loader.365884/
+
+That code is blocking, and it mishandles negative indices, but with a bit of polish it looks like it could be made to work.  And it is a *much* smaller library and easier build process than UnityGLTF.
+
+So I'm going to start today with OBJ import (for reference objects), and then try to add GLTF perhaps tomorrow.
+
+
+
+
 
 
 

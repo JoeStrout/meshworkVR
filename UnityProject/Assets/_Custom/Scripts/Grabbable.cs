@@ -128,7 +128,7 @@ public class Grabbable : MonoBehaviour
 	}
 	
 	public void GrabBy(Grabber grabber, bool requireTwoHands=false) {
-		Debug.Log($"Grabbed by {grabber.gameObject.name}");
+		Debug.Log($"{gameObject.name} grabbed by {grabber.gameObject.name}");
 		primaryGrab = grabber;
 		secondaryGrab = null;
 		twoHandManip = null;
@@ -145,7 +145,7 @@ public class Grabbable : MonoBehaviour
 	
 	void Release() {
 		BeforeRelease();
-		Debug.Log($"Released by {primaryGrab.gameObject.name}");
+		Debug.Log($"{gameObject.name} released by {primaryGrab.gameObject.name}");
 		primaryGrab = secondaryGrab = null;
 		twoHandManip = null;
 		AfterRelease();

@@ -11,6 +11,7 @@ using UnityEngine.UI;
 public class AddReference : MonoBehaviour
 {
 	public GameObject imageRefPrefab;
+	public Dummiesman.OBJLoader objLoader;
 	
 	public void AddReferenceFromFile(string filePath) {
 		if (filePath.EndsWith(".png") || filePath.EndsWith(".jpg")) {
@@ -37,7 +38,41 @@ public class AddReference : MonoBehaviour
 	}
 	
 	void Add3DReference(string filePath) {
-		Debug.Log("To-Do!");
+		if (filePath.EndsWith(".obj") || filePath.EndsWith(".OBJ")) {
+			objLoader.LoadAsync(filePath, (GameObject obj) => {
+				if (obj == null) return;
+				Bounds b = FindBounds(obj);
+				Debug.Log("Loaded " + obj.name + " with bounds " + b);
+				
+				// scale and position reasonably
+				float scale = 1;
+				if (b.extents.magnitude > 10) scale = 2f / b.extents.magnitude;
+				obj.transform.position = (-b.center + Vector3.up * b.extents.y) * scale;
+				obj.transform.localScale = Vector3.one * scale;
+				
+				// make it grabbable
+				foreach (MeshFilter mf in obj.GetComponentsInChildren<MeshFilter>()) {
+					obj.AddComponent<MeshCollider>().sharedMesh = mf.sharedMesh;
+				}
+				obj.layer = LayerMask.NameToLayer("Grabbable");
+				obj.AddComponent<Grabbable>();
+				
+			});
+		}
 		
+	}
+	
+	Bounds FindBounds(GameObject obj) {
+		Bounds b = default(Bounds);
+		bool first = true;
+		foreach (Renderer r in obj.GetComponentsInChildren<Renderer>()) {
+			if (first) {
+				b = r.bounds;
+				first = false;
+			} else {
+				b.Encapsulate(r.bounds);
+			}
+		}
+		return b;
 	}
 }
