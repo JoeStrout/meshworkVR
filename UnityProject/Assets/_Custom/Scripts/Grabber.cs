@@ -38,8 +38,8 @@ public class Grabber : MonoBehaviour
 	}
 	
 	protected void Update() {
-		justGrabbed = grabValue >= 0.5f && lastGrabValue < 0.5f;
-		justReleased = grabValue < 0.5f && lastGrabValue >= 0.5f;
+		justGrabbed = grabValue >= 0.55f && lastGrabValue < 0.55f;
+		justReleased = grabValue < 0.45f && lastGrabValue >= 0.45f;
 		lastGrabValue = grabValue;
 		
 		int count = Physics.OverlapSphereNonAlloc(center, radius, tempColliders,

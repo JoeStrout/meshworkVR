@@ -16,7 +16,8 @@
 Changes by Joe Strout (JJS):
 - fixed handling of negative indices
 - made OBJLoader derive from MonoBehaviour (so it can use coroutines)
-- ToDo: add asynchronous loading
+- added asynchronous loading
+- fixed stale data sticking around after an object is loaded
 */
 
 using System.Collections;		// JJS
@@ -50,9 +51,9 @@ namespace Dummiesman
 	    public Material nullMaterial;
 
         //global lists, accessed by objobjectbuilder
-        internal List<Vector3> Vertices = new List<Vector3>();
-        internal List<Vector3> Normals = new List<Vector3>();
-        internal List<Vector2> UVs = new List<Vector2>();
+	    internal List<Vector3> Vertices;
+	    internal List<Vector3> Normals;
+	    internal List<Vector2> UVs;
 
         //materials, accessed by objobjectbuilder
         internal Dictionary<string, Material> Materials;
@@ -111,7 +112,11 @@ namespace Dummiesman
 	    /// <param name="input">Input OBJ stream</param>
 	    /// <param name="callback">Callback that gets a GameObject represeting the OBJ file, with each imported object as a child.</returns>
 	    public IEnumerator LoadCoroutine(Stream input, Action<GameObject> callback)		// JJS
-	    {
+	    {	
+			Vertices = new List<Vector3>();	// JJS
+			Normals = new List<Vector3>();
+			UVs = new List<Vector2>();
+
 		    var inputReader = new StreamReader(input);
 		    var reader = new StringReader(inputReader.ReadToEnd());
 
@@ -302,7 +307,10 @@ namespace Dummiesman
 			    builtObj.transform.SetParent(obj.transform, false);
 		    }
 
-		    UnityEngine.Debug.Log("Done loading OBJ from stream");
+		    Vertices = null;			// JJS
+		    Normals = null;
+		    UVs = null;
+
 		    callback.Invoke(obj);		// JJS
 	    }
 
@@ -314,7 +322,11 @@ namespace Dummiesman
         /// <returns>Returns a GameObject represeting the OBJ file, with each imported object as a child.</returns>
         public GameObject Load(Stream input)
         {
-            var inputReader = new StreamReader(input);
+	        Vertices = new List<Vector3>();	// JJS
+	        Normals = new List<Vector3>();
+	        UVs = new List<Vector2>();
+
+	        var inputReader = new StreamReader(input);
             var reader = new StringReader(inputReader.ReadToEnd());
 
             Dictionary<string, OBJObjectBuilder> builderDict = new Dictionary<string, OBJObjectBuilder>();
@@ -496,7 +508,12 @@ namespace Dummiesman
                 builtObj.transform.SetParent(obj.transform, false);
             }
 
-            return obj;
+  
+	        Vertices = null;		// JJS
+	        Normals = null;
+	        UVs = null;
+
+	        return obj;
         }
 
         /// <summary>

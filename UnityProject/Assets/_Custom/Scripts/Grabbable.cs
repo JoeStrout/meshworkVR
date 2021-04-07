@@ -112,9 +112,9 @@ public class Grabbable : MonoBehaviour
 		}
 		if (isOver != wasOver) {
 			if (isOver) {
-				onGrabOver.Invoke($"Grabber over {gameObject.name}");
+				if (onGrabOver != null) onGrabOver.Invoke($"Grabber over {gameObject.name}");
 			} else {
-				onGrabExit.Invoke($"Grabber exits {gameObject.name}");
+				if (onGrabExit != null) onGrabExit.Invoke($"Grabber exits {gameObject.name}");
 			}
 			wasOver = isOver;
 		}

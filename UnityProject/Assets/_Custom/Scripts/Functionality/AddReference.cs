@@ -52,9 +52,9 @@ public class AddReference : MonoBehaviour
 				
 				// make it grabbable
 				foreach (MeshFilter mf in obj.GetComponentsInChildren<MeshFilter>()) {
-					obj.AddComponent<MeshCollider>().sharedMesh = mf.sharedMesh;
+					mf.gameObject.AddComponent<MeshCollider>().sharedMesh = mf.sharedMesh;
 				}
-				obj.layer = LayerMask.NameToLayer("Grabbable");
+				obj.SetLayerRecursively(LayerMask.NameToLayer("Grabbable"));
 				obj.AddComponent<Grabbable>();
 				
 			});
