@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Custom/Scenes/MainScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/UnityGLTF/Runtime/Shaders/ShaderRetention/ShaderRetention.unity
+    guid: da9cfbe5162455445a223e080858cb2c
   m_configObjects: {}
