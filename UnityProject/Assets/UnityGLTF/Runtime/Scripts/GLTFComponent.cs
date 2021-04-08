@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -62,6 +62,17 @@ namespace UnityGLTF
 				await Task.Delay((int)(RetryTimeout * 1000));
 				Start();
 			}
+		}
+
+		public async void LoadAsync(string url, Action<GameObject> callback) {
+			try {
+				GLTFUri = url;
+				await Load();
+			} catch (HttpRequestException) {
+				callback.Invoke(null);
+				return;
+			}
+			callback.Invoke(LastLoadedScene);
 		}
 
 		public async Task Load()

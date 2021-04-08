@@ -54,8 +54,10 @@ public class SelectFileDialog : MonoBehaviour
 	
 	public void Reload() {
 		fileList.DeleteAllRows();
-		string[] files = Directory.GetFiles(dirPath);
-		Debug.Log($"found {files.Length} files in {dirPath}");
+		List<string> files = new List<string>(Directory.GetFiles(dirPath));
+		files.AddRange(Directory.GetDirectories(dirPath));
+		files.Sort();
+		Debug.Log($"found {files.Count} files and directories in {dirPath}");
 		foreach (string path in files) {
 			string name = Path.GetFileName(path);
 			if (name.StartsWith(".")) continue;

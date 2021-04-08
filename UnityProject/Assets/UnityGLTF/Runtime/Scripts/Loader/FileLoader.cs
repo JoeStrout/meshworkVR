@@ -28,6 +28,7 @@ namespace UnityGLTF.Loader
 			string pathToLoad = Path.Combine(_rootDirectoryPath, relativeFilePath);
 			if (!File.Exists(pathToLoad))
 			{
+				UnityEngine.Debug.Log("File not found: " + pathToLoad);
 				throw new FileNotFoundException("Buffer file not found", relativeFilePath);
 			}
 

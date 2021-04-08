@@ -4724,13 +4724,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9087a95f22bcee64ebc45f6deec08714, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GLTFUri: https://rawgit.com/sbtron/BabylonJS-glTFLoader/master/src/models/2.0/png/FarmLandDiorama/glTF/FarmLandDiorama.gltf
+  GLTFUri: 
   Multithreaded: 1
-  UseStream: 0
-  AppendStreamingAssets: 1
+  UseStream: 1
+  AppendStreamingAssets: 0
   PlayAnimationOnLoad: 1
   Factory: {fileID: 0}
-  loadOnStart: 1
+  loadOnStart: 0
   MaterialsOnly: 0
   RetryCount: 10
   RetryTimeout: 2
@@ -4746,7 +4746,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 545969656}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.38102996, y: 0.70864964, z: -0.8422718}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -14074,6 +14074,7 @@ MonoBehaviour:
   imageRefPrefab: {fileID: 7512330628662499808, guid: 3c9af2e0fb9be496e8cebc38b2b7f218,
     type: 3}
   objLoader: {fileID: 470115700}
+  gltfLoader: {fileID: 545969657}
 --- !u!114 &1307523751 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5930707424393962874, guid: e1d11cf09a96e49b0946b2c7ac8e7444,

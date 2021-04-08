@@ -12,17 +12,22 @@ public class AddReference : MonoBehaviour
 {
 	public GameObject imageRefPrefab;
 	public Dummiesman.OBJLoader objLoader;
+	public UnityGLTF.GLTFComponent gltfLoader;
+	
+	static List<string> extensions2D = new List<string> { ".png", ".jpg", ".jpeg" };
+	static List<string> extensions3D = new List<string> { ".obj", ".glb", ".gltf" };
 	
 	public void AddReferenceFromFile(string filePath) {
-		if (filePath.EndsWith(".png") || filePath.EndsWith(".jpg")) {
+		string ext = Path.GetExtension(filePath).ToLowerInvariant();
+		if (extensions2D.Contains(ext)) {
 			Add2DReference(filePath);
-		} else if (filePath.EndsWith(".obj")) {
+		} else if (extensions3D.Contains(ext)) {
 			Add3DReference(filePath);
 		} else {
 			Debug.Log("Unknown reference file type: " + filePath);
 		}
 	}
-	
+		
 	void Add2DReference(string filePath) {
 		byte[] data = File.ReadAllBytes(filePath);
 		Texture2D tex = new Texture2D(2,2);
@@ -38,28 +43,35 @@ public class AddReference : MonoBehaviour
 	}
 	
 	void Add3DReference(string filePath) {
+
 		if (filePath.EndsWith(".obj") || filePath.EndsWith(".OBJ")) {
 			objLoader.LoadAsync(filePath, (GameObject obj) => {
-				if (obj == null) return;
-				Bounds b = FindBounds(obj);
-				Debug.Log("Loaded " + obj.name + " with bounds " + b);
-				
-				// scale and position reasonably
-				float scale = 1;
-				if (b.extents.magnitude > 10) scale = 2f / b.extents.magnitude;
-				obj.transform.position = (-b.center + Vector3.up * b.extents.y) * scale;
-				obj.transform.localScale = Vector3.one * scale;
-				
-				// make it grabbable
-				foreach (MeshFilter mf in obj.GetComponentsInChildren<MeshFilter>()) {
-					mf.gameObject.AddComponent<MeshCollider>().sharedMesh = mf.sharedMesh;
-				}
-				obj.SetLayerRecursively(LayerMask.NameToLayer("Grabbable"));
-				obj.AddComponent<Grabbable>();
-				
+				if (obj != null) PostLoadSetup(obj);				
+			});
+		} else if (filePath.EndsWith(".glb") || filePath.EndsWith(".gltf")) {
+			gltfLoader.LoadAsync(filePath, (GameObject obj) => {
+				if (obj != null) PostLoadSetup(obj);				
 			});
 		}
 		
+	}
+	
+	void PostLoadSetup(GameObject obj) {
+		Bounds b = FindBounds(obj);
+		Debug.Log("Loaded " + obj.name + " with bounds " + b);
+				
+		// scale and position reasonably
+		float scale = 1;
+		if (b.extents.magnitude > 10) scale = 2f / b.extents.magnitude;
+		obj.transform.position = (-b.center + Vector3.up * b.extents.y) * scale;
+		obj.transform.localScale = Vector3.one * scale;
+				
+		// make it grabbable
+		foreach (MeshFilter mf in obj.GetComponentsInChildren<MeshFilter>()) {
+			mf.gameObject.AddComponent<MeshCollider>().sharedMesh = mf.sharedMesh;
+		}
+		obj.SetLayerRecursively(LayerMask.NameToLayer("Grabbable"));
+		obj.AddComponent<Grabbable>();		
 	}
 	
 	Bounds FindBounds(GameObject obj) {
