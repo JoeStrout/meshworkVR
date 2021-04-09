@@ -5189,6 +5189,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 607370342}
   m_CullTransparentMesh: 0
+--- !u!114 &632491766 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3416391813965924702, guid: 87e38e21ebea344f3b081b4122b6111f,
+    type: 3}
+  m_PrefabInstance: {fileID: 120087686456704136}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23270b90339fc4eb38132c4d2df3a5b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &633987594
 GameObject:
   m_ObjectHideFlags: 0
@@ -7877,34 +7889,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8782c9d9f6154f36a2152bc8c107e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onGrabOver:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onGrabExit:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  isScalable: 1
+  highlight: {fileID: 0}
+  myPoof: {fileID: 0}
+  destroyMyPoofAfter: 1
+  highlightWarningColor:
+    serializedVersion: 2
+    rgba: 4278190335
+  updateRate: 0.16666667
+  ignoreAuthority: 0
+  activeGrabber: {fileID: 0}
+  onTriggerStay: 0
+  stayingTriggerName: 
+  myCollider: {fileID: 0}
+  highlightMeshRenderer: {fileID: 0}
+  originalHighlightColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!65 &918528779
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8317,12 +8318,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8782c9d9f6154f36a2152bc8c107e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onGrabOver:
-    m_PersistentCalls:
-      m_Calls: []
-  onGrabExit:
-    m_PersistentCalls:
-      m_Calls: []
+  isScalable: 1
+  highlight: {fileID: 0}
+  myPoof: {fileID: 0}
+  destroyMyPoofAfter: 1
+  highlightWarningColor:
+    serializedVersion: 2
+    rgba: 4278190335
+  updateRate: 0.16666667
+  ignoreAuthority: 0
+  activeGrabber: {fileID: 0}
+  onTriggerStay: 0
+  stayingTriggerName: 
+  myCollider: {fileID: 0}
+  highlightMeshRenderer: {fileID: 0}
+  originalHighlightColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!114 &937513226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8946,34 +8958,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8782c9d9f6154f36a2152bc8c107e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onGrabOver:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 552336219}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onGrabExit:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 552336219}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  isScalable: 1
+  highlight: {fileID: 0}
+  myPoof: {fileID: 0}
+  destroyMyPoofAfter: 1
+  highlightWarningColor:
+    serializedVersion: 2
+    rgba: 4278190335
+  updateRate: 0.16666667
+  ignoreAuthority: 0
+  activeGrabber: {fileID: 0}
+  onTriggerStay: 0
+  stayingTriggerName: 
+  myCollider: {fileID: 0}
+  highlightMeshRenderer: {fileID: 0}
+  originalHighlightColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!64 &991970947
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -8982,10 +8983,10 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 992067805}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 4d33de7d1d876d84784522e3486cf5be, type: 3}
 --- !u!114 &991970949
@@ -9532,34 +9533,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8782c9d9f6154f36a2152bc8c107e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onGrabOver:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onGrabExit:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  isScalable: 1
+  highlight: {fileID: 0}
+  myPoof: {fileID: 0}
+  destroyMyPoofAfter: 1
+  highlightWarningColor:
+    serializedVersion: 2
+    rgba: 4278190335
+  updateRate: 0.16666667
+  ignoreAuthority: 0
+  activeGrabber: {fileID: 0}
+  onTriggerStay: 0
+  stayingTriggerName: 
+  myCollider: {fileID: 0}
+  highlightMeshRenderer: {fileID: 0}
+  originalHighlightColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!65 &1120132842
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10096,6 +10086,11 @@ PrefabInstance:
       propertyPath: handTracker
       value: 
       objectReference: {fileID: 1787484375}
+    - target: {fileID: 3416391813965924702, guid: 87e38e21ebea344f3b081b4122b6111f,
+        type: 3}
+      propertyPath: otherGrabber
+      value: 
+      objectReference: {fileID: 632491766}
     - target: {fileID: 7582602043150937164, guid: 87e38e21ebea344f3b081b4122b6111f,
         type: 3}
       propertyPath: m_Name
@@ -10322,34 +10317,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8782c9d9f6154f36a2152bc8c107e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onGrabOver:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onGrabExit:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  isScalable: 1
+  highlight: {fileID: 0}
+  myPoof: {fileID: 0}
+  destroyMyPoofAfter: 1
+  highlightWarningColor:
+    serializedVersion: 2
+    rgba: 4278190335
+  updateRate: 0.16666667
+  ignoreAuthority: 0
+  activeGrabber: {fileID: 0}
+  onTriggerStay: 0
+  stayingTriggerName: 
+  myCollider: {fileID: 0}
+  highlightMeshRenderer: {fileID: 0}
+  originalHighlightColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!65 &1181168076
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15983,6 +15967,18 @@ Transform:
   m_Father: {fileID: 1966876684}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1674947009 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3416391813965924702, guid: 87e38e21ebea344f3b081b4122b6111f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1152523281}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23270b90339fc4eb38132c4d2df3a5b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1681974351
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15998,7 +15994,7 @@ PrefabInstance:
     - target: {fileID: 3191778155519415468, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
       propertyPath: m_Center.y
-      value: -0.000000014901161
+      value: 0.000000044703484
       objectReference: {fileID: 0}
     - target: {fileID: 3191778155519415468, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
@@ -16283,7 +16279,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1710389689}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.13, y: 0, z: 0}
+  m_LocalPosition: {x: 0.199, y: 0, z: 0.237}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 67456000}
@@ -16737,6 +16733,9 @@ MonoBehaviour:
   rightHandTracker: {fileID: 2062643011}
   leftRayInteractor: {fileID: 68933717}
   rightRayInteractor: {fileID: 1203404727}
+  grabbers:
+  - {fileID: 1674947009}
+  - {fileID: 632491766}
   typingTips:
   - {fileID: 2464605490583362362}
   - {fileID: 1520689271}
@@ -16785,34 +16784,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8782c9d9f6154f36a2152bc8c107e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onGrabOver:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onGrabExit:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  isScalable: 1
+  highlight: {fileID: 0}
+  myPoof: {fileID: 0}
+  destroyMyPoofAfter: 1
+  highlightWarningColor:
+    serializedVersion: 2
+    rgba: 4278190335
+  updateRate: 0.16666667
+  ignoreAuthority: 0
+  activeGrabber: {fileID: 0}
+  onTriggerStay: 0
+  stayingTriggerName: 
+  myCollider: {fileID: 0}
+  highlightMeshRenderer: {fileID: 0}
+  originalHighlightColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!65 &1745987996
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -17053,6 +17041,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: 1
   handTransform: {fileID: 532060172}
+  fakeTrigger: 0
+  fakeTriggerValue: 0
+  fakeGrip: 0
+  fakeGripValue: 0
 --- !u!1 &1793089056
 GameObject:
   m_ObjectHideFlags: 0
@@ -17710,34 +17702,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8782c9d9f6154f36a2152bc8c107e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onGrabOver:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 552336219}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onGrabExit:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 552336219}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  isScalable: 1
+  highlight: {fileID: 0}
+  myPoof: {fileID: 0}
+  destroyMyPoofAfter: 1
+  highlightWarningColor:
+    serializedVersion: 2
+    rgba: 4278190335
+  updateRate: 0.16666667
+  ignoreAuthority: 0
+  activeGrabber: {fileID: 0}
+  onTriggerStay: 0
+  stayingTriggerName: 
+  myCollider: {fileID: 0}
+  highlightMeshRenderer: {fileID: 0}
+  originalHighlightColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!65 &1862638392
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -18245,12 +18226,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8782c9d9f6154f36a2152bc8c107e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onGrabOver:
-    m_PersistentCalls:
-      m_Calls: []
-  onGrabExit:
-    m_PersistentCalls:
-      m_Calls: []
+  isScalable: 1
+  highlight: {fileID: 0}
+  myPoof: {fileID: 0}
+  destroyMyPoofAfter: 1
+  highlightWarningColor:
+    serializedVersion: 2
+    rgba: 4278190335
+  updateRate: 0.16666667
+  ignoreAuthority: 0
+  activeGrabber: {fileID: 0}
+  onTriggerStay: 0
+  stayingTriggerName: 
+  myCollider: {fileID: 0}
+  highlightMeshRenderer: {fileID: 0}
+  originalHighlightColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!4 &1966876684
 Transform:
   m_ObjectHideFlags: 0
@@ -18670,7 +18662,7 @@ PrefabInstance:
     - target: {fileID: 2938212842725459148, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
       propertyPath: m_Center.y
-      value: -0.000000014901161
+      value: 0.000000044703484
       objectReference: {fileID: 0}
     - target: {fileID: 2938212842725459148, guid: 6d45b6526632f41f7bbdf5ab0fcea9de,
         type: 3}
@@ -19177,6 +19169,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: 0
   handTransform: {fileID: 382698868}
+  fakeTrigger: 0
+  fakeTriggerValue: 0
+  fakeGrip: 0
+  fakeGripValue: 0
 --- !u!1 &2099079993
 GameObject:
   m_ObjectHideFlags: 0
@@ -20414,6 +20410,11 @@ PrefabInstance:
       propertyPath: handTracker
       value: 
       objectReference: {fileID: 2062643011}
+    - target: {fileID: 3416391813965924702, guid: 87e38e21ebea344f3b081b4122b6111f,
+        type: 3}
+      propertyPath: otherGrabber
+      value: 
+      objectReference: {fileID: 1674947009}
     - target: {fileID: 7582602043150937164, guid: 87e38e21ebea344f3b081b4122b6111f,
         type: 3}
       propertyPath: m_Name
@@ -21170,12 +21171,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8782c9d9f6154f36a2152bc8c107e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onGrabOver:
-    m_PersistentCalls:
-      m_Calls: []
-  onGrabExit:
-    m_PersistentCalls:
-      m_Calls: []
+  isScalable: 1
+  highlight: {fileID: 0}
+  myPoof: {fileID: 0}
+  destroyMyPoofAfter: 1
+  highlightWarningColor:
+    serializedVersion: 2
+    rgba: 4278190335
+  updateRate: 0.16666667
+  ignoreAuthority: 0
+  activeGrabber: {fileID: 0}
+  onTriggerStay: 0
+  stayingTriggerName: 
+  myCollider: {fileID: 0}
+  highlightMeshRenderer: {fileID: 0}
+  originalHighlightColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!64 &1161768581156642894
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -22267,17 +22279,17 @@ PrefabInstance:
     - target: {fileID: 3116196640153624923, guid: afef962d6c66748358c4384806edde67,
         type: 3}
       propertyPath: m_Center.x
-      value: -0.0000000035618912
+      value: -0.00000000726404
       objectReference: {fileID: 0}
     - target: {fileID: 3116196640153624923, guid: afef962d6c66748358c4384806edde67,
         type: 3}
       propertyPath: m_Center.y
-      value: -0.000000026833526
+      value: -0.000000053276658
       objectReference: {fileID: 0}
     - target: {fileID: 3116196640153624923, guid: afef962d6c66748358c4384806edde67,
         type: 3}
       propertyPath: m_Center.z
-      value: 0.0000000016725763
+      value: 0.0000000051610174
       objectReference: {fileID: 0}
     - target: {fileID: 5003491163698752235, guid: afef962d6c66748358c4384806edde67,
         type: 3}

@@ -8,67 +8,208 @@ using UnityEngine;
 
 public class Grabber : MonoBehaviour
 {
-	public static List<Grabber> instances = new List<Grabber>();
-	
+	[SerializeField] Transform myGrabAnchor;
+	[SerializeField] Grabber otherGrabber;
+	[SerializeField] float grabActiveAt = .75f;
+	[SerializeField] float destroyShrunkenObjectSize = .18f;
+
+
+	[Space(10)]
+	[Header("Public Variables")]
 	public HandTracker handTracker;
+	public Grabbable myGrabbable;
+	public bool isGrabbing = false;
+	public bool isScaling = false;
+	public float myGrabbableScaleMaxSideSize = 0f;
+	public bool leftHand { get { return handTracker.leftHand; } }
+
+	[HideInInspector] public SphereCollider collider;
 	
-	public Vector3 center { get { return transform.position; } }
-	public float radius { get { return collider.radius * transform.lossyScale.x; } }
-	public float grabValue { get { return forcedGrab ? 1f : handTracker.grip; } }
-	public float trigger { get { return handTracker.trigger; } }
-	public bool isGrabbing { get { return grabValue >= 0.5f; } }
-	public bool justGrabbed { get; private set; }
-	public bool justReleased { get; private set; }
-	
-	bool forcedGrab;	
-	float lastGrabValue = 0.5f;
-	SphereCollider collider;
+	float initialGrabScaleDistance;
+	Vector3 initialGrabScale;
+	float activeGrabScaleFactor;
 	
 	Collider[] tempColliders = new Collider[32];
+	int tempCollidersCount;
+	int tempCollidersFrame;	
 	static LayerMask grabbableMask;
-	
+
+	Transform originalParent;
+	public Vector3 initialGrabScalePosition;
+
+	GameObject grabbedOrigin;
+
+	GameObject doubleHandGrab;
+	GameObject doubleHandGrab_Placer;
+
 	protected void Awake() {
-		instances.Add(this);
-		collider = GetComponent<SphereCollider>();
-		grabbableMask = LayerMask.GetMask("Grabbable");
-	}
-	
-	protected void OnDestroy() {
-		instances.Remove(this);
-	}
-	
-	protected void Update() {
-		justGrabbed = grabValue >= 0.55f && lastGrabValue < 0.55f;
-		justReleased = grabValue < 0.45f && lastGrabValue >= 0.45f;
-		lastGrabValue = grabValue;
-		
-		int count = Physics.OverlapSphereNonAlloc(center, radius, tempColliders,
-			grabbableMask, QueryTriggerInteraction.Collide);
-		for (int i=0; i<count; i++) {
-			var grabbable = tempColliders[i].GetComponentInParent<Grabbable>();
-			if (grabbable != null) grabbable.NoteGrabberOverThis(this);
+		grabbableMask = LayerMask.GetMask("Grabbable");	
+
+		if (myGrabAnchor == null) {
+			if (transform.childCount > 0) myGrabAnchor = transform.GetChild(0);
+			else myGrabAnchor = transform;
 		}
+
+		collider = GetComponent<SphereCollider>();
+	}
+
+
+	void Update() {
+		if (myGrabbable == null) {
+			if (!otherGrabber || !otherGrabber.isGrabbing) return;
+		}
+
+		if (handTracker.grip > grabActiveAt) {
+			if (!isGrabbing && !isScaling) {
+				// Begin a grab or scale
+				
+				if (otherGrabber && otherGrabber.isGrabbing) {
+					if (otherGrabber.myGrabbable.isScalable) { // SCALE
+						BeginScale();
+					}
+				} else { // GRAB
+					BeginGrab();
+				}
+			}
+
+			if (isScaling && otherGrabber.grabbedOrigin) {
+				ContinueGrabAndScale();
+			}
+		} else if (isGrabbing) {
+			ReleaseGrab();
+		} else if (isScaling) { // release scale
+			ReleaseScale();
+		}
+
+	}
+
+	void BeginGrab() {
+		isGrabbing = true;
 		
-		// Note that actual grabbing of grabbables is handled in Grabbable itself
-		// (which allows us to grab multiple objects at once if they are close together).
-		// But if you grab empty space, possibly manipulating the scene, we handle
-		// that here.
-		if (count == 0 && justGrabbed) {
-			if (GlobalRefs.instance.scene.isGrabbed) {
-				GlobalRefs.instance.scene.StretchWith(this);
+		originalParent = myGrabbable.transform.parent; // #NOTE ...just in case it's changed...
+
+		if (grabbedOrigin) DestroyImmediate(grabbedOrigin);
+
+		grabbedOrigin = new GameObject();
+
+		grabbedOrigin.name = "--> Grabbed Origin: " + name;
+		grabbedOrigin.transform.SetParent(myGrabAnchor);
+		grabbedOrigin.transform.localPosition = Vector3.zero;
+		grabbedOrigin.transform.localEulerAngles = Vector3.zero;
+		grabbedOrigin.transform.localScale = Vector3.one;
+
+		myGrabbable.transform.SetParent(grabbedOrigin.transform, true);
+		isGrabbing = true;
+	}
+
+	void BeginScale() {
+		initialGrabScale = otherGrabber.grabbedOrigin.transform.localScale;
+
+		initialGrabScalePosition = transform.position;
+		otherGrabber.initialGrabScalePosition = otherGrabber.transform.position;
+
+		initialGrabScaleDistance = Vector3.Distance(transform.position, otherGrabber.transform.position);
+		isScaling = true;
+
+		if (doubleHandGrab != null)  Destroy(doubleHandGrab);
+		if (doubleHandGrab_Placer != null) Destroy(doubleHandGrab_Placer);
+
+		doubleHandGrab = new GameObject();
+		doubleHandGrab.name = "-> DoubleHandGrab";
+		doubleHandGrab.transform.SetParent(otherGrabber.transform, false);
+		doubleHandGrab.transform.LookAt(transform, Vector3.Lerp(transform.up, otherGrabber.transform.up, 0.5f));
+		doubleHandGrab.transform.localScale = new Vector3(1, 1, initialGrabScaleDistance);
+
+		doubleHandGrab_Placer = new GameObject();
+		doubleHandGrab_Placer.name = "--> DoubleHandGrab_Placer";
+		doubleHandGrab_Placer.transform.SetParent(doubleHandGrab.transform);
+		doubleHandGrab_Placer.transform.position = otherGrabber.grabbedOrigin.transform.position;
+		doubleHandGrab_Placer.transform.rotation = otherGrabber.grabbedOrigin.transform.rotation;
+	}
+
+	public void ContinueGrabAndScale() {
+		// Do scaling and two-handed rotation
+
+		float xGrabberDistance = Vector3.Distance(otherGrabber.gameObject.transform.position, transform.position);
+
+		activeGrabScaleFactor = xGrabberDistance / initialGrabScaleDistance;
+
+		otherGrabber.grabbedOrigin.transform.localScale = initialGrabScale * activeGrabScaleFactor;
+
+		myGrabbableScaleMaxSideSize = Mathf.Max(otherGrabber.myGrabbable.myCollider.bounds.size.x,
+			otherGrabber.myGrabbable.myCollider.bounds.size.y);
+
+		var highlightRend = otherGrabber.myGrabbable.highlightMeshRenderer;
+		if (highlightRend) {
+			if (myGrabbableScaleMaxSideSize < destroyShrunkenObjectSize) {
+				highlightRend.material.color = otherGrabber.myGrabbable.highlightWarningColor;
 			} else {
-				GlobalRefs.instance.scene.GrabBy(this, true);	// require second hand in this case
+				highlightRend.material.color = otherGrabber.myGrabbable.originalHighlightColor;
 			}
 		}
+				
+		doubleHandGrab.transform.LookAt(transform, Vector3.Lerp(transform.up, otherGrabber.transform.up, .5f));
+		doubleHandGrab.transform.localScale = new Vector3(1, 1, xGrabberDistance);
+
+		otherGrabber.grabbedOrigin.transform.position = doubleHandGrab_Placer.transform.position;
+		otherGrabber.grabbedOrigin.transform.rotation = doubleHandGrab_Placer.transform.rotation;
+	}
+
+	public void ReleaseGrab() {
+		if (originalParent) myGrabbable.transform.SetParent(originalParent.transform, true);
+		else myGrabbable.transform.parent = null;
+
+		if (grabbedOrigin) Destroy(grabbedOrigin);
+
+		isGrabbing = false;
+
+		if (doubleHandGrab != null) Destroy(doubleHandGrab);
+		if (doubleHandGrab_Placer != null) Destroy(doubleHandGrab_Placer);
 	}
 	
-	[ContextMenu("Force Grab")]
-	void ForceGrab() {
-		forcedGrab = true;
+	void ReleaseScale() {
+		isScaling = false;
+		if (myGrabbableScaleMaxSideSize < destroyShrunkenObjectSize) {
+			if (otherGrabber.myGrabbable != null) otherGrabber.myGrabbable.ActivateSelfDestructSequence();
+			else if (myGrabbable != null) myGrabbable.ActivateSelfDestructSequence();
+
+			otherGrabber.myGrabbable = null;
+			otherGrabber.isGrabbing = false;
+			otherGrabber.isScaling = false;
+
+			myGrabbable = null;
+			isGrabbing = false;
+			isScaling = false;
+		}
 	}
-	
-	[ContextMenu("Release Force Grab")]
-	void ReleaseForceGrab() {
-		forcedGrab = false;
+
+	public bool IsTouching(Collider otherCollider) {
+		if (Time.frameCount > tempCollidersFrame) {
+			Vector3 center = transform.TransformPoint(collider.center);
+			float radius = collider.radius * transform.lossyScale.y;
+			tempCollidersCount = Physics.OverlapSphereNonAlloc(center, radius, tempColliders,
+				grabbableMask, QueryTriggerInteraction.Collide);
+		}
+		
+		int idx = System.Array.IndexOf(tempColliders, otherCollider);
+		return idx >= 0 && idx < tempCollidersCount;
 	}
+
+	public void RegisterGrabbable(Grabbable incoming) {
+		myGrabbable = incoming;
+	}
+
+	public void UnegisterGrabbable(Grabbable incoming) {
+		myGrabbable = null;
+	}
+
+	private void OnDisable() {
+		if (myGrabbable) myGrabbable.OnTriggerExit(collider);
+
+		myGrabbable = null;
+		isGrabbing = false;
+		isScaling = false;
+	}
+
+
 }

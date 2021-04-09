@@ -24,6 +24,15 @@ public class HandTracker : MonoBehaviour
 
 	public Transform handTransform;	
 
+	#if UNITY_EDITOR
+	[Space(10)]
+	[Header("Debugging")]
+	public bool fakeTrigger = false;
+	[Range(0,1)] public float fakeTriggerValue = 0;
+	public bool fakeGrip = false;
+	[Range(0,1)] public float fakeGripValue = 0;	
+	#endif
+
 	//public Grabber grabber;
 
 	public enum Button {
@@ -145,6 +154,11 @@ public class HandTracker : MonoBehaviour
 		
 		if (!deviceFound || !isTracking) DoGameControllerStandin();
 		//else Debug.Log("No controller standin for you!");
+		
+		#if UNITY_EDITOR
+		if (fakeTrigger) trigger = fakeTriggerValue;
+		if (fakeGrip) grip = fakeGripValue;
+		#endif
 		
 		curButtonStates[(int)Button.Trigger] = (trigger > 0.5f);
 		curButtonStates[(int)Button.Grip] = (grip > 0.5f);
