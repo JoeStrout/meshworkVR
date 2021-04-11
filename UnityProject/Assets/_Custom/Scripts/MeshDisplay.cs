@@ -16,7 +16,7 @@ public class MeshDisplay : MonoBehaviour
 	// keeps track of which texture layer is currently selected for painting:
 	public P3dPaintableTexture selectedTexture;
 	
-	protected void Awake() {
+	protected void Start() {
 		if (showWireframe) {
 			var mainTex = GetComponent<MeshRenderer>().sharedMaterial.mainTexture;
 			
@@ -30,11 +30,13 @@ public class MeshDisplay : MonoBehaviour
 			
 			GetComponent<MeshRenderer>().material = wireframeMaterial;
 			GetComponent<MeshRenderer>().material.mainTexture = mainTex;
+			Debug.Log($"{gameObject.name}: Generated {baked.name} to prepare for wireframe display");
 		} else {
 			// ToDo: even if we're not showing wireframe, there's something we need
 			// to do here to make PaintIn3D work with the layer 0 material.
 			// If we don't do it, then we simply can't paint on it.
 			// Probably we need to clone the material, like P3dMaterialCloner.
+			Debug.Log($"{gameObject.name}: wireframe display not selected");
 		}
 	}
 	

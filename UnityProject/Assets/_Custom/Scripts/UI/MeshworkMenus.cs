@@ -14,6 +14,7 @@ public class MeshworkMenus : MonoBehaviour
 	public Grabbable loadReference2DPanel;
 	public Grabbable loadReference3DPanel;
 	public Grabbable loadRefFromFilePanel;
+	public Grabbable importModelPanel;
 	
 	protected Menu mainMenu { get {
 		if (_mainMenu == null) {
@@ -141,9 +142,11 @@ public class MeshworkMenus : MonoBehaviour
 	
 	protected void LoadSceneMenu(Menu menu) {
 		PrepareMenu(menu, "Scene");
+		menu.AddItem("Load...");
+		menu.AddItem("Save...");
+		menu.AddItem("Import Model...", false, (item,left) => { item.ShowPanel(importModelPanel); } );
 		menu.AddItem("Transform...", false, (item,left) => { item.ShowPanel(sceneTransformPanel); });
 		menu.AddItem("Background...");
-		menu.AddItem("Load Model...");
 		menu.AddItem("Add Reference", true, (item,left) => { item.ShowSubmenu(loadRefMenu); });
 	}
 	

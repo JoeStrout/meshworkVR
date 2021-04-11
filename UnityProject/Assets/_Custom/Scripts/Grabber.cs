@@ -136,8 +136,8 @@ public class Grabber : MonoBehaviour
 
 		otherGrabber.grabbedOrigin.transform.localScale = initialGrabScale * activeGrabScaleFactor;
 
-		myGrabbableScaleMaxSideSize = Mathf.Max(otherGrabber.myGrabbable.myCollider.bounds.size.x,
-			otherGrabber.myGrabbable.myCollider.bounds.size.y);
+		Bounds b = otherGrabber.myGrabbable.GetBounds();
+		myGrabbableScaleMaxSideSize = Mathf.Max(b.size.x, b.size.y, b.size.z);
 
 		var highlightRend = otherGrabber.myGrabbable.highlightMeshRenderer;
 		if (highlightRend) {

@@ -40,7 +40,7 @@ public class Grabbable : MonoBehaviour
 	public bool onTriggerStay;
 	public string stayingTriggerName = "";
 
-	public Collider myCollider;
+	Collider[] myColliders;
 	Transform originalParent;
 	Grabber initialGrabber;
 
@@ -50,7 +50,7 @@ public class Grabbable : MonoBehaviour
 	Dictionary<Grabber, bool> grabberTouching = new Dictionary<Grabber, bool>();
     
 	void Start() {
-		myCollider = GetComponent<Collider>();
+		myColliders = GetComponentsInChildren<Collider>();
 		if (highlight != null) {
 			highlight.SetActive(false);
 			highlightMeshRenderer = highlight.GetComponent<MeshRenderer>();
@@ -70,18 +70,18 @@ public class Grabbable : MonoBehaviour
 			highlightMeshRenderer.material.color = originalHighlightColor;
 		}
 		
-		if (!myCollider) return;
+		if (myColliders == null || myColliders.Length == 0) return;
 		// Unity won't give me trigger-trigger callbacks unless we add Rigidbodies,
 		// so never mind, I'll just do it myself.
 		foreach (Grabber g in GlobalRefs.instance.grabbers) {
 			if (!grabberTouching.ContainsKey(g)) grabberTouching[g] = false;
 			if (grabberTouching[g]) {
-				if (!g.IsTouching(myCollider)) {
+				if (!IsTouching(g)) {
 					OnTriggerExit(g.collider);
 					grabberTouching[g] = false;
 				}
 			} else {
-				if (g.IsTouching(myCollider)) {
+				if (IsTouching(g)) {
 					OnTriggerEnter(g.collider);
 					grabberTouching[g] = true;
 				}
@@ -89,6 +89,22 @@ public class Grabbable : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Return true if the given grabber is touching any of our colliders.
+	/// </summary>
+	bool IsTouching(Grabber g) {
+		for (int i=0; i<myColliders.Length; i++) {
+			if (g.IsTouching(myColliders[i])) return true;
+		}
+		return false;
+	}
+
+	public Bounds GetBounds() {
+		if (myColliders == null || myColliders.Length == 0) return default(Bounds);
+		Bounds result = myColliders[0].bounds;
+		for (int i=1; i<myColliders.Length; i++) result.Encapsulate(myColliders[i].bounds);
+		return result;
+	}
 
 	private void OnTriggerEnter(Collider other) {
 		//Debug.Log($"{gameObject.name} OnTriggerEnter({other.gameObject.name})");
