@@ -28,6 +28,11 @@ namespace Meshwork.UI {
 		submenuIndicator.SetActive(hasSubmenu);
 		this.action = action;
 		gameObject.name = text + " (MenuItem)";
+		if (!hasSubmenu && action == null) {
+			// if this menu has no submenu or action, give it a disabled appearance
+			var txt = itemText.GetComponent<TextMeshProUGUI>();
+			txt.color = new Color(txt.color.r, txt.color.g, txt.color.b, 0.35f);
+		}
 	}
 	
 	public void OnPointerClick(PointerEventData p) {
