@@ -17,6 +17,10 @@ public class ImportModel : MonoBehaviour
 	
 	static List<string> extensions3D = new List<string> { ".obj", ".glb", ".gltf" };
 	
+	protected void Awake() {
+		GetComponent<SelectFileDialog>().extensionsToShow = extensions3D.ToArray();
+	}	
+
 	public void ImportFromFile(string filePath) {
 		string ext = Path.GetExtension(filePath).ToLowerInvariant();
 		if (extensions3D.Contains(ext)) {

@@ -15,6 +15,7 @@ public class SelectFileDialog : MonoBehaviour
 {
 	public Listbox fileList;
 	public Button openButton;
+	public string[] extensionsToShow;
 	
 	public string dirPath { get; private set; }
 	
@@ -61,6 +62,10 @@ public class SelectFileDialog : MonoBehaviour
 		foreach (string path in files) {
 			string name = Path.GetFileName(path);
 			if (name.StartsWith(".")) continue;
+			if (extensionsToShow != null && extensionsToShow.Length > 0) {
+				string ext = Path.GetExtension(name);
+				if (System.Array.IndexOf(extensionsToShow, ext) < 0) continue;
+			}
 			fileList.AddRow();
 			int row = fileList.rows.Count - 1;
 			fileList.rows[row].tag = path;

@@ -5,6 +5,7 @@ This script adds a reference model or image to the scene from a file.
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,10 @@ public class AddReference : MonoBehaviour
 	
 	static List<string> extensions2D = new List<string> { ".png", ".jpg", ".jpeg" };
 	static List<string> extensions3D = new List<string> { ".obj", ".glb", ".gltf" };
+	
+	protected void Awake() {
+		GetComponent<SelectFileDialog>().extensionsToShow = extensions2D.Concat(extensions3D).ToArray();
+	}
 	
 	public void AddReferenceFromFile(string filePath) {
 		string ext = Path.GetExtension(filePath).ToLowerInvariant();

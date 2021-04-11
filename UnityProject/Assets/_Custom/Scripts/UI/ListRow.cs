@@ -36,7 +36,6 @@ public class ListRow : MonoBehaviour
 	}
 	
 	void UpdateColor() {
-		Debug.Log("Updating color of " + tag);
 		if (cellBackgrounds == null) {
 			cellBackgrounds = new Image[cells.Length];
 			for (int i=0; i<cells.Length; i++) cellBackgrounds[i] = cells[i].GetComponentInParent<Image>();
