@@ -40,6 +40,16 @@ public class VRKeyboardKey : MonoBehaviour
 		if (function == Function.CharKey && label != null) label.text = unshiftedChar;
 	}
 	
+	protected void Reset() {
+		string s = gameObject.name;
+		s = s.Replace(" Key", "").Trim();
+		if (s.Length == 1) {
+			shiftedChar = s.ToUpper();
+			unshiftedChar = s.ToLower();
+			OnValidate();
+		}
+	}
+	
 	protected void Awake() {
 		keyboard = GetComponentInParent<VRKeyboard>();
 		button = GetComponent<VRPushButton>();
@@ -108,6 +118,6 @@ public class VRKeyboardKey : MonoBehaviour
 	
 	public void NoteShiftState(bool shiftPressed) {
 		if (function != Function.CharKey) return;
-		label.text = shiftPressed ? shiftedChar : unshiftedChar;
+		if (label != null) label.text = shiftPressed ? shiftedChar : unshiftedChar;
 	}
 }
