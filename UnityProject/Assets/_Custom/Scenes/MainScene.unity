@@ -3806,7 +3806,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5929881750459509325}
-        m_MethodName: NoteReplaceCheckChanged
+        m_MethodName: UpdateSaveButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
