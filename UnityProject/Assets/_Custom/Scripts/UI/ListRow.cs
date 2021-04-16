@@ -53,4 +53,14 @@ public class ListRow : MonoBehaviour
 	public void NoteClicked() {
 		GetComponentInParent<Listbox>().HandleRowClick(this);
 	}
+	
+	public string GetText(int column=-1) {
+		if (column < 0) {
+			for (int i=0; i<cells.Length; i++) {
+				var txt = cells[i].GetComponent<TextMeshProUGUI>();
+				if (txt != null) return txt.text;
+			}
+		}
+		return cells[column].GetComponent<TextMeshProUGUI>().text;
+	}
 }
