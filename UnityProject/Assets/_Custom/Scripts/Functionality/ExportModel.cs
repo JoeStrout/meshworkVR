@@ -13,11 +13,12 @@ public class ExportModel : MonoBehaviour
 	public TMP_InputField fileNameField;
 	public Listbox fileList;
 	
-	static List<string> extensions3D = new List<string> { ".obj", ".glb", ".gltf" };
+	static List<string> extensions3D = new List<string> { ".obj", ".glb" };
 	
 	protected void Awake() {
-		GetComponent<SelectFileDialog>().extensionsToShow = extensions3D.ToArray();
+		GetComponent<SaveFileDialog>().extensionsToShow = extensions3D.ToArray();
 	}
+	
 	public void ExportToFile(string filePath) {
 		string ext = Path.GetExtension(filePath).ToLowerInvariant();
 		if (ext.Length == 0 || ext.Length > 4) {
