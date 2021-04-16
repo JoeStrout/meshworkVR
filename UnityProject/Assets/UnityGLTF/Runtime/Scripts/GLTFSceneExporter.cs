@@ -1089,6 +1089,14 @@ namespace UnityGLTF
 
 				if (mainTex != null)
 				{
+					if (mainTex is RenderTexture) {		// JJS
+						Texture2D tex = new Texture2D(mainTex.width, mainTex.height, TextureFormat.ARGB32, false);
+						RenderTexture.active = (RenderTexture)mainTex;
+						tex.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0);
+						tex.Apply();
+						RenderTexture.active = null;
+						mainTex = tex;
+					}
 					if(mainTex is Texture2D)
 					{
 						pbr.BaseColorTexture = ExportTextureInfo(mainTex, TextureMapType.Main);

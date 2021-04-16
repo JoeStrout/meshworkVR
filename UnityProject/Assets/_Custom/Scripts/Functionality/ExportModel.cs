@@ -28,6 +28,7 @@ public class ExportModel : MonoBehaviour
 		if (ext == ".glb") {
 			// Export to GLB format
 			Debug.Log("Exporting to GLB file: " + filePath);
+			SaveSceneToGLB(filePath);
 		} else if (ext == ".obj") {
 			Debug.Log("Exporting to OBJ file: " + filePath);
 		} else {
@@ -35,4 +36,24 @@ public class ExportModel : MonoBehaviour
 		}
 	}
 	
+	public void SaveSceneToGLB(string filePath) {
+		// Gather the set of objects that should be saved (excluding floor, etc.)
+		var objects = new List<Transform>();
+		for (int i=0; i<GlobalRefs.instance.scene.transform.childCount; i++) {
+			Transform t = GlobalRefs.instance.scene.transform.GetChild(i);
+			if (t.GetComponent<MeshModel>() != null) {
+				objects.Add(t);
+			}
+		}
+		
+		// Set export options
+		var options = new UnityGLTF.ExportOptions();
+		
+		// Create a GLTF exporter, and save to GLB
+		var exporter = new UnityGLTF.GLTFSceneExporter(objects.ToArray(), options);
+		string dirPath = Path.GetDirectoryName(filePath);
+		string fileName = Path.GetFileName(filePath);
+		exporter.SaveGLB(dirPath, fileName);
+		Debug.Log("Wrote file to: " + filePath);
+	}
 }

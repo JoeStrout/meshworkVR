@@ -27,8 +27,6 @@ public class SaveFileDialog : MonoBehaviour
 	protected void Start() {
 		dirPath = Application.persistentDataPath;
 		Reload();
-		
-		saveButton.interactable = false;
 	}
 	
 	protected void OnEnable() {
@@ -49,7 +47,7 @@ public class SaveFileDialog : MonoBehaviour
 	}
 	
 	public void SaveSelectedFile() {
-		string path = (string)fileList.rows[fileList.FirstSelected()].tag;
+		string path = Path.Combine(dirPath, nameField.text);
 		onConfirm.Invoke(path);
 	}
 	
