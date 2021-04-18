@@ -291,11 +291,6 @@ To that end, I've changed the VertexTweak tool into a more general MeshTweak too
 
 The idea here is that you will be able to grab a face (usually a triangle or quad, which is really a pair of coplanar triangles) and drag it around or rotate it with the tool.  An initial implementation has that partly working: you can grab and drag a triangle, but it doesn't get the other half of the quad (if any) and does not yet support rotation.
 
+I think to do this properly, I need to gather the positions of the affected vertices at the start of the drag; store those as local to the tool; and then on drag, convert those local positions back into (new) positions local to the mesh, and apply them that way.
 
-
-
-
-
-
-
-
+Implemented and working, though the code that figures out what other triangle should be considered part of the same face is a little dicey.  It works fine once, but as you edit the model the coplanarity is quickly lost, and then it doesn't work anymore.  Possibly we need to work out all the quads (in the same way the wireframe shader does?) when the model is first loaded, and then maintain that information while editing even if the triangles in a quad are no longer truly coplanar.

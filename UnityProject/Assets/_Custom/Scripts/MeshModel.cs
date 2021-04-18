@@ -124,6 +124,64 @@ public class MeshModel : MonoBehaviour
 	}
 	
 	/// <summary>
+	/// Add the vertexes involved in the given triangle to a dictionary with the vertex index 
+	/// as the key,  and the vertex position (relative to the given transform) as the value.
+	/// </summary>
+	public void AddTriVertices(int triIndex, Dictionary<int, Vector3> positions, Transform relativeTo) {
+		for (int i=0; i<3; i++) {
+			int vertexIdx = triangles[triIndex + i];
+			Vector3 v = vertices[vertexIdx];
+			if (relativeTo != null && relativeTo != transform) {
+				v = relativeTo.InverseTransformPoint(transform.TransformPoint(v));
+			}
+			positions[vertexIdx] = v;
+		}
+	}
+	
+	/// <summary>
+	/// Find the vertexes involved in the given triangle (and if it's part of a quad, the
+	/// partner triangle).  Add these to a dictionary with the vertex index as the key, 
+	/// and the vertex position (relative to the given transform) as the value.
+	/// </summary>
+	public void FindFaceVertices(int triIndex, Dictionary<int, Vector3> positions, Transform relativeTo) {
+		// Add the given triangle.
+		AddTriVertices(triIndex, positions, relativeTo);
+		// Now search for another triangle with a shared edge, the same normal,
+		// and the most acute corner angles on that edge.
+		Vector3 v0 = vertices[triangles[triIndex+0]];
+		Vector3 v1 = vertices[triangles[triIndex+1]];
+		Vector3 v2 = vertices[triangles[triIndex+2]];
+		Vector3 normal = TriangleNormal(v0, v1, v2);
+		for (int t=0; t<triangles.Length; t += 3) {
+			if (t == triIndex) continue;
+			Vector3 n = TriangleNormal(t);
+			if (!n.ApproximatelyEqual(normal)) continue;
+			int shared = 0;
+			for (int j=0; j<3; j++) {
+				Vector3 tv = vertices[triangles[t+j]];
+				if (tv == v0 || tv == v1 || tv == v2) shared++;
+			}
+			if (shared != 2) continue;
+			// ToDo: also check angles and when there are multiple shared coplanar
+			// triangles, pick the best one.
+			// For now, we'll just go wit the first such triangle we find.
+			AddTriVertices(t, positions, relativeTo);
+			break;
+		}
+	}
+	
+	public Vector3 TriangleNormal(int triIndex) {
+		return TriangleNormal(
+			vertices[triangles[triIndex+0]],
+			vertices[triangles[triIndex+1]],
+			vertices[triangles[triIndex+2]]);
+	}
+	
+	public Vector3 TriangleNormal(Vector3 v0, Vector3 v1, Vector3 v2) {
+		return Vector3.Cross(v1 - v0, v2 - v0);
+	}
+	
+	/// <summary>
 	/// Add the given delta to the UV of the given vertex, and any other
 	/// vertices which share the same position and UV coordinates.
 	/// </summary>

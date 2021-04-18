@@ -36,10 +36,13 @@ public class MeshTweakTool : Tool
 
 	bool hadCenter;	// flag indicating we had the thumb stick centered since we last did anything with it
 
+	Dictionary<int, Vector3> toolRelativePositions;
+
 	protected override void Awake() {
 		base.Awake();
 		SetMode(mode);
 		hadCenter = false;
+		toolRelativePositions = new Dictionary<int, Vector3>();
 	}
 
 	protected void Update() {
@@ -96,6 +99,8 @@ public class MeshTweakTool : Tool
 				break;
 			case Mode.Face:
 				if (!mesh.FindFace(endPoint.position, transform.position, bestDist, out idx, out dist)) continue;
+				toolRelativePositions.Clear();
+				mesh.FindFaceVertices(idx, toolRelativePositions, transform);
 				break;
 			}
 			dragIndex = idx;
@@ -120,8 +125,13 @@ public class MeshTweakTool : Tool
 			Vector3 newVPos = dragStartVPos + delta;			
 			dragMesh.ShiftVertexTo(dragIndex, newVPos);
 		} else if (mode == Mode.Face) {
-			Vector3 delta = toolPos - dragMesh.transform.InverseTransformPoint(lastToolWorldPos);
-			dragMesh.ShiftFace(dragIndex, delta);
+			int i = 1;
+			foreach (var kv in toolRelativePositions) {
+				int vidx = kv.Key;
+				Vector3 v = dragMesh.transform.InverseTransformPoint(transform.TransformPoint(kv.Value));
+				dragMesh.ShiftVertexTo(vidx, v, i == toolRelativePositions.Count);
+				i++;
+			}
 		}
 		
 		if (audio != null) {

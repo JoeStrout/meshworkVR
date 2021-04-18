@@ -4319,7 +4319,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf9f463b6b2b44daf853ea51043f75e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultTool: {fileID: 0}
+  defaultTool: {fileID: 1875765876}
   uiTool: {fileID: 1203404729}
   typingStick: {fileID: 1520689273}
 --- !u!224 &383362745 stripped
@@ -19071,6 +19071,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1872508579}
   m_CullTransparentMesh: 0
+--- !u!114 &1875765876 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5917173862668515688, guid: 56e670edd4a18472f94b8fac0a4e21be,
+    type: 3}
+  m_PrefabInstance: {fileID: 5716694574939912172}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a38a799ca53f141438f6d0895c73e3ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1935732797 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6634567941750199855, guid: 7165e2c7f8f914c0aa90562b1f1d5ad1,
@@ -24160,6 +24172,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5917173862668515688, guid: 56e670edd4a18472f94b8fac0a4e21be,
+        type: 3}
+      propertyPath: mode
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 56e670edd4a18472f94b8fac0a4e21be, type: 3}
