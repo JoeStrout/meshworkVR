@@ -75,8 +75,9 @@ public class MeshModel : MonoBehaviour
 	/// Find the vertex closest to the given position, by casting a ray onto the mesh
 	/// and then moving to the closest vertex of the triangle hit.
 	/// </summary>
-	public bool FindIndex(Vector3 worldPos, Vector3 toolBase, float maxDist, out int outIndex) {
+	public bool FindVertexIndex(Vector3 worldPos, Vector3 toolBase, float maxDist, out int outIndex, out float outDistance) {
 		outIndex = -1;
+		outDistance = Mathf.Infinity;
 		Vector3 localEnd = transform.InverseTransformPoint(worldPos);
 		Vector3 localBase = transform.InverseTransformPoint(toolBase);
 		maxDist /= transform.lossyScale.x;
@@ -97,6 +98,28 @@ public class MeshModel : MonoBehaviour
 		}
 		if (bestDist > maxDist) return false;
 		outIndex = triangles[hitTriangle+bestIdx];
+		outDistance = bestDist * transform.lossyScale.x;
+		return true;
+	}
+	
+	/// <summary>
+	/// Find the face closest to the given position, by casting a ray onto the mesh.
+	/// It must be within maxDist; return the actual distance in outDistance.
+	/// </summary>
+	public bool FindFace(Vector3 worldPos, Vector3 toolBase, float maxDist, out int outIndex, out float outDistance) {
+		outIndex = -1;
+		outDistance = Mathf.Infinity;
+		Vector3 localEnd = transform.InverseTransformPoint(worldPos);
+		Vector3 localBase = transform.InverseTransformPoint(toolBase);
+		maxDist /= transform.lossyScale.x;
+		var ray = new Ray(localBase, localEnd - localBase);
+		Vector3 hitPoint;
+		float hitDistance;
+		int hitTriangle;
+		if (!MeshUtils.RayMeshIntersect(ray, vertices, triangles, out hitPoint, out hitDistance, out hitTriangle)) return false;
+		if (hitDistance > maxDist) return false;
+		outIndex = hitTriangle;
+		outDistance = hitDistance;
 		return true;
 	}
 	
@@ -123,15 +146,28 @@ public class MeshModel : MonoBehaviour
 	/// Add the given delta to the position of the given vertex, and
 	/// any other vertices that share the same position.
 	/// </summary>
-	public void ShiftVertexTo(int index, Vector3 newPos) {
+	public void ShiftVertexTo(int index, Vector3 newPos, bool updateMesh=true) {
 		Vector3 oldPos = vertices[index];
 		for (int i=0; i<uv.Length; i++) {
 			if (i == index || vertices[i] == oldPos) {
 				vertices[i] = newPos;
 			}
 		}
+		if (!updateMesh) return;
 		mesh.vertices = vertices;
 		meshCollider.sharedMesh = mesh;	// (forces collider to re-cook)
 		if (display != null) display.ShiftVertexTo(oldPos, newPos);
+	}
+	
+	/// <summary>
+	/// Shift the given triangle face by the given delta in local coordinates.
+	/// </summary>
+	public void ShiftFace(int triIndex, Vector3 localDelta) {
+		for (int i=0; i<3; i++) {
+			int vertIdx = triangles[triIndex + i];
+			ShiftVertexTo(vertIdx, vertices[vertIdx] + localDelta, false);
+		}
+		mesh.vertices = vertices;
+		meshCollider.sharedMesh = mesh;	// (forces collider to re-cook)
 	}
 }

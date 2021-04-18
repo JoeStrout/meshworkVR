@@ -49,10 +49,11 @@ public class UVTweakTool : Tool
 			var mesh = tempColliders[i].GetComponentInParent<MeshModel>();
 			if (mesh == null) continue;
 			int idx;
-			if (!mesh.FindIndex(endPoint.position, transform.position, bestDist, out idx)) continue;
+			float dist;
+			if (!mesh.FindVertexIndex(endPoint.position, transform.position, bestDist, out idx, out dist)) continue;
 			dragIndex = idx;
 			dragMesh = mesh;
-			bestDist = Vector3.Distance(mesh.Vertex(idx), endPoint.position);
+			bestDist = dist;
 		}
 			
 		if (dragMesh != null) {		

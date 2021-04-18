@@ -283,7 +283,13 @@ That code is blocking, and it mishandles negative indices, but with a bit of pol
 
 So I'm going to start today with OBJ import (for reference objects), and then try to add GLTF perhaps tomorrow.
 
+4/18/19
+=======
+OBJ and GLTF import and export are both working.  Moving on to modeling now.
 
+To that end, I've changed the VertexTweak tool into a more general MeshTweak tool.  It has three sub-modes: vertex, edge, and face.  Vertex works as before; deferring edge for now and working on Face mode.
+
+The idea here is that you will be able to grab a face (usually a triangle or quad, which is really a pair of coplanar triangles) and drag it around or rotate it with the tool.  An initial implementation has that partly working: you can grab and drag a triangle, but it doesn't get the other half of the quad (if any) and does not yet support rotation.
 
 
 

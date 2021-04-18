@@ -1,5 +1,21 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &3807543341746316012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3930756724135117010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f669e5e29b1b4d7ca85f69139388a70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  format: '{0}'
+  textChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5716694573614404614
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,6 +28,7 @@ GameObject:
   - component: {fileID: 5716694573614404610}
   - component: {fileID: 5716694573614404609}
   - component: {fileID: 5716694573614404608}
+  - component: {fileID: 2536036463144262674}
   m_Layer: 2
   m_Name: Label
   m_TagString: Untagged
@@ -104,7 +121,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: position
+  m_text: vertex
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7a03216d805024df8838a58cc661b97c, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 7a03216d805024df8838a58cc661b97c, type: 2}
@@ -176,6 +193,22 @@ MonoBehaviour:
   _SortingLayer: 0
   _SortingLayerID: 0
   _SortingOrder: 0
+--- !u!114 &2536036463144262674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5716694573614404614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f669e5e29b1b4d7ca85f69139388a70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  format: '{0}'
+  textChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5716694575013769571
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,9 +219,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5716694575013769596}
   - component: {fileID: 5716694575013769598}
-  - component: {fileID: 5716694575013769597}
+  - component: {fileID: 5917173862668515688}
   m_Layer: 2
-  m_Name: Vertex Tweak Tool
+  m_Name: Mesh Tweak Tool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -308,7 +341,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &5716694575013769597
+--- !u!114 &5917173862668515688
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -317,13 +350,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 5716694575013769571}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad1d237faad2d416e8e06cf867ba1c70, type: 3}
+  m_Script: {fileID: 11500000, guid: a38a799ca53f141438f6d0895c73e3ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   endPoint: {fileID: 5716694575044528183}
   tweakableMask:
     serializedVersion: 2
     m_Bits: 256
+  label: {fileID: 2536036463144262674}
+  infoTitle: {fileID: 6264043433381964255}
+  infoText: {fileID: 4612653435730381228}
+  mode: 0
   forceApply: 0
 --- !u!1 &5716694575044528182
 GameObject:
@@ -519,6 +556,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5716694575013769596}
     m_Modifications:
+    - target: {fileID: 397020969773825168, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: format
+      value: Touch {0}, pull trigger, and move tool to shift {0} position. Push joystick
+        left/right to change mode.
+      objectReference: {fileID: 0}
+    - target: {fileID: 1400538102859537635, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: format
+      value: Tweak {0}
+      objectReference: {fileID: 0}
     - target: {fileID: 3468617390629132629, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
         type: 3}
       propertyPath: m_SizeDelta.y
@@ -602,7 +650,30 @@ PrefabInstance:
     - target: {fileID: 8887693913291518620, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
         type: 3}
       propertyPath: m_text
-      value: Touch vertex, pull trigger, and move tool to shift vertex position.
+      value: 'Touch vertex, pull trigger, and move tool to shift vertex position.
+
+        Push
+        joystick left/right to change mode.'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8887693913291518620, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 8887693913291518620, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_fontSizeMax
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 8887693913291518620, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_fontSizeBase
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 8887693913291518620, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+        type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4, type: 3}
@@ -612,3 +683,33 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5008547780664112444}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3930756724135117010 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8290341594981430766, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+    type: 3}
+  m_PrefabInstance: {fileID: 5008547780664112444}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6264043433381964255 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1400538102859537635, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+    type: 3}
+  m_PrefabInstance: {fileID: 5008547780664112444}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3930756724135117010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f669e5e29b1b4d7ca85f69139388a70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4612653435730381228 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 397020969773825168, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
+    type: 3}
+  m_PrefabInstance: {fileID: 5008547780664112444}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f669e5e29b1b4d7ca85f69139388a70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

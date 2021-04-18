@@ -638,34 +638,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8782c9d9f6154f36a2152bc8c107e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onGrabOver:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onGrabExit:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PrintLine
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  isScalable: 1
+  hideInsteadOfDestroy: 1
+  highlight: {fileID: 0}
+  myPoof: {fileID: 0}
+  destroyMyPoofAfter: 1
+  highlightWarningColor:
+    serializedVersion: 2
+    rgba: 4278190335
+  updateRate: 0.16666667
+  ignoreAuthority: 0
+  activeGrabber: {fileID: 0}
+  onTriggerStay: 0
+  stayingTriggerName: 
+  highlightMeshRenderer: {fileID: 0}
+  originalHighlightColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!114 &4310200151958866552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1041,6 +1030,7 @@ GameObject:
   - component: {fileID: 7711220506045336981}
   - component: {fileID: 8707800535781091131}
   - component: {fileID: 8887693913291518620}
+  - component: {fileID: 397020969773825168}
   m_Layer: 5
   m_Name: Description
   m_TagString: Untagged
@@ -1163,6 +1153,22 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &397020969773825168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8068764968188632119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f669e5e29b1b4d7ca85f69139388a70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  format: '{0}'
+  textChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8235905642908264702
 GameObject:
   m_ObjectHideFlags: 0
@@ -1210,6 +1216,7 @@ GameObject:
   - component: {fileID: 6466716223849309636}
   - component: {fileID: 2554293059301839236}
   - component: {fileID: 4169005703536492387}
+  - component: {fileID: 1400538102859537635}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -1332,6 +1339,22 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1400538102859537635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8290341594981430766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f669e5e29b1b4d7ca85f69139388a70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  format: '{0}'
+  textChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8322931567655732017
 GameObject:
   m_ObjectHideFlags: 0
