@@ -30,6 +30,7 @@ public class SaveFileDialog : MonoBehaviour
 	}
 	
 	protected void OnEnable() {
+		Reload();
 		fileList.onRowSelected.AddListener(NoteRowSelected);
 		UpdateSaveButton();
 	}
@@ -49,6 +50,7 @@ public class SaveFileDialog : MonoBehaviour
 	public void SaveSelectedFile() {
 		string path = Path.Combine(dirPath, nameField.text);
 		onConfirm.Invoke(path);
+		gameObject.SetActive(false);
 	}
 	
 	public void Cancel() {
