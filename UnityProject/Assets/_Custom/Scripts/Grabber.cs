@@ -11,6 +11,7 @@ public class Grabber : MonoBehaviour
 	[SerializeField] Transform myGrabAnchor;
 	[SerializeField] Grabber otherGrabber;
 	[SerializeField] float grabActiveAt = .75f;
+	[SerializeField] float releaseAt = 0.5f;
 	[SerializeField] float destroyShrunkenObjectSize = .18f;
 
 
@@ -55,6 +56,15 @@ public class Grabber : MonoBehaviour
 
 
 	void Update() {
+		if (handTracker.grip > grabActiveAt && !isGrabbing && !isScaling && myGrabbable == null) {
+			// User is trying to grab, but is not over any grabbable.
+			//  Grab the scene instead... but ONLY if the other grabbable is ALSO grabbing.
+			if (otherGrabber != null && otherGrabber.handTracker.grip > grabActiveAt &&
+				!otherGrabber.isGrabbing && !otherGrabber.isScaling && otherGrabber.myGrabbable == null) {
+				myGrabbable = GlobalRefs.instance.scene;				
+			}
+		}
+		
 		if (myGrabbable == null) {
 			if (!otherGrabber || !otherGrabber.isGrabbing) return;
 		}
@@ -75,10 +85,9 @@ public class Grabber : MonoBehaviour
 			if (isScaling && otherGrabber.grabbedOrigin) {
 				ContinueGrabAndScale();
 			}
-		} else if (isGrabbing) {
-			ReleaseGrab();
-		} else if (isScaling) { // release scale
-			ReleaseScale();
+		} else if (handTracker.grip < releaseAt) {
+			if (isGrabbing) ReleaseGrab();
+			if (isScaling) ReleaseScale();
 		}
 
 	}
@@ -141,7 +150,7 @@ public class Grabber : MonoBehaviour
 
 		var highlightRend = otherGrabber.myGrabbable.highlightMeshRenderer;
 		if (highlightRend) {
-			if (myGrabbableScaleMaxSideSize < destroyShrunkenObjectSize) {
+			if (myGrabbableScaleMaxSideSize < destroyShrunkenObjectSize && myGrabbable.destructible) {
 				highlightRend.material.color = otherGrabber.myGrabbable.highlightWarningColor;
 			} else {
 				highlightRend.material.color = otherGrabber.myGrabbable.originalHighlightColor;
@@ -161,26 +170,42 @@ public class Grabber : MonoBehaviour
 
 		if (grabbedOrigin) Destroy(grabbedOrigin);
 
+		bool isScene = myGrabbable == GlobalRefs.instance.scene;
 		isGrabbing = false;
+		myGrabbable = null;
 
 		if (doubleHandGrab != null) Destroy(doubleHandGrab);
 		if (doubleHandGrab_Placer != null) Destroy(doubleHandGrab_Placer);
+
+		if (isScene && otherGrabber != null && otherGrabber.isScaling) {
+			otherGrabber.ReleaseScale();
+		}
+		
 	}
 	
 	void ReleaseScale() {
 		isScaling = false;
-		if (myGrabbableScaleMaxSideSize < destroyShrunkenObjectSize) {
+		
+		var grabbable = (otherGrabber.myGrabbable == null ? myGrabbable : otherGrabber.myGrabbable);
+		if (grabbable == null) return;
+		
+		if (myGrabbableScaleMaxSideSize < destroyShrunkenObjectSize && grabbable.destructible) {
 			if (otherGrabber.myGrabbable != null) otherGrabber.myGrabbable.ActivateSelfDestructSequence();
 			else if (myGrabbable != null) myGrabbable.ActivateSelfDestructSequence();
-
+		
 			otherGrabber.myGrabbable = null;
 			otherGrabber.isGrabbing = false;
 			otherGrabber.isScaling = false;
-
-			myGrabbable = null;
-			isGrabbing = false;
-			isScaling = false;
 		}
+		
+		myGrabbable = null;
+		isGrabbing = false;
+		isScaling = false;
+
+		if (grabbable == GlobalRefs.instance.scene && otherGrabber != null && otherGrabber.isGrabbing) {
+			otherGrabber.ReleaseGrab();
+		}
+
 	}
 
 	public bool IsTouching(Collider otherCollider) {

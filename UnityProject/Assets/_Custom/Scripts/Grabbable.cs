@@ -9,6 +9,7 @@ using UnityEngine;
 public class Grabbable : MonoBehaviour
 {
 	public bool isScalable = true;
+	public bool destructible = true;
 	public bool hideInsteadOfDestroy = true;
 	
 	[Space(10)]
