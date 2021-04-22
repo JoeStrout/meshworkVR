@@ -260,7 +260,7 @@ But I suppose I could have a special layer for paintable-but-not-grababble, and 
 
 So!  We *finally* have the basic functionality of layers and painting on both the model and the atlas working.  One thing I need to fix before doing this week's build: right now erasing on the bottommost layer looks wrong, because it's clearing the alpha channel, but it's not a transparent shader.  I think we need to either switch that layer to allow transparency, or erase to white (on this layer only).
 
-3/15/19
+3/15/21
 =======
 Trying to wrap up the week-o-painting, one day late.  Hooking up the spaceship to its panels.  Doing this manually for now; later, when we have UI, obviously we'll need to do this from code.  The required steps are:
 
@@ -271,7 +271,7 @@ Trying to wrap up the week-o-painting, one day late.  Hooking up the spaceship t
 
 I've run into a snag wherein the second Paint Layers Canvas, set up for the Ship, is not usable as UI with the XR Interaction rays.  It works fine in the editor with the mouse, but with the XR interactors the controls do not highlight or react.   ...Ah.  The canvas did not have its worldCamera set.  I've added something to CanvasColliderAdjuster to automatically assign Camera.main in Start, if no other value is set.
 
-4/06/19
+4/06/21
 =======
 Initial painting is done.  Working now on UI and file I/O.
 
@@ -283,7 +283,7 @@ That code is blocking, and it mishandles negative indices, but with a bit of pol
 
 So I'm going to start today with OBJ import (for reference objects), and then try to add GLTF perhaps tomorrow.
 
-4/18/19
+4/18/21
 =======
 OBJ and GLTF import and export are both working.  Moving on to modeling now.
 
@@ -294,3 +294,28 @@ The idea here is that you will be able to grab a face (usually a triangle or qua
 I think to do this properly, I need to gather the positions of the affected vertices at the start of the drag; store those as local to the tool; and then on drag, convert those local positions back into (new) positions local to the mesh, and apply them that way.
 
 Implemented and working, though the code that figures out what other triangle should be considered part of the same face is a little dicey.  It works fine once, but as you edit the model the coplanarity is quickly lost, and then it doesn't work anymore.  Possibly we need to work out all the quads (in the same way the wireframe shader does?) when the model is first loaded, and then maintain that information while editing even if the triangles in a quad are no longer truly coplanar.
+
+
+4/21/21
+=======
+Starting on selection support.  This is trickier than it appears; I need a way to draw a highlight on certain faces, edges, or vertices.
+
+Vertices will probably just use a little box (perhaps drawn with DrawInstanced?) for each vertex, so that's straightforward.  But edges and vertices are trickier.  We want this highlight to appear between the normal texture of the object, and the wireframe.
+
+Right now that's all drawn at once, using the standard Amazing Wireframe shader.  I could separate it out, and use multiple materials to draw (1) the various texture layers, (2) the highlight, and (3) the wireframe (configured to clip wherever the wireframe isn't).  Of course that's more draw passes.  But hopefully you won't have dozens of editable objects in the scene at once, so maybe it's fine.
+
+How to actually draw the highlights?  Let's take face and edge highlighting separately (and ignore vertices for now since they're easy).
+
+To highlight faces, I might be able to use vertex colors, IF we are never sharing vertices between faces.  It's possible that's already true, due to requirements of PaintIn3D or Amazing Wireframe (though I doubt the latter).  If so we may as well take advantage of this for the highlighting too.
+
+If that's not true, then I can't use vertex colors.  Instead I would need a shader that uses the triangle index, accessible in the fragment function as a SV_PrimitiveID parameter (after the usual v2f parameter).  It would then need to look up that triangle ID by sampling a texture that has one row (or column) for each triangle in the mesh.
+
+(Update: I just found Amazing Wireframe docs saying that when you bake a mesh for use with this shader, every triangle has its own unique vertices.  So I guess vertex colors should work fine.)
+
+For highlighting edges, I would need to make a custom wireframe shader (fortunately Amazing Wireframe is organized as an include file that is easy to incorporate into custom shaders).  I can get the vertex ID in the vertex function as a second SV_VertexID parameter.  However I'm not sure how that helps, since the highlighting of an edge is a function of TWO vertices.  The vert function has one, and the frag function has at best a mixture of three.  Hmm.
+
+I wonder if there's some clever way to make use of vertex colors such that they only cross some threshold when _both_ vertices at either end of a triangle are selected.
+
+
+
+
