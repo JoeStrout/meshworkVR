@@ -4,6 +4,7 @@ Handles display options on a mesh, including wireframe.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using AmazingAssets.WireframeShader;
 using PaintIn3D;
 
@@ -35,7 +36,7 @@ public class MeshDisplay : MonoBehaviour
 			
 			GetComponent<MeshRenderer>().material = wireframeMaterial;
 			GetComponent<MeshRenderer>().material.mainTexture = mainTex;
-			Debug.Log($"{gameObject.name}: Generated {baked.name} to prepare for wireframe display");
+			Debug.Log($"{gameObject.name}: Generated {baked.name} with {baked.vertexCount} vertices to prepare for wireframe display");
 		} else {
 			// ToDo: even if we're not showing wireframe, there's something we need
 			// to do here to make PaintIn3D work with the layer 0 material.
@@ -43,6 +44,8 @@ public class MeshDisplay : MonoBehaviour
 			// Probably we need to clone the material, like P3dMaterialCloner.
 			Debug.Log($"{gameObject.name}: wireframe display not selected");
 		}
+		
+		GetComponent<MeshModel>().LoadMesh();
 	}
 	
 	public void ShiftVertexTo(Vector3 oldPos, Vector3 newPos) {
@@ -58,8 +61,13 @@ public class MeshDisplay : MonoBehaviour
 	// Return whether the given vertex, edge, or triangle is currently selected.
 	public bool IsSelected(SelectionTool.Mode mode, int index) {
 		EnsureColors();
-		int baseTriIdx = index * 3;
-		return colors32[baseTriIdx].a > 128;
+		if (mode == SelectionTool.Mode.Face) {
+			int baseTriIdx = index * 3;
+			return colors32[baseTriIdx].a > 128;
+		} else if (mode == SelectionTool.Mode.Vertex) {
+			return colors32[index].a > 128;
+		}
+		return false;
 	}
 	
 	// Select or deselect the given vertex, edge, or triangle.

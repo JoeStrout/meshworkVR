@@ -104,13 +104,13 @@ public class SelectionTool : Tool
 			// Deselect!
 			Debug.Log($"Deselecting triangle {curIndex} of {curMesh.gameObject.name}");
 			display.SetSelected(mode, curIndex, false);
-			audioSrc.pitch = 0.9f;
+			audioSrc.pitch = 0.8f;
 			audioSrc.Play();
 		} else if (!isSelected && dragMode == DragMode.Selecting) {
 			// Select!
 			Debug.Log($"Selecting triangle {curIndex} of {curMesh.gameObject.name}");
 			display.SetSelected(mode, curIndex, true);
-			audioSrc.pitch = 1.1f;
+			audioSrc.pitch = 1.2f;
 			audioSrc.Play();
 		}
 	}

@@ -99,8 +99,7 @@ public class MeshTweakTool : Tool
 				break;
 			case Mode.Face:
 				if (!mesh.FindFace(endPoint.position, transform.position, bestDist, out idx, out dist)) continue;
-				toolRelativePositions.Clear();
-				mesh.FindFaceVertices(idx, toolRelativePositions, transform);
+				GrabFaces(mesh, idx);
 				break;
 			}
 			dragIndex = idx;
@@ -116,6 +115,27 @@ public class MeshTweakTool : Tool
 			if (audio != null) audio.Play();
 		}
 		
+	}
+	
+	/// <summary>
+	/// Grab the set of faces that should be dragged along with the given (hit) triangle.
+	/// </summary>
+	/// <param name="mesh"></param>
+	/// <param name="triangleIndex"></param>
+	void GrabFaces(MeshModel mesh, int triangleIndex) {
+		toolRelativePositions.Clear();
+
+		// First, check whether the hit triangle is selected.  If so, then we just
+		// need to grab all the vertices in the selection.
+		var disp = mesh.GetComponent<MeshDisplay>();
+		if (disp.IsSelected(SelectionTool.Mode.Face, triangleIndex)) {
+			mesh.FindSelectionVertices(toolRelativePositions, transform);
+		} else {
+			// If the hit triangle is not selected, then just find the vertices that
+			// are in the given "face".
+			mesh.FindFaceVertices(triangleIndex, toolRelativePositions, transform);			
+		}
+
 	}
 	
 	void Drag() {

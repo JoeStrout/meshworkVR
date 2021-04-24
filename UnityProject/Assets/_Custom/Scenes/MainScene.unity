@@ -17543,7 +17543,7 @@ PrefabInstance:
     - target: {fileID: 3191778155519415468, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
       propertyPath: m_Center.x
-      value: 0
+      value: 0.0000000015575936
       objectReference: {fileID: 0}
     - target: {fileID: 3191778155519415468, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
@@ -17553,7 +17553,7 @@ PrefabInstance:
     - target: {fileID: 3191778155519415468, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}
       propertyPath: m_Center.z
-      value: 0
+      value: -0.000000014819531
       objectReference: {fileID: 0}
     - target: {fileID: 5716694575013769571, guid: 56e670edd4a18472f94b8fac0a4e21be,
         type: 3}

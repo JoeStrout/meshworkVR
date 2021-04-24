@@ -45,7 +45,7 @@ public class MeshModel : MonoBehaviour
 		meshCollider = GetComponent<MeshCollider>();
 	}
 	
-	protected void Start() {
+	public void LoadMesh() {
 		mesh = GetComponent<MeshFilter>().sharedMesh;
 		vertices = mesh.vertices;
 		uv = mesh.uv;
@@ -58,7 +58,7 @@ public class MeshModel : MonoBehaviour
 			edges.Add(new MeshEdge() { index0=tris[i+1], index1=tris[i+2] } );
 			edges.Add(new MeshEdge() { index0=tris[i+2], index1=tris[i+0] } );
 		}
-		Debug.Log($"{gameObject.name} with {tris.Length/3} triangles: {edges.Count} edges");
+		Debug.Log($"{gameObject.name} with {tris.Length/3} triangles; {edges.Count} edges; {vertices.Length} vertices ");
 		
 		display = GetComponent<MeshDisplay>();
 	}
@@ -105,8 +105,8 @@ public class MeshModel : MonoBehaviour
 	/// Find the face closest to the given position, by casting a ray onto the mesh.
 	/// It must be within maxDist; return the actual distance in outDistance.
 	/// </summary>
-	public bool FindFace(Vector3 worldPos, Vector3 toolBase, float maxDist, out int outIndex, out float outDistance) {
-		outIndex = -1;
+	public bool FindFace(Vector3 worldPos, Vector3 toolBase, float maxDist, out int outTriangle, out float outDistance) {
+		outTriangle = -1;
 		outDistance = Mathf.Infinity;
 		Vector3 localEnd = transform.InverseTransformPoint(worldPos);
 		Vector3 localBase = transform.InverseTransformPoint(toolBase);
@@ -114,10 +114,10 @@ public class MeshModel : MonoBehaviour
 		var ray = new Ray(localBase, localEnd - localBase);
 		Vector3 hitPoint;
 		float hitDistance;
-		int hitTriangle;
-		if (!MeshUtils.RayMeshIntersect(ray, vertices, triangles, out hitPoint, out hitDistance, out hitTriangle)) return false;
+		int triBaseIndex;
+		if (!MeshUtils.RayMeshIntersect(ray, vertices, triangles, out hitPoint, out hitDistance, out triBaseIndex)) return false;
 		if (hitDistance > maxDist) return false;
-		outIndex = hitTriangle;
+		outTriangle = triBaseIndex / 3;
 		outDistance = hitDistance;
 		return true;
 	}
@@ -147,9 +147,9 @@ public class MeshModel : MonoBehaviour
 		AddTriVertices(triIndex, positions, relativeTo);
 		// Now search for another triangle with a shared edge, the same normal,
 		// and the most acute corner angles on that edge.
-		Vector3 v0 = vertices[triangles[triIndex+0]];
-		Vector3 v1 = vertices[triangles[triIndex+1]];
-		Vector3 v2 = vertices[triangles[triIndex+2]];
+		Vector3 v0 = vertices[triangles[triIndex*3+0]];
+		Vector3 v1 = vertices[triangles[triIndex*3+1]];
+		Vector3 v2 = vertices[triangles[triIndex*3+2]];
 		Vector3 normal = TriangleNormal(v0, v1, v2);
 		for (int t=0; t<triangles.Length; t += 3) {
 			if (t == triIndex) continue;
@@ -166,6 +166,28 @@ public class MeshModel : MonoBehaviour
 			// For now, we'll just go wit the first such triangle we find.
 			AddTriVertices(t, positions, relativeTo);
 			break;
+		}
+	}
+	
+	/// Add all vertices in the selection to a dictionary with the vertex index as the key, 
+	/// and the vertex position (relative to the given transform) as the value.
+	/// Note that this includes vertices of the selected triangles, AND any vertices at
+	/// the same positions (but belonging to other triangles).
+	public void FindSelectionVertices(Dictionary<int, Vector3> positions, Transform relativeTo) {
+		var disp = GetComponent<MeshDisplay>();
+		for (int i=0; i<vertices.Length; i++) {
+			if (!disp.IsSelected(SelectionTool.Mode.Vertex, i)) continue;
+			// OK, vertex i is selected, but we need all vertices at the same position too.
+			Vector3 pos = vertices[i];
+			Debug.Log("Selecting vertices at same pos as " + i + " (" + pos + ")");
+			for (int j=0; j<vertices.Length; j++) {
+				Vector3 v = vertices[j];
+				if (!v.ApproximatelyEqual(pos)) continue;
+				if (relativeTo != null && relativeTo != transform) {
+					v = relativeTo.InverseTransformPoint(transform.TransformPoint(v));
+				}
+				positions[j] = v;
+			}
 		}
 	}
 	
