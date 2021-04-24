@@ -30,7 +30,9 @@ public class HandTracker : MonoBehaviour
 	public bool fakeTrigger = false;
 	[Range(0,1)] public float fakeTriggerValue = 0;
 	public bool fakeGrip = false;
-	[Range(0,1)] public float fakeGripValue = 0;	
+	[Range(0,1)] public float fakeGripValue = 0;
+	public bool fakeButtonX = false;
+	public bool fakeButtonY = false;
 	#endif
 
 	//public Grabber grabber;
@@ -156,8 +158,10 @@ public class HandTracker : MonoBehaviour
 		//else Debug.Log("No controller standin for you!");
 		
 		#if UNITY_EDITOR
-		if (fakeTrigger) trigger = fakeTriggerValue;
-		if (fakeGrip) grip = fakeGripValue;
+		if (fakeTrigger) trigger = fakeTriggerValue; else trigger = 0;
+		if (fakeGrip) grip = fakeGripValue; else grip = 0;
+		curButtonStates[(int)Button.X] = fakeButtonX;
+		curButtonStates[(int)Button.Y] = fakeButtonY;
 		#endif
 		
 		curButtonStates[(int)Button.Trigger] = (trigger > 0.5f);

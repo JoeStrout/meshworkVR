@@ -48,7 +48,12 @@ public class MeshDisplay : MonoBehaviour
 		GetComponent<MeshModel>().LoadMesh();
 	}
 	
-	public void ShiftVertexTo(Vector3 oldPos, Vector3 newPos) {
+	public void Rebake() {
+		MeshFilter mf = GetComponent<MeshFilter>();
+		Mesh baked = mf.sharedMesh.GenerateWireframeMesh(true, true);
+		mf.sharedMesh = baked;
+		GetComponent<MeshCollider>().sharedMesh = baked;
+		GetComponent<MeshModel>().LoadMesh();
 	}
 	
 	void EnsureColors() {
@@ -63,7 +68,7 @@ public class MeshDisplay : MonoBehaviour
 		EnsureColors();
 		if (mode == SelectionTool.Mode.Face) {
 			int baseTriIdx = index * 3;
-			return colors32[baseTriIdx].a > 128;
+			return colors32[baseTriIdx].a > 128 && colors32[baseTriIdx+1].a > 128 && colors32[baseTriIdx+2].a > 128;
 		} else if (mode == SelectionTool.Mode.Vertex) {
 			return colors32[index].a > 128;
 		}

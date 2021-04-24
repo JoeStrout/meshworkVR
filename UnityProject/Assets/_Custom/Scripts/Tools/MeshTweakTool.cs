@@ -20,12 +20,10 @@ public class MeshTweakTool : Tool
 	public FormatText infoText;
 	
 	public Mode mode = Mode.Vertex;
-
-	public bool forceApply;
 	
 	bool isDragging = false;
 	
-	bool wasDown = false;
+	bool grabWasDown = false;
 	
 	Collider[] tempColliders = new Collider[32];
 	MeshModel dragMesh;			// mesh we are currently tweaking
@@ -58,11 +56,15 @@ public class MeshTweakTool : Tool
 			hadCenter = false;
 		}
 		
-		bool isDown = forceApply || (handTracker.trigger > (wasDown ? 0.4f : 0.6f));
-		if (isDown && !wasDown) BeginDrag();
-		else if (wasDown && !isDown) EndDrag();
+		bool isDown = (handTracker.trigger > (grabWasDown ? 0.4f : 0.6f));
+		if (isDown && !grabWasDown) BeginDrag();
+		else if (grabWasDown && !isDown) EndDrag();
 		else if (isDragging) Drag();
-		wasDown = isDown;
+		grabWasDown = isDown;
+		
+		if (isDragging && handTracker.GetButtonDown(HandTracker.Button.X)) {
+			dragMesh.DoExtrude();
+		}
 	}
 	
 	void SetMode(Mode newMode) {
@@ -165,4 +167,5 @@ public class MeshTweakTool : Tool
 		if (audio != null) audio.Stop();
 		isDragging = false;
 	}
+	
 }

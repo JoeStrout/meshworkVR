@@ -21,6 +21,7 @@ public class MeshModel : MonoBehaviour
 	MeshCollider meshCollider;
 
 	public struct MeshEdge {
+		public MeshEdge(int a=0, int b=0) { index0 = a; index1 = b; }
 		public int index0;
 		public int index1;
 	}
@@ -191,11 +192,101 @@ public class MeshModel : MonoBehaviour
 		}
 	}
 	
-	public Vector3 TriangleNormal(int triIndex) {
+	/// Return a list of triangle indexes for all selected triangles.
+	public List<int> FindSelectedTriangles() {
+		var disp = GetComponent<MeshDisplay>();
+		var tris = new List<int>();
+		for (int i=0; i<triangles.Length/3; i++) {
+			if (disp.IsSelected(SelectionTool.Mode.Face, i)) tris.Add(i);
+		}
+		return tris;
+	}
+	
+	/// Find the edges along the outside of the current selection.  That is, all edges
+	/// that belong to exactly one selected triangle.
+	List<MeshEdge> FindSelectionEdges(List<int> tris) {
+		var result = new List<MeshEdge>();
+		
+		// For each edge of each triangle, see if it is shared by any other triangles
+		// (considering position and not just vertex numbers).
+		for (int i=0; i<tris.Count; i++) {
+			int iBase = tris[i]*3;
+			Vector3 v0 = vertices[triangles[iBase + 0]];
+			Vector3 v1 = vertices[triangles[iBase + 1]];
+			Vector3 v2 = vertices[triangles[iBase + 2]];
+			bool v0v1Edge = true, v1v2Edge = true, v2v0Edge = true;
+			for (int j=0; j<tris.Count && (v0v1Edge || v1v2Edge || v2v0Edge); j++) {
+				if (i == j) continue;
+				int jBase = tris[j] * 3;
+				if (HasEdge(jBase, v0, v1)) v0v1Edge = false;
+				if (HasEdge(jBase, v1, v2)) v1v2Edge = false;
+				if (HasEdge(jBase, v2, v0)) v2v0Edge = false;
+			}
+			// ...and store each edge NOT shared with any other triangle
+			if (v0v1Edge) result.Add(new MeshEdge(iBase + 0, iBase + 1));
+			if (v1v2Edge) result.Add(new MeshEdge(iBase + 1, iBase + 2));
+			if (v2v0Edge) result.Add(new MeshEdge(iBase + 2, iBase + 0));
+		}
+		Debug.Log($"FindSelectionEdges found {result.Count} edges");
+		return result;
+	}
+	
+	// Do one extrusion step, i.e., duplicate all the edges around the selection
+	// and connect them with quads to the old edges.
+	public void DoExtrude() {
+		// Start by finding the edges on the outside of the selection.
+		List<int> selectedTriangles = FindSelectedTriangles();
+		List<MeshModel.MeshEdge> edges = FindSelectionEdges(selectedTriangles);
+		if (edges.Count == 0) return;
+		
+		// Now we need to create a quad for each of those by creating two
+		// new vertices.  The new vertices will be left at the same position as
+		// the old ones, but only the old ones are in the set of vertices grabbed
+		// and dragged by the user.
+		var newVerts = new List<Vector3>(vertices);
+		var newUV = new List<Vector2>(uv);
+		var newTris = new List<int>(triangles);
+		foreach (var edge in edges) {
+			newVerts.Add(vertices[edge.index0]);	newUV.Add(uv[edge.index0]);
+			newVerts.Add(vertices[edge.index1]);	newUV.Add(uv[edge.index1]);
+			newTris.Add(edge.index0); newTris.Add(edge.index1); newTris.Add(newVerts.Count-2);
+			newTris.Add(edge.index1); newTris.Add(newVerts.Count-1); newTris.Add(newVerts.Count-2);
+		}
+		
+		// Drat, that's not good enough.  We need to actually shift the vertices in
+		// the selection set so they no longer match the ones we don't want to move.
+		Vector3 smallShift = new Vector3(0, 0.1f, 0);
+		foreach (int triIdx in selectedTriangles) {
+			newVerts[newTris[triIdx*3]+0] += smallShift;
+			newVerts[newTris[triIdx*3]+1] += smallShift;
+			newVerts[newTris[triIdx*3]+2] += smallShift;			
+		}
+		
+		// Update the mesh.
+		mesh.vertices = newVerts.ToArray();
+		mesh.uv = newUV.ToArray();
+		mesh.triangles = newTris.ToArray();
+		GetComponent<MeshDisplay>().Rebake();
+	}
+
+	/// <summary>
+	/// Return whether the triangle starting at triBaseIndex has an edge matching v0,v1.
+	/// </summary>
+	public bool HasEdge(int triBaseIndex, Vector3 v0, Vector3 v1) {
+		Vector3 a = vertices[triBaseIndex+0];
+		Vector3 b = vertices[triBaseIndex+1];
+		Vector3 c = vertices[triBaseIndex+2];
+		if (a == v0 && b == v1 || (a == v1 && b == v0)) return true;
+		if (b == v0 && c == v1 || (b == v1 && c == v0)) return true;
+		if (c == v0 && a == v1 || (c == v1 && a == v0)) return true;
+		return false;
+	}
+	
+	public Vector3 TriangleNormal(int triBaseIndex) {
 		return TriangleNormal(
-			vertices[triangles[triIndex+0]],
-			vertices[triangles[triIndex+1]],
-			vertices[triangles[triIndex+2]]);
+			vertices[triangles[triBaseIndex+0]],
+			vertices[triangles[triBaseIndex+1]],
+			vertices[triangles[triBaseIndex+2]]);
 	}
 	
 	public Vector3 TriangleNormal(Vector3 v0, Vector3 v1, Vector3 v2) {
@@ -235,7 +326,6 @@ public class MeshModel : MonoBehaviour
 		if (!updateMesh) return;
 		mesh.vertices = vertices;
 		meshCollider.sharedMesh = mesh;	// (forces collider to re-cook)
-		if (display != null) display.ShiftVertexTo(oldPos, newPos);
 	}
 	
 	/// <summary>
