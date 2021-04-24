@@ -13,8 +13,13 @@ public class MeshDisplay : MonoBehaviour
 	
 	public bool showWireframe;
 	
+	public Color selectionColor = Color.cyan;
+	
 	// keeps track of which texture layer is currently selected for painting:
 	public P3dPaintableTexture selectedTexture;
+	
+	Mesh mesh;
+	Color32[] colors32;
 	
 	protected void Start() {
 		if (showWireframe) {
@@ -41,5 +46,31 @@ public class MeshDisplay : MonoBehaviour
 	}
 	
 	public void ShiftVertexTo(Vector3 oldPos, Vector3 newPos) {
+	}
+	
+	void EnsureColors() {
+		if (mesh == null) mesh = GetComponent<MeshFilter>().sharedMesh;
+		if (colors32 != null && colors32.Length == mesh.vertexCount) return;
+		colors32 = mesh.colors32;
+		if (colors32 == null || colors32.Length == 0) colors32 = new Color32[mesh.vertexCount];
+	}
+
+	// Return whether the given vertex, edge, or triangle is currently selected.
+	public bool IsSelected(SelectionTool.Mode mode, int index) {
+		EnsureColors();
+		int baseTriIdx = index * 3;
+		return colors32[baseTriIdx].a > 128;
+	}
+	
+	// Select or deselect the given vertex, edge, or triangle.
+	public void SetSelected(SelectionTool.Mode mode, int index, bool isSelected) {
+		EnsureColors();
+		Color32 colorToSet = (isSelected ? selectionColor : Color.clear);
+		var tris = mesh.triangles;
+		int baseTriIdx = index * 3;
+		for (int i=0; i<3; i++) {
+			colors32[tris[baseTriIdx + i]] = colorToSet;
+		}
+		mesh.colors32 = colors32;
 	}
 }

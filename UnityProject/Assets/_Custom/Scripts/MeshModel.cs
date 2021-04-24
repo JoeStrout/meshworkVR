@@ -18,7 +18,6 @@ public class MeshModel : MonoBehaviour
 	int[] triangles;
 
 	MeshDisplay display;
-
 	MeshCollider meshCollider;
 
 	public struct MeshEdge {
