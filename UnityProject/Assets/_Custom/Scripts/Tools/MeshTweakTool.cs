@@ -18,6 +18,7 @@ public class MeshTweakTool : Tool
 	public FormatText label;
 	public FormatText infoTitle;
 	public FormatText infoText;
+	public AudioSource extrudeSound;
 	
 	public Mode mode = Mode.Vertex;
 	
@@ -63,6 +64,7 @@ public class MeshTweakTool : Tool
 		grabWasDown = isDown;
 		
 		if (isDragging && handTracker.GetButtonDown(HandTracker.Button.X)) {
+			extrudeSound.Play();
 			dragMesh.DoExtrude();
 		}
 	}
@@ -166,6 +168,7 @@ public class MeshTweakTool : Tool
 	void EndDrag() {
 		if (audio != null) audio.Stop();
 		isDragging = false;
+		if (dragMesh != null) dragMesh.RecalcBoundsAndNormals();
 	}
 	
 }

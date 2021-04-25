@@ -50,17 +50,21 @@ public class MeshDisplay : MonoBehaviour
 	
 	public void Rebake() {
 		MeshFilter mf = GetComponent<MeshFilter>();
-		Mesh baked = mf.sharedMesh.GenerateWireframeMesh(true, true);
-		mf.sharedMesh = baked;
-		GetComponent<MeshCollider>().sharedMesh = baked;
+		mesh = mf.sharedMesh.GenerateWireframeMesh(true, true);
+		mf.sharedMesh = mesh;
+		GetComponent<MeshCollider>().sharedMesh = mesh;
 		GetComponent<MeshModel>().LoadMesh();
 	}
 	
 	void EnsureColors() {
 		if (mesh == null) mesh = GetComponent<MeshFilter>().sharedMesh;
 		if (colors32 != null && colors32.Length == mesh.vertexCount) return;
+		Debug.Log($"Reassigning colors32 ({colors32}) from mesh ({mesh.colors32})");
 		colors32 = mesh.colors32;
-		if (colors32 == null || colors32.Length == 0) colors32 = new Color32[mesh.vertexCount];
+		if (colors32 == null || colors32.Length != mesh.vertexCount) {
+			colors32 = new Color32[mesh.vertexCount];
+			Debug.Log($"Created fresh colors32 array of length {colors32.Length}");
+		}
 	}
 
 	// Return whether the given vertex, edge, or triangle is currently selected.

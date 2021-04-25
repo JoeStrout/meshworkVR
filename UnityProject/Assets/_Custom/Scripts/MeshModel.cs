@@ -16,6 +16,8 @@ public class MeshModel : MonoBehaviour
 	Vector3[] vertices;
 	Vector2[] uv;
 	int[] triangles;
+	// But also keep track of which vertices are welded to which others:
+	int[] weldGroup;	// index of lowest-numbered vertex this one is welded to
 
 	MeshDisplay display;
 	MeshCollider meshCollider;
@@ -51,6 +53,7 @@ public class MeshModel : MonoBehaviour
 		vertices = mesh.vertices;
 		uv = mesh.uv;
 		triangles = mesh.triangles;
+		RecalcWeldGroups();
 		
 		edges = new List<MeshEdge>();
 		var tris = mesh.triangles;
@@ -64,6 +67,17 @@ public class MeshModel : MonoBehaviour
 		display = GetComponent<MeshDisplay>();
 	}
 	
+	void RecalcWeldGroups() {
+		if (weldGroup == null || weldGroup.Length != vertices.Length) weldGroup = new int[vertices.Length];
+		for (int i=0; i<vertices.Length; i++) {
+			if (i > 0 && weldGroup[i] > 0) continue;
+			weldGroup[i] = i;
+			Vector3 pos = vertices[i];
+			for (int j=i+1; j<vertices.Length; j++) {
+				if (weldGroup[j] == 0 && vertices[j] == pos) weldGroup[j] = i;
+			}
+		}
+	}
 	
 	public Vector3 Vertex(int idx) { return vertices[idx]; }
 	
@@ -138,6 +152,11 @@ public class MeshModel : MonoBehaviour
 		}
 	}
 	
+	public void RecalcBoundsAndNormals() {
+		mesh.RecalculateBounds();
+		mesh.RecalculateNormals();
+	}
+	
 	/// <summary>
 	/// Find the vertexes involved in the given triangle (and if it's part of a quad, the
 	/// partner triangle).  Add these to a dictionary with the vertex index as the key, 
@@ -172,22 +191,17 @@ public class MeshModel : MonoBehaviour
 	
 	/// Add all vertices in the selection to a dictionary with the vertex index as the key, 
 	/// and the vertex position (relative to the given transform) as the value.
-	/// Note that this includes vertices of the selected triangles, AND any vertices at
-	/// the same positions (but belonging to other triangles).
+	/// Note that we include only vertices of the actual selected triangles, and NOT any
+	/// other vertices welded to them.
 	public void FindSelectionVertices(Dictionary<int, Vector3> positions, Transform relativeTo) {
 		var disp = GetComponent<MeshDisplay>();
 		for (int i=0; i<vertices.Length; i++) {
-			if (!disp.IsSelected(SelectionTool.Mode.Vertex, i)) continue;
-			// OK, vertex i is selected, but we need all vertices at the same position too.
-			Vector3 pos = vertices[i];
-			Debug.Log("Selecting vertices at same pos as " + i + " (" + pos + ")");
-			for (int j=0; j<vertices.Length; j++) {
-				Vector3 v = vertices[j];
-				if (!v.ApproximatelyEqual(pos)) continue;
+			if (disp.IsSelected(SelectionTool.Mode.Vertex, i)) {
+				Vector3 v = vertices[i];
 				if (relativeTo != null && relativeTo != transform) {
 					v = relativeTo.InverseTransformPoint(transform.TransformPoint(v));
 				}
-				positions[j] = v;
+				positions[i] = v;
 			}
 		}
 	}
@@ -209,6 +223,7 @@ public class MeshModel : MonoBehaviour
 		
 		// For each edge of each triangle, see if it is shared by any other triangles
 		// (considering position and not just vertex numbers).
+		// ToDo: is there some way to do this by weld group instead of position?
 		for (int i=0; i<tris.Count; i++) {
 			int iBase = tris[i]*3;
 			Vector3 v0 = vertices[triangles[iBase + 0]];
@@ -234,39 +249,74 @@ public class MeshModel : MonoBehaviour
 	// Do one extrusion step, i.e., duplicate all the edges around the selection
 	// and connect them with quads to the old edges.
 	public void DoExtrude() {
+		var sb = new System.Text.StringBuilder();
+		var disp = GetComponent<MeshDisplay>();
+		for (int i=0; i<vertices.Length; i++) if (disp.IsSelected(SelectionTool.Mode.Vertex,i)) {
+			sb.Append($"{i}({weldGroup[i]}) ");
+		}
+		Debug.Log("Selection (before extrude): " + sb.ToString());
+
 		// Start by finding the edges on the outside of the selection.
 		List<int> selectedTriangles = FindSelectedTriangles();
 		List<MeshModel.MeshEdge> edges = FindSelectionEdges(selectedTriangles);
 		if (edges.Count == 0) return;
 		
-		// Now we need to create a quad for each of those by creating two
-		// new vertices.  The new vertices will be left at the same position as
-		// the old ones, but only the old ones are in the set of vertices grabbed
-		// and dragged by the user.
+		// Now we need to create a quad for each of those by creating four
+		// new vertices.  (You might think we could share some of the existing vertices,
+		// but the wireframe renderer requires completely separate triangles anyway,
+		// and it simplifies our data management to just do it now.)
 		var newVerts = new List<Vector3>(vertices);
 		var newUV = new List<Vector2>(uv);
 		var newTris = new List<int>(triangles);
+		var newColors = new List<Color32>(mesh.colors32);
+		Color32 clear = Color.clear;
+		Vector3 smallShift = new Vector3(0, 0.1f, 0);
 		foreach (var edge in edges) {
-			newVerts.Add(vertices[edge.index0]);	newUV.Add(uv[edge.index0]);
-			newVerts.Add(vertices[edge.index1]);	newUV.Add(uv[edge.index1]);
-			newTris.Add(edge.index0); newTris.Add(edge.index1); newTris.Add(newVerts.Count-2);
-			newTris.Add(edge.index1); newTris.Add(newVerts.Count-1); newTris.Add(newVerts.Count-2);
+			int idx = newVerts.Count;
+			newVerts.Add(vertices[edge.index0]);	newUV.Add(uv[edge.index0]);		newColors.Add(clear);
+			newVerts.Add(vertices[edge.index1]);	newUV.Add(uv[edge.index1]);		newColors.Add(clear);
+			newVerts.Add(vertices[edge.index0]+smallShift);	newUV.Add(uv[edge.index0]);		newColors.Add(clear);
+			newVerts.Add(vertices[edge.index1]+smallShift);	newUV.Add(uv[edge.index1]);		newColors.Add(clear);
+
+			newTris.Add(idx+0); newTris.Add(idx+1); newTris.Add(idx+2);
+			newTris.Add(idx+2); newTris.Add(idx+1); newTris.Add(idx+3);
+			
+			Debug.Log($"Extrude: created new quad {idx}, {idx+1}, {idx+2}, {idx+3}");
 		}
 		
 		// Drat, that's not good enough.  We need to actually shift the vertices in
 		// the selection set so they no longer match the ones we don't want to move.
-		Vector3 smallShift = new Vector3(0, 0.1f, 0);
 		foreach (int triIdx in selectedTriangles) {
+			Debug.Log($"Shifting {newTris[triIdx*3]+0}, {newTris[triIdx*3]+1}, and {newTris[triIdx*3]+2}");
 			newVerts[newTris[triIdx*3]+0] += smallShift;
 			newVerts[newTris[triIdx*3]+1] += smallShift;
-			newVerts[newTris[triIdx*3]+2] += smallShift;			
+			newVerts[newTris[triIdx*3]+2] += smallShift;		
 		}
+		Debug.Log($"after shift: 24@{newVerts[24]}, 25@{newVerts[25]}, 36@{newVerts[36]}, 37@{newVerts[37]}");
 		
 		// Update the mesh.
 		mesh.vertices = newVerts.ToArray();
 		mesh.uv = newUV.ToArray();
 		mesh.triangles = newTris.ToArray();
+		mesh.colors32 = newColors.ToArray();
+		mesh.RecalculateNormals();
+
+		sb = new System.Text.StringBuilder();
+		for (int i=0; i<vertices.Length; i++) if (mesh.colors32[i].a > 128) {
+			sb.Append($"{i} ");
+		}
+		Debug.Log("Selection (from mesh.colors before bake): " + sb.ToString());
+
 		GetComponent<MeshDisplay>().Rebake();
+
+		Debug.Log($"after bake: 24@{mesh.vertices[24]}, 24@{mesh.vertices[24]}, 36@{mesh.vertices[24]}, 37@{mesh.vertices[24]}");
+
+		Debug.Log($"Weld groups: 25->{weldGroup[25]}, 26->{weldGroup[26]}, 36->{weldGroup[36]}, 37->{weldGroup[37]}");
+		sb = new System.Text.StringBuilder();
+		for (int i=0; i<vertices.Length; i++) if (disp.IsSelected(SelectionTool.Mode.Vertex,i)) {
+			sb.Append($"{i}({weldGroup[i]}) ");
+		}
+		Debug.Log("Selection (after extrude): " + sb.ToString());
 	}
 
 	/// <summary>
@@ -295,7 +345,7 @@ public class MeshModel : MonoBehaviour
 	
 	/// <summary>
 	/// Add the given delta to the UV of the given vertex, and any other
-	/// vertices which share the same position and UV coordinates.
+	/// vertices in the same weld group AND using the same UV.
 	/// </summary>
 	/// <param name="index"></param>
 	/// <param name="dUV"></param>
@@ -303,8 +353,9 @@ public class MeshModel : MonoBehaviour
 		Vector3 vpos = vertices[index];
 		Vector2 oldUV = uv[index];
 		Vector2 newUV = oldUV + dUV;
+		int weld = weldGroup[index];
 		for (int i=0; i<uv.Length; i++) {
-			if (i == index || (vertices[i] == vpos && uv[i] == oldUV)) {
+			if (weldGroup[i] == weld && uv[i] == oldUV) {
 				uv[i] = newUV;
 				onUVChanged.Invoke(i);
 			}
@@ -314,14 +365,12 @@ public class MeshModel : MonoBehaviour
 	
 	/// <summary>
 	/// Add the given delta to the position of the given vertex, and
-	/// any other vertices that share the same position.
+	/// any other vertices in the same weld group.
 	/// </summary>
 	public void ShiftVertexTo(int index, Vector3 newPos, bool updateMesh=true) {
-		Vector3 oldPos = vertices[index];
+		int weld = weldGroup[index];
 		for (int i=0; i<uv.Length; i++) {
-			if (i == index || vertices[i] == oldPos) {
-				vertices[i] = newPos;
-			}
+			if (weldGroup[i] == weld) vertices[i] = newPos;
 		}
 		if (!updateMesh) return;
 		mesh.vertices = vertices;

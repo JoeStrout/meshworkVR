@@ -112,6 +112,12 @@ public class SelectionTool : Tool
 			display.SetSelected(mode, curIndex, true);
 			audioSrc.pitch = 1.2f;
 			audioSrc.Play();
+			
+			var sb = new System.Text.StringBuilder();
+			for (int i=0; i<curMesh.vertexCount; i++) if (display.IsSelected(SelectionTool.Mode.Vertex,i)) {
+				sb.Append($"{i} ");
+			}
+			Debug.Log("Selected vertices: " + sb.ToString());
 		}
 	}
 	
