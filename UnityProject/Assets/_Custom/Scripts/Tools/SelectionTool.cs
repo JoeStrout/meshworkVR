@@ -65,6 +65,13 @@ public class SelectionTool : Tool
 		else if (wasDown && !isDown) EndDrag();
 		else if (dragMode != DragMode.Idle) Drag();
 		wasDown = isDown;
+		
+		if (handTracker.GetButtonDown(HandTracker.Button.X) && display != null) {
+			if (display.DeselectAll()) {
+				audioSrc.pitch = 0.5f;
+				audioSrc.Play();	// ToDo: play this at the location of the deselected triangle, in case it's far away!
+			}
+		}
 	}
 	
 	void SetMode(Mode newMode) {
@@ -102,22 +109,14 @@ public class SelectionTool : Tool
 		bool isSelected = display.IsSelected(mode, curIndex);
 		if (isSelected && dragMode == DragMode.Deselecting) {
 			// Deselect!
-			Debug.Log($"Deselecting triangle {curIndex} of {curMesh.gameObject.name}");
 			display.SetSelected(mode, curIndex, false);
 			audioSrc.pitch = 0.8f;
-			audioSrc.Play();
+			audioSrc.Play();	// ToDo: play this at the location of the deselected triangle, in case it's far away!
 		} else if (!isSelected && dragMode == DragMode.Selecting) {
 			// Select!
-			Debug.Log($"Selecting triangle {curIndex} of {curMesh.gameObject.name}");
 			display.SetSelected(mode, curIndex, true);
 			audioSrc.pitch = 1.2f;
 			audioSrc.Play();
-			
-			var sb = new System.Text.StringBuilder();
-			for (int i=0; i<curMesh.vertexCount; i++) if (display.IsSelected(SelectionTool.Mode.Vertex,i)) {
-				sb.Append($"{i} ");
-			}
-			Debug.Log("Selected vertices: " + sb.ToString());
 		}
 	}
 	

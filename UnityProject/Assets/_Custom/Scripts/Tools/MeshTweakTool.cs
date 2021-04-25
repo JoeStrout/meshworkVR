@@ -5,6 +5,7 @@ or edges, or faces, depending on the current editing mode.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class MeshTweakTool : Tool
 {
@@ -46,26 +47,38 @@ public class MeshTweakTool : Tool
 
 	protected void Update() {
 		base.Update();
-		
-		float stickX = handTracker.thumbStick.x;
-		if (stickX > -0.3 && stickX < 0.3) hadCenter = true;
-		else if (stickX < -0.7f && hadCenter) {
-			ShiftMode(-1);
-			hadCenter = false;
-		} else if (stickX > 0.7f && hadCenter) {
-			ShiftMode(1);
-			hadCenter = false;
-		}
-		
+				
 		bool isDown = (handTracker.trigger > (grabWasDown ? 0.4f : 0.6f));
 		if (isDown && !grabWasDown) BeginDrag();
 		else if (grabWasDown && !isDown) EndDrag();
 		else if (isDragging) Drag();
 		grabWasDown = isDown;
 		
-		if (isDragging && handTracker.GetButtonDown(HandTracker.Button.X)) {
-			extrudeSound.Play();
-			dragMesh.DoExtrude();
+		float stickX = handTracker.thumbStick.x;
+		if (isDragging) {
+			// Additional functions you can do while dragging:
+			
+			// Extrude (button X)
+			if (handTracker.GetButtonDown(HandTracker.Button.X)) {
+				extrudeSound.Play();
+				dragMesh.DoExtrude();
+			}
+			
+			// Scale (thumb stick)
+			float stickY = handTracker.thumbStick.y;
+			float scaleInput = (Mathf.Abs(stickX) > Mathf.Abs(stickY) ? stickX : stickY);
+			if (scaleInput > 0.1f) ScaleSelection(Mathf.InverseLerp(0.1f, 1f, scaleInput));
+			else if (scaleInput < -0.1f) ScaleSelection(-Mathf.InverseLerp(-0.1f, -1f, scaleInput));
+		} else {
+			// While not dragging: check stick to change mode.
+			if (stickX > -0.3 && stickX < 0.3) hadCenter = true;
+			else if (stickX < -0.7f && hadCenter) {
+				ShiftMode(-1);
+				hadCenter = false;
+			} else if (stickX > 0.7f && hadCenter) {
+				ShiftMode(1);
+				hadCenter = false;
+			}
 		}
 	}
 	
@@ -171,4 +184,22 @@ public class MeshTweakTool : Tool
 		if (dragMesh != null) dragMesh.RecalcBoundsAndNormals();
 	}
 	
+	/// <summary>
+	/// Scale the selection (and any welded vertices) in the given direction and speed:
+	/// +1 = scale up, -1 = scale down, 0 = no scaling.
+	/// </summary>
+	void ScaleSelection(float direction) {
+		float scaleFactor = 1;
+		if (direction > 0) {
+			// If scaling up at full speed, double in size over 1 second; 2^(1/60) = 1.011619
+			scaleFactor = 1f + 0.011619f * direction;
+		} else {
+			// If scaling down at full speed, halve the size over 1 second; 0.5^(1/60) = 0.011486
+			scaleFactor = 1f + 0.011486f * direction;
+		}
+
+		foreach (int idx in toolRelativePositions.Keys.ToArray()) {
+			toolRelativePositions[idx] *= scaleFactor;
+		}
+	}
 }

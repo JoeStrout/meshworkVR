@@ -45,7 +45,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -127,22 +127,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &3807543341746316012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3930756724135117010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f669e5e29b1b4d7ca85f69139388a70, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  format: '{0}'
-  textChanged:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &5716694573614404614
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,7 +316,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f669e5e29b1b4d7ca85f69139388a70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  format: '{0}'
+  format: tweak {0}
   textChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -687,8 +671,9 @@ PrefabInstance:
     - target: {fileID: 397020969773825168, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
         type: 3}
       propertyPath: format
-      value: Touch {0}, pull trigger, and move tool to shift {0} position. Push joystick
-        left/right to change mode.
+      value: 'Touch {0}, pull trigger, and move tool to shift {0} position. Push
+        joystick left/right to change mode.  While dragging a selection: use joystick
+        to scale; press A/X to extrude.'
       objectReference: {fileID: 0}
     - target: {fileID: 1400538102859537635, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
         type: 3}
@@ -778,15 +763,14 @@ PrefabInstance:
     - target: {fileID: 8887693913291518620, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
         type: 3}
       propertyPath: m_text
-      value: 'Touch vertex, pull trigger, and move tool to shift vertex position.
-
-        Push
-        joystick left/right to change mode.'
+      value: 'Touch {0}, pull trigger, and move tool to shift {0} position. Push
+        joystick left/right to change mode.  While dragging a selection: use joystick
+        to scale; press A/X to extrude.'
       objectReference: {fileID: 0}
     - target: {fileID: 8887693913291518620, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
         type: 3}
       propertyPath: m_fontSize
-      value: 24
+      value: 22.7
       objectReference: {fileID: 0}
     - target: {fileID: 8887693913291518620, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
         type: 3}
@@ -811,19 +795,13 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5008547780664112444}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &3930756724135117010 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8290341594981430766, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
-    type: 3}
-  m_PrefabInstance: {fileID: 5008547780664112444}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &6264043433381964255 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1400538102859537635, guid: 6d8ee7bbdfbf14bd6b759769b2783ab4,
     type: 3}
   m_PrefabInstance: {fileID: 5008547780664112444}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3930756724135117010}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9f669e5e29b1b4d7ca85f69139388a70, type: 3}

@@ -16,6 +16,24 @@ public class ToolsPanel : MonoBehaviour
 		options = new List<ToolOption>(GetComponentsInChildren<ToolOption>());
 	}
 
+	protected void Start() {
+		ToolModeManager mgr = GlobalRefs.instance.leftRayInteractor.GetComponentInParent<ToolModeManager>();
+		string leftToolName = mgr.activeTool == null ? null : mgr.activeTool.name;
+		mgr = GlobalRefs.instance.rightRayInteractor.GetComponentInParent<ToolModeManager>();
+		string rightToolName = mgr.activeTool == null ? null : mgr.activeTool.name;
+		foreach (var opt in options) {
+			opt.selectedLeft = (opt.name == leftToolName);
+			opt.selectedRight = (opt.name == rightToolName);
+		}
+	}
+
+	ToolOption FindToolOption(string toolName) {
+		foreach (var opt in options) {
+			if (opt.name == toolName) return opt;
+		}
+		return null;
+	}
+
 	public void NoteClicked(ToolOption option, bool leftHand) {
 		// Update the tool buttons to show which is selected
 		foreach (var opt in options) {

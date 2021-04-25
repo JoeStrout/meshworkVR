@@ -33,6 +33,9 @@ public class HandTracker : MonoBehaviour
 	[Range(0,1)] public float fakeGripValue = 0;
 	public bool fakeButtonX = false;
 	public bool fakeButtonY = false;
+	public bool fakeThumbStick = false;
+	[Range(-1,1)] public float fakeStickX = 0;
+	[Range(-1,1)] public float fakeStickY = 0;
 	#endif
 
 	//public Grabber grabber;
@@ -162,6 +165,7 @@ public class HandTracker : MonoBehaviour
 		if (fakeGrip) grip = fakeGripValue; else grip = 0;
 		curButtonStates[(int)Button.X] = fakeButtonX;
 		curButtonStates[(int)Button.Y] = fakeButtonY;
+		if (fakeThumbStick) thumbStick = new Vector2(fakeStickX, fakeStickY);
 		#endif
 		
 		curButtonStates[(int)Button.Trigger] = (trigger > 0.5f);

@@ -90,4 +90,19 @@ public class MeshDisplay : MonoBehaviour
 		}
 		mesh.colors32 = colors32;
 	}
+	
+	// Clear the selection.  Return true if we had a selection to clear,
+	// false if nothing was selected anyway.
+	public bool DeselectAll() {
+		EnsureColors();
+		bool clearedAny = false;
+		Color32 clear = Color.clear;
+		for (int i=0; i<colors32.Length; i++) {
+			clearedAny = clearedAny || colors32[i].a > 128;
+			colors32[i] = clear;
+		}
+		if (!clearedAny) return false;
+		mesh.colors32 = colors32;
+		return true;
+	}
 }
