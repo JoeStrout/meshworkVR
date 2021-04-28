@@ -124,7 +124,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 0.05
+  bundleVersion: 0.06
   preloadedAssets:
   - {fileID: 0}
   - {fileID: 0}
@@ -185,8 +185,8 @@ PlayerSettings:
   applicationIdentifier:
     Standalone: com.LuminaryApps.DanceBot
   buildNumber: {}
-  AndroidBundleVersionCode: 5
-  AndroidMinSdkVersion: 19
+  AndroidBundleVersionCode: 6
+  AndroidMinSdkVersion: 23
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
   aotOptions: 
