@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: a29fb508bb459de53603293f1d8fff8a
+PluginImporter:
+  serializedVersion: 2
+  platformData:
+
+  - first:
+      Any:
+    second:
+      enabled: 1
+
+  - first:
+      "": Any
+    second:
+      enabled: 0
+      settings:
+
+        Exclude WindowsStoreApps: 1
+  executionOrder: {}
