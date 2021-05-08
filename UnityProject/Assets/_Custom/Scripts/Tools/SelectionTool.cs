@@ -7,18 +7,13 @@ using UnityEngine;
 
 public class SelectionTool : Tool
 {
-	public enum Mode {
-		Vertex,
-		Edge,
-		Face
-	}
 	public Transform endPoint;
 	public LayerMask selectableMask;
 	public FormatText label;
 	public FormatText infoTitle;
 	public FormatText infoText;
 	
-	public static Mode mode = Mode.Face;
+	public static MeshEditMode mode = MeshEditMode.Face;
 	
 	enum DragMode {
 		Idle,
@@ -74,7 +69,7 @@ public class SelectionTool : Tool
 		}
 	}
 	
-	void SetMode(Mode newMode) {
+	void SetMode(MeshEditMode newMode) {
 		mode = newMode;
 		string modeStr = mode.ToString().ToLower();
 		label.SetString(modeStr);
@@ -84,8 +79,8 @@ public class SelectionTool : Tool
 	
 	void ShiftMode(int delta) {
 		int modeNum = (int)mode;
-		int count = System.Enum.GetValues(typeof(Mode)).Length;
-		SetMode((Mode)((modeNum + delta + count) % count));
+		int count = System.Enum.GetValues(typeof(MeshEditMode)).Length;
+		SetMode((MeshEditMode)((modeNum + delta + count) % count));
 	}
 	
 	/// <summary>

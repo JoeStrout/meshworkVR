@@ -1,6 +1,9 @@
 ﻿/*
 This tool allows you to grab and drag parts of a mesh around: either vertices,
 or edges, or faces, depending on the current editing mode.
+
+It also allows for simple selection/deselection.  (We may not need a separate
+Selection Tool after all!)
 */
 using System.Collections;
 using System.Collections.Generic;
@@ -9,11 +12,6 @@ using System.Linq;
 
 public class MeshTweakTool : Tool
 {
-	public enum Mode {
-		Vertex,
-		Edge,
-		Face
-	}
 	public Transform endPoint;
 	public LayerMask tweakableMask;
 	public FormatText label;
@@ -21,16 +19,20 @@ public class MeshTweakTool : Tool
 	public FormatText infoText;
 	public AudioSource extrudeSound;
 	
-	public Mode mode = Mode.Vertex;
+	public MeshEditMode mode = MeshEditMode.Vertex;
 	
 	bool isDragging = false;
+	bool isSelecting = false;
+	bool isDeselecting = false;
 	
 	bool grabWasDown = false;
 	
+	float toolRayLength;
 	Collider[] tempColliders = new Collider[32];
-	MeshModel dragMesh;			// mesh we are currently tweaking
-	int dragIndex;				// index of the vertex, edge, or face which we are tweaking
-	Vector3 dragStartToolPos;	// local (to dragMesh) position of the tool at the start of the drag
+	MeshModel curMesh;			// mesh we are currently tweaking
+	int curIndex;				// index of the vertex, edge, or face which we are tweaking
+	MeshDisplay display;		// MeshDisplay associated with curMesh
+	Vector3 dragStartToolPos;	// local (to curMesh) position of the tool at the start of the drag
 	Vector3 dragStartVPos;		// local position of the grabbed vertex at the start of the drag
 	Vector3 lastToolWorldPos;	// world position of the tool on last update
 
@@ -43,14 +45,15 @@ public class MeshTweakTool : Tool
 		SetMode(mode);
 		hadCenter = false;
 		toolRelativePositions = new Dictionary<int, Vector3>();
+		toolRayLength = Vector3.Distance(transform.position, endPoint.position) + 0.01f;
 	}
 
 	protected void Update() {
 		base.Update();
 				
 		bool isDown = (handTracker.trigger > (grabWasDown ? 0.4f : 0.6f));
-		if (isDown && !grabWasDown) BeginDrag();
-		else if (grabWasDown && !isDown) EndDrag();
+		if (isDown && !grabWasDown) StartTool();
+		else if (grabWasDown && !isDown) EndTool();
 		else if (isDragging) Drag();
 		grabWasDown = isDown;
 		
@@ -61,7 +64,7 @@ public class MeshTweakTool : Tool
 			// Extrude (button X)
 			if (handTracker.GetButtonDown(HandTracker.Button.X)) {
 				extrudeSound.Play();
-				dragMesh.DoExtrude();
+				curMesh.DoExtrude();
 			}
 			
 			// Scale (thumb stick)
@@ -69,6 +72,14 @@ public class MeshTweakTool : Tool
 			float scaleInput = (Mathf.Abs(stickX) > Mathf.Abs(stickY) ? stickX : stickY);
 			if (scaleInput > 0.1f) ScaleSelection(Mathf.InverseLerp(0.1f, 1f, scaleInput));
 			else if (scaleInput < -0.1f) ScaleSelection(-Mathf.InverseLerp(-0.1f, -1f, scaleInput));
+		} else if (isSelecting || isDeselecting) {
+			// Extend a selection or deselection.
+			MeshModel model;
+			int index;
+			if (FindFaceHitByTool(out model, out index) && model == curMesh && index != curIndex) {
+				display.SetSelected(mode, index, isSelecting);
+				curIndex = index;
+			}
 		} else {
 			// While not dragging: check stick to change mode.
 			if (stickX > -0.3 && stickX < 0.3) hadCenter = true;
@@ -82,7 +93,7 @@ public class MeshTweakTool : Tool
 		}
 	}
 	
-	void SetMode(Mode newMode) {
+	void SetMode(MeshEditMode newMode) {
 		mode = newMode;
 		string modeStr = mode.ToString().ToLower();
 		label.SetString(modeStr);
@@ -92,48 +103,74 @@ public class MeshTweakTool : Tool
 	
 	void ShiftMode(int delta) {
 		int modeNum = (int)mode;
-		int count = System.Enum.GetValues(typeof(Mode)).Length;
-		SetMode((Mode)((modeNum + delta + count) % count));
+		int count = System.Enum.GetValues(typeof(MeshEditMode)).Length;
+		SetMode((MeshEditMode)((modeNum + delta + count) % count));
 	}
 	
-	void BeginDrag() {
-		// Find a mesh corner near the vertex.
-		float radius = 0.1f;
-		int count = Physics.OverlapSphereNonAlloc(endPoint.position, radius, tempColliders,
-			tweakableMask, QueryTriggerInteraction.Collide);
-		
-		dragMesh = null;
-		dragIndex = -1;
-		float bestDist = radius;
-		for (int i=0; i<count; i++) {
-			var mesh = tempColliders[i].GetComponentInParent<MeshModel>();
-			if (mesh == null) continue;
-			int idx = -1;
-			float dist = Mathf.Infinity;
-			switch (mode) {
-			case Mode.Vertex:
-				if (!mesh.FindVertexIndex(endPoint.position, transform.position, bestDist, out idx, out dist)) continue;
-				break;
-			case Mode.Face:
-				if (!mesh.FindFace(endPoint.position, transform.position, bestDist, out idx, out dist)) continue;
-				GrabFaces(mesh, idx);
-				break;
-			}
-			dragIndex = idx;
-			dragMesh = mesh;
-			bestDist = dist;
+	void StartTool() {
+		MeshModel meshHit;
+		int indexHit;
+		bool hit = FindFaceHitByTool(out meshHit, out indexHit);	// ToDo: other modes.
+		if (!hit) {
+			// We couldn't find any, so deselect all on last mesh, then bail out.
+			if (display != null) display.DeselectAll();
+			display = null;
+			curMesh = null;
+			return;
 		}
-			
-		if (dragMesh != null && dragIndex >= 0) {		
+		curMesh = meshHit;
+		curIndex = indexHit;
+		display = curMesh.GetComponent<MeshDisplay>();
+		bool isSelected = display.IsSelected(mode, curIndex);
+		
+		// The behavior now depends on whether the hit thing was already selected,
+		// and the state of the modifier buttons.
+		if (handTracker.GetButton(HandTracker.Button.X)) {
+			Debug.Log("Toggling selection " + (isSelected ? "off" : "on"));
+			// With A/X button held: just toggle selection.
+			isSelecting = !isSelected;
+			isDeselecting = isSelected;
+			isDragging = false;
+			display.SetSelected(mode, curIndex, isSelecting);
+		} else if (display.IsSelected(mode, curIndex)) {
+			// An already-selected thing: start dragging.
+			Debug.Log("Dragging faces");
+			GrabFaces(curMesh, curIndex);
 			isDragging = true;
+			isSelecting = isDeselecting = false;
 			lastToolWorldPos = endPoint.position;
-			dragStartToolPos = dragMesh.transform.InverseTransformPoint(endPoint.position);
-			dragStartVPos = dragMesh.Vertex(dragIndex);
+			dragStartToolPos = curMesh.transform.InverseTransformPoint(endPoint.position);
+			dragStartVPos = curMesh.Vertex(curIndex);
 			if (audio != null) audio.Play();
+		} else {
+			// Not previously selected: deselect all, then select thing clicked.
+			Debug.Log("Deselecting all, then selecting");
+			display.DeselectAll();
+			isSelecting = true;
+			isDeselecting = isDragging = false;
+			display.SetSelected(mode, curIndex, true);
 		}
 		
 	}
 	
+	/// <summary>
+	/// Find the face which the tool is currently pointing at or touching.
+	/// </summary>
+	/// <returns>true if face found; false if no face is hit</returns>
+	bool FindFaceHitByTool(out MeshModel outModel, out int outTriIndex) {
+		outModel = null;
+		outTriIndex = 0;
+		RaycastHit hit;
+		if (!Physics.Raycast(transform.position, transform.forward, out hit, toolRayLength, 
+			tweakableMask, QueryTriggerInteraction.Collide)) return false;
+		outModel = hit.collider.GetComponentInParent<MeshModel>();
+		if (outModel == null) return false;
+		outTriIndex = hit.triangleIndex;
+		if (outTriIndex < 0) Debug.LogWarning($"triangleIndex = {outTriIndex} on {hit.collider}");
+		return true;
+	}
+	
+
 	/// <summary>
 	/// Grab the set of faces that should be dragged along with the given (hit) triangle.
 	/// </summary>
@@ -145,7 +182,7 @@ public class MeshTweakTool : Tool
 		// First, check whether the hit triangle is selected.  If so, then we just
 		// need to grab all the vertices in the selection.
 		var disp = mesh.GetComponent<MeshDisplay>();
-		if (disp.IsSelected(SelectionTool.Mode.Face, triangleIndex)) {
+		if (disp.IsSelected(MeshEditMode.Face, triangleIndex)) {
 			mesh.FindSelectionVertices(toolRelativePositions, transform);
 		} else {
 			// If the hit triangle is not selected, then just find the vertices that
@@ -156,17 +193,17 @@ public class MeshTweakTool : Tool
 	}
 	
 	void Drag() {
-		Vector3 toolPos = dragMesh.transform.InverseTransformPoint(endPoint.position);
-		if (mode == Mode.Vertex) {
+		Vector3 toolPos = curMesh.transform.InverseTransformPoint(endPoint.position);
+		if (mode == MeshEditMode.Vertex) {
 			Vector3 delta = toolPos - dragStartToolPos;
 			Vector3 newVPos = dragStartVPos + delta;			
-			dragMesh.ShiftVertexTo(dragIndex, newVPos);
-		} else if (mode == Mode.Face) {
+			curMesh.ShiftVertexTo(curIndex, newVPos);
+		} else if (mode == MeshEditMode.Face) {
 			int i = 1;
 			foreach (var kv in toolRelativePositions) {
 				int vidx = kv.Key;
-				Vector3 v = dragMesh.transform.InverseTransformPoint(transform.TransformPoint(kv.Value));
-				dragMesh.ShiftVertexTo(vidx, v, i == toolRelativePositions.Count);
+				Vector3 v = curMesh.transform.InverseTransformPoint(transform.TransformPoint(kv.Value));
+				curMesh.ShiftVertexTo(vidx, v, i == toolRelativePositions.Count);
 				i++;
 			}
 		}
@@ -178,10 +215,10 @@ public class MeshTweakTool : Tool
 		lastToolWorldPos = endPoint.position;
 	}
 	
-	void EndDrag() {
+	void EndTool() {
 		if (audio != null) audio.Stop();
-		isDragging = false;
-		if (dragMesh != null) dragMesh.RecalcBoundsAndNormals();
+		if (curMesh != null && isDragging) curMesh.RecalcBoundsAndNormals();
+		isDragging = isSelecting = isDeselecting = false;
 	}
 	
 	/// <summary>

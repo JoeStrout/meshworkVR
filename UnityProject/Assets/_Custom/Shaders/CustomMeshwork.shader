@@ -76,7 +76,7 @@ Shader "Custom/CustomMeshwork"
 			
 			fixed4 frag (v2f i) : SV_Target {
 				// sample the texture, apply the lighting, and add the highlight color
-				fixed4 col = tex2D(_MainTex, i.uv) * i.diffuse + i.color;
+				fixed4 col = tex2D(_MainTex, i.uv) * i.diffuse * (1 - 0.5 *(i.color.a>0.5)) + i.color;
 				// apply wireframe
 				float wireframe = WireframeShaderReadTrangleMassFromUV(i.uv3, _Wireframe_Thickness, _Wireframe_Smoothness, _Wireframe_Diameter);
 				return wireframe * _Wireframe_Color + (1 - wireframe) * col;

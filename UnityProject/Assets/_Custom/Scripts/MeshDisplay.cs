@@ -8,6 +8,12 @@ using UnityEngine.Events;
 using AmazingAssets.WireframeShader;
 using PaintIn3D;
 
+public enum MeshEditMode {
+	Vertex,
+	Edge,
+	Face
+}
+
 public class MeshDisplay : MonoBehaviour
 {
 	public Material wireframeMaterial;
@@ -68,19 +74,19 @@ public class MeshDisplay : MonoBehaviour
 	}
 
 	// Return whether the given vertex, edge, or triangle is currently selected.
-	public bool IsSelected(SelectionTool.Mode mode, int index) {
+	public bool IsSelected(MeshEditMode mode, int index) {
 		EnsureColors();
-		if (mode == SelectionTool.Mode.Face) {
+		if (mode == MeshEditMode.Face) {
 			int baseTriIdx = index * 3;
 			return colors32[baseTriIdx].a > 128 && colors32[baseTriIdx+1].a > 128 && colors32[baseTriIdx+2].a > 128;
-		} else if (mode == SelectionTool.Mode.Vertex) {
+		} else if (mode == MeshEditMode.Vertex) {
 			return colors32[index].a > 128;
 		}
 		return false;
 	}
 	
 	// Select or deselect the given vertex, edge, or triangle.
-	public void SetSelected(SelectionTool.Mode mode, int index, bool isSelected) {
+	public void SetSelected(MeshEditMode mode, int index, bool isSelected) {
 		EnsureColors();
 		Color32 colorToSet = (isSelected ? selectionColor : Color.clear);
 		var tris = mesh.triangles;

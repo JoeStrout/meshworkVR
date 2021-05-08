@@ -196,7 +196,7 @@ public class MeshModel : MonoBehaviour
 	public void FindSelectionVertices(Dictionary<int, Vector3> positions, Transform relativeTo) {
 		var disp = GetComponent<MeshDisplay>();
 		for (int i=0; i<vertices.Length; i++) {
-			if (disp.IsSelected(SelectionTool.Mode.Vertex, i)) {
+			if (disp.IsSelected(MeshEditMode.Vertex, i)) {
 				Vector3 v = vertices[i];
 				if (relativeTo != null && relativeTo != transform) {
 					v = relativeTo.InverseTransformPoint(transform.TransformPoint(v));
@@ -211,7 +211,7 @@ public class MeshModel : MonoBehaviour
 		var disp = GetComponent<MeshDisplay>();
 		var tris = new List<int>();
 		for (int i=0; i<triangles.Length/3; i++) {
-			if (disp.IsSelected(SelectionTool.Mode.Face, i)) tris.Add(i);
+			if (disp.IsSelected(MeshEditMode.Face, i)) tris.Add(i);
 		}
 		return tris;
 	}
@@ -251,7 +251,7 @@ public class MeshModel : MonoBehaviour
 	public void DoExtrude() {
 		var sb = new System.Text.StringBuilder();
 		var disp = GetComponent<MeshDisplay>();
-		for (int i=0; i<vertices.Length; i++) if (disp.IsSelected(SelectionTool.Mode.Vertex,i)) {
+		for (int i=0; i<vertices.Length; i++) if (disp.IsSelected(MeshEditMode.Vertex,i)) {
 			sb.Append($"{i}({weldGroup[i]}) ");
 		}
 		Debug.Log("Selection (before extrude): " + sb.ToString());
@@ -313,7 +313,7 @@ public class MeshModel : MonoBehaviour
 
 		Debug.Log($"Weld groups: 25->{weldGroup[25]}, 26->{weldGroup[26]}, 36->{weldGroup[36]}, 37->{weldGroup[37]}");
 		sb = new System.Text.StringBuilder();
-		for (int i=0; i<vertices.Length; i++) if (disp.IsSelected(SelectionTool.Mode.Vertex,i)) {
+		for (int i=0; i<vertices.Length; i++) if (disp.IsSelected(MeshEditMode.Vertex,i)) {
 			sb.Append($"{i}({weldGroup[i]}) ");
 		}
 		Debug.Log("Selection (after extrude): " + sb.ToString());
