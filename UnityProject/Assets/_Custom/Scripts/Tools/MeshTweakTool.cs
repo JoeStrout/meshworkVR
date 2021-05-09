@@ -183,11 +183,11 @@ public class MeshTweakTool : Tool
 		// need to grab all the vertices in the selection.
 		var disp = mesh.GetComponent<MeshDisplay>();
 		if (disp.IsSelected(MeshEditMode.Face, triangleIndex)) {
-			mesh.FindSelectionVertices(toolRelativePositions, transform);
+			mesh.FindSelectionVertices(toolRelativePositions, endPoint);
 		} else {
 			// If the hit triangle is not selected, then just find the vertices that
 			// are in the given "face".
-			mesh.FindFaceVertices(triangleIndex, toolRelativePositions, transform);			
+			mesh.FindFaceVertices(triangleIndex, toolRelativePositions, endPoint);			
 		}
 
 	}
@@ -202,7 +202,7 @@ public class MeshTweakTool : Tool
 			int i = 1;
 			foreach (var kv in toolRelativePositions) {
 				int vidx = kv.Key;
-				Vector3 v = curMesh.transform.InverseTransformPoint(transform.TransformPoint(kv.Value));
+				Vector3 v = curMesh.transform.InverseTransformPoint(endPoint.TransformPoint(kv.Value));
 				curMesh.ShiftVertexTo(vidx, v, i == toolRelativePositions.Count);
 				i++;
 			}
