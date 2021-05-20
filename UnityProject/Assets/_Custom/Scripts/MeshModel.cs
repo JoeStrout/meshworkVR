@@ -69,12 +69,15 @@ public class MeshModel : MonoBehaviour
 	
 	void RecalcWeldGroups() {
 		if (weldGroup == null || weldGroup.Length != vertices.Length) weldGroup = new int[vertices.Length];
+		for (int i=0; i<vertices.Length; i++) weldGroup[i] = -1;
+		const float weldDistance = 0.001f;
+		float weldDSqr = weldDistance * weldDistance;
 		for (int i=0; i<vertices.Length; i++) {
-			if (i > 0 && weldGroup[i] > 0) continue;
+			if (weldGroup[i] >= 0) continue;
 			weldGroup[i] = i;
 			Vector3 pos = vertices[i];
 			for (int j=i+1; j<vertices.Length; j++) {
-				if (weldGroup[j] == 0 && vertices[j] == pos) weldGroup[j] = i;
+				if (weldGroup[j] < 0 && (vertices[j] - pos).sqrMagnitude < weldDSqr) weldGroup[j] = i;
 			}
 		}
 	}
