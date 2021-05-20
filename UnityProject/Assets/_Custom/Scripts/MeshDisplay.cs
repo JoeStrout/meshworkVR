@@ -43,6 +43,8 @@ public class MeshDisplay : MonoBehaviour
 			GetComponent<MeshRenderer>().material = wireframeMaterial;
 			GetComponent<MeshRenderer>().material.mainTexture = mainTex;
 			Debug.Log($"{gameObject.name}: Generated {baked.name} with {baked.vertexCount} vertices to prepare for wireframe display");
+			EnsureColors();
+			mesh.colors32 = colors32;
 		} else {
 			// ToDo: even if we're not showing wireframe, there's something we need
 			// to do here to make PaintIn3D work with the layer 0 material.
@@ -60,6 +62,8 @@ public class MeshDisplay : MonoBehaviour
 		mf.sharedMesh = mesh;
 		GetComponent<MeshCollider>().sharedMesh = mesh;
 		GetComponent<MeshModel>().LoadMesh();
+		EnsureColors();
+		mesh.colors32 = colors32;
 	}
 	
 	void EnsureColors() {
