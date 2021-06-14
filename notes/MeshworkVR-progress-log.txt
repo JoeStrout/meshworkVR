@@ -314,8 +314,12 @@ If that's not true, then I can't use vertex colors.  Instead I would need a shad
 
 For highlighting edges, I would need to make a custom wireframe shader (fortunately Amazing Wireframe is organized as an include file that is easy to incorporate into custom shaders).  I can get the vertex ID in the vertex function as a second SV_VertexID parameter.  However I'm not sure how that helps, since the highlighting of an edge is a function of TWO vertices.  The vert function has one, and the frag function has at best a mixture of three.  Hmm.
 
-I wonder if there's some clever way to make use of vertex colors such that they only cross some threshold when _both_ vertices at either end of a triangle are selected.
+I wonder if there's some clever way to make use of vertex colors such that they only cross some threshold when _both_ vertices at either end of an edge are selected.
 
 
+6/13/21
+=======
+Yikes.  A bit of a hiatus just happened due to other commitments.  I've got another one coming up the week after that, but otherwise I should be good to push forward on this.
 
+Reviewing the current status: highlighting and manipulating faces (triangles, for now) is working pretty well.  I think the next step is to support edge and vertex mode.  The previous entry contains thoughts about highlighting edges.
 

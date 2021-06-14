@@ -35,7 +35,7 @@ public class MeshDisplay : MonoBehaviour
 			MeshFilter mf = GetComponent<MeshFilter>();
 			Debug.Assert(mf != null);
 			
-			Mesh baked = mf.sharedMesh.GenerateWireframeMesh(true, true);
+			Mesh baked = mf.sharedMesh.GenerateWireframeMesh(true, false);// true);
 			baked.name += " (Baked Wireframe)";
 			mf.sharedMesh = baked;
 			GetComponent<MeshCollider>().sharedMesh = baked;
@@ -53,7 +53,8 @@ public class MeshDisplay : MonoBehaviour
 			Debug.Log($"{gameObject.name}: wireframe display not selected");
 		}
 		
-		GetComponent<MeshModel>().LoadMesh();
+		var model = GetComponent<MeshModel>();
+		if (model != null) model.LoadMesh();
 	}
 	
 	public void Rebake() {
@@ -61,7 +62,8 @@ public class MeshDisplay : MonoBehaviour
 		mesh = mf.sharedMesh.GenerateWireframeMesh(true, true);
 		mf.sharedMesh = mesh;
 		GetComponent<MeshCollider>().sharedMesh = mesh;
-		GetComponent<MeshModel>().LoadMesh();
+		var model = GetComponent<MeshModel>();
+		if (model != null) model.LoadMesh();
 		EnsureColors();
 		mesh.colors32 = colors32;
 	}
