@@ -323,3 +323,6 @@ Yikes.  A bit of a hiatus just happened due to other commitments.  I've got anot
 
 Reviewing the current status: highlighting and manipulating faces (triangles, for now) is working pretty well.  I think the next step is to support edge and vertex mode.  The previous entry contains thoughts about highlighting edges.
 
+The tricky case here is when two of the edges in a triangle are selected, but not the third.  In this case all three vertices are part of a selection, but only certain pairs should be drawn with a highlighted edge.  How to tell when you are part of such a pair?
+
+After some experimentation, I have settled on this solution: we set the uv2 coordinates of the vertices in each triangle in a very specific way: (0,0), (1,0), and (0.5,1).  Then the shader does a bit of math from the uv2 coordinates to figure out which side of the triangle it is on.  Finally, we store a vertex color for each triangle where the red, green, and blue components indicate whether each corresponding edge is selected, and use that to select an appropriate color.  A little complex, but it looks great and performs well.

@@ -1,5 +1,19 @@
 ﻿/*
 Experiments in coloring the wireframe lines via a texture using uv2.
+
+HOW THIS WORKS:
+- Special coordinates are stored in UV2 for each triangle:
+	for vertex 0, we store 0, 0;
+	for vertex 1, we store 1, 0;
+	for vertex 2, we store 0.5, 1.
+
+- The triangle color (i.e., vertex color for all three verts in the triangle)
+is then set to a special color that indicates which combination of edges are
+currently selected, by storing 0 (unselected) or 255 (selected) in each of the
+three color channels: red for edge 0, green for edge 1, and blue for edge 2.
+
+- The CustomMeshworkEdge shader then uses the UV2 coordinates and color of each
+fragment to figure out whether to use the standard or highlighted wire color.
 */
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +30,7 @@ public class EdgeColorTest : MonoBehaviour
 		Debug.Log("Found mesh with " + mesh.vertexCount + " vertices");
 		
 		// Assign UVs in a special pattern per triangle, which the shader can
-		// use to figure out which side of the triangle is on.
+		// use to figure out which side of the triangle it's on.
 		var uv2 = new Vector2[6];
 		int[] tris = mesh.triangles;
 		for (int trinum=0; trinum<tris.Length; trinum += 3) {
