@@ -2,17 +2,9 @@
 This shader is used on editable meshes in edge mode.  It supports edge selection
 (on top of a custom texture)
 */
-Shader "Custom/CustomMeshworkEdge"
+Shader "Debug/ColorUV2"
 {
 	Properties {
-		_MainTex ("Texture", 2D) = "white" {}
-
-		[Header(Wireframe Properties)]
-        _Wireframe_Thickness("Thickness", Range(0, 1)) = 0.01
-		_Wireframe_Smoothness("Smoothness", Range(0, 1)) = 0	
-		_Wireframe_Diameter("Diameter", Range(0, 1)) = 1
-		_Wireframe_Color("Color", Color) = (0,0.7,0.7,1)
-		_Wireframe_SelColor("Selected Color", Color) = (0,1,1,1)
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -80,23 +72,9 @@ Shader "Custom/CustomMeshworkEdge"
 			}
 			
 			fixed4 frag (v2f i) : SV_Target {
-				// sample the texture, apply the lighting, and add the highlight color
-				fixed4 col = tex2D(_MainTex, i.uv) * i.diffuse;
-				
-				// apply wireframe
-				// figure out which side of the triangle we're on
 				float2 uv = i.uv2;
-				int side = 0			// bottom
-					+ (uv.x > 0.5 && uv.y > 1 - uv.x)		// left side
-					+ (uv.x <= 0.5 && uv.y > uv.x) * 2;		// right side
-				//debug: return fixed4(1,0,0,1)*(side==0) + fixed4(0,1,0,1)*(side==1) + fixed4(0,0,1,1)*(side==2);
-				// and from that and the vertex color (which should be constant across the triangle),
-				// figure out if this side is selected
-				int selected = i.color[side];
-				// Huzzah!  Finally we can choose the correct color to use.
-				float4 wirecolor = _Wireframe_SelColor * selected + _Wireframe_Color * (1 - selected);
-				float wireframe = WireframeShaderReadTrangleMassFromUV(i.uv3, _Wireframe_Thickness, _Wireframe_Smoothness, _Wireframe_Diameter);
-				return wireframe * wirecolor + (1 - wireframe) * col;
+				fixed4 col = fixed4(uv.x, uv.y, 0,1) * i.diffuse;
+				return col;
 			}
 			ENDCG
 		}

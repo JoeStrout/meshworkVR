@@ -326,3 +326,10 @@ Reviewing the current status: highlighting and manipulating faces (triangles, fo
 The tricky case here is when two of the edges in a triangle are selected, but not the third.  In this case all three vertices are part of a selection, but only certain pairs should be drawn with a highlighted edge.  How to tell when you are part of such a pair?
 
 After some experimentation, I have settled on this solution: we set the uv2 coordinates of the vertices in each triangle in a very specific way: (0,0), (1,0), and (0.5,1).  Then the shader does a bit of math from the uv2 coordinates to figure out which side of the triangle it is on.  Finally, we store a vertex color for each triangle where the red, green, and blue components indicate whether each corresponding edge is selected, and use that to select an appropriate color.  A little complex, but it looks great and performs well.
+
+
+6/30/21
+=======
+Started integrating the edge coloring technique into the tools.  I've started with the Selection tool because it is much simpler than the tweak tool.  Ultimately, I think these need to be unified -- perhaps the tweak tool can derive from the selection tool?
+
+Current status: using the selection tool, and manually replacing the material on the test cube with MeshworkEdgeMat (which uses the custom edge shader), you can now select edges and they are properly highlighted.  The next step will be to make MeshDisplay automatically change the material based on the current mode, and then to integrate the new functionality into TweakTool (perhaps refactoring to share code with SelectionTool).

@@ -88,6 +88,24 @@ public class MeshModel : MonoBehaviour
 	
 	public MeshEdge Edge(int idx) { return edges[idx]; }
 	
+	public Vector3 VertexWorldPos(int idx) {
+		return transform.TransformPoint(vertices[idx]);
+	}
+
+	/// <summary>
+	/// Get the world positions of the corners of a triangle with the given 
+	/// index.  Note that triangleIndex in this case goes from 0 to the 
+	/// number of triangles in the mesh (minus 1); it does not count by threes.
+	/// </summary>
+	/// <returns>a 3-element array containing the world positions of the given triangle</returns>
+	public Vector3[] TriangleWorldPos(int triangleIndex) {
+		Vector3[] result = new Vector3[3];
+		result[0] = VertexWorldPos(triangles[triangleIndex*3 + 0]);
+		result[1] = VertexWorldPos(triangles[triangleIndex*3 + 1]);
+		result[2] = VertexWorldPos(triangles[triangleIndex*3 + 2]);
+		return result;
+	}
+
 	/// <summary>
 	/// Find the vertex closest to the given position, by casting a ray onto the mesh
 	/// and then moving to the closest vertex of the triangle hit.

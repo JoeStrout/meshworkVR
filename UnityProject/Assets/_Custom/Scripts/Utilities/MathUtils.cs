@@ -331,7 +331,7 @@ public static class MathUtils {
 		float t = Mathf.Clamp01(Vector2.Dot(a_p, a_b) / segLenSqr);
 		return endA + a_b * t;		
 	}
-	
+		
 	/// <summary>
 	/// Find the proportion (u) along each line segment where two lines
 	/// intersect.  If both uA and uB are in [0,1] then the intersection
@@ -537,6 +537,10 @@ public static class MathUtils {
 		return endA + a_b * t;		
 	}
 	
+	public static float DistanceToLineSegment(Vector3 endA, Vector3 endB, Vector3 p) {
+		return Vector3.Distance(p, NearestPointOnLineSegment(endA, endB, p));
+	}
+
 	/// <summary>
 	/// Find a quaternion that rotates from the start orientation to the end orientation.
 	/// </summary>

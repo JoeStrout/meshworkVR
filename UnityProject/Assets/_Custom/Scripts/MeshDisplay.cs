@@ -27,6 +27,7 @@ public class MeshDisplay : MonoBehaviour
 	
 	Mesh mesh;
 	Color32[] colors32;
+	bool[] edgeSelected;	// separate boolean array to keep track of which edges are currently selected
 	
 	protected void Start() {
 		if (showWireframe) {
@@ -79,12 +80,40 @@ public class MeshDisplay : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Make sure we have an edgeSelected array that is the correct length
+	/// for the number of triangles in our mesh.
+	/// </summary>
+	void EnsureEdgeSelArray() {
+		int properEdgeCount = mesh.triangles.Length * 3;
+		if (edgeSelected == null) edgeSelected = new bool[properEdgeCount];
+		else if (edgeSelected.Length != properEdgeCount) System.Array.Resize(ref edgeSelected, properEdgeCount);
+	}
+	
+	// Ensure our mesh has the UV2 array set up properly for edge coloring.
+	void EnsureUV2() {
+		// Assign UVs in a special pattern per triangle, which the shader can
+		// use to figure out which side of the triangle it's on.
+		if (mesh.uv2 != null && mesh.uv2.Length == mesh.vertexCount) return;
+		var tris = mesh.triangles;
+		var uv2 = new Vector2[mesh.vertexCount];
+		for (int trinum=0; trinum<tris.Length; trinum += 3) {
+			uv2[tris[trinum]] = Vector2.zero;
+			uv2[tris[trinum+1]] = new Vector2(1,0);
+			uv2[tris[trinum+2]] = new Vector2(0.5f, 1);
+		}
+		mesh.uv2 = uv2;
+	}
+
 	// Return whether the given vertex, edge, or triangle is currently selected.
 	public bool IsSelected(MeshEditMode mode, int index) {
 		EnsureColors();
 		if (mode == MeshEditMode.Face) {
 			int baseTriIdx = index * 3;
 			return colors32[baseTriIdx].a > 128 && colors32[baseTriIdx+1].a > 128 && colors32[baseTriIdx+2].a > 128;
+		} else if (mode == MeshEditMode.Edge) {
+			EnsureEdgeSelArray();
+			return edgeSelected[index];
 		} else if (mode == MeshEditMode.Vertex) {
 			return colors32[index].a > 128;
 		}
@@ -93,25 +122,50 @@ public class MeshDisplay : MonoBehaviour
 	
 	// Select or deselect the given vertex, edge, or triangle.
 	public void SetSelected(MeshEditMode mode, int index, bool isSelected) {
+		Debug.Log($"SetSelected({mode}, {index}, {isSelected})", gameObject);
 		EnsureColors();
-		Color32 colorToSet = (isSelected ? selectionColor : Color.clear);
-		var tris = mesh.triangles;
-		int baseTriIdx = index * 3;
-		for (int i=0; i<3; i++) {
-			colors32[tris[baseTriIdx + i]] = colorToSet;
+		if (mode == MeshEditMode.Edge) {
+			EnsureEdgeSelArray();
+			EnsureUV2();
+			edgeSelected[index] = isSelected;
+			// Edge highlighting works by setting red, green, and blue of the face color
+			// to indicate what combination of the three edges is selected.
+			Color32 c = new Color32();
+			int baseIndex = (index / 3) * 3;
+			if (edgeSelected[baseIndex]) c.r = 255;
+			if (edgeSelected[baseIndex+1]) c.g = 255;
+			if (edgeSelected[baseIndex+2]) c.b = 255;
+			colors32[baseIndex] = colors32[baseIndex+1] = colors32[baseIndex+2] = c;
+		} else {
+			Color32 colorToSet = (isSelected ? selectionColor : Color.clear);
+			var tris = mesh.triangles;
+			int baseTriIdx = index * 3;
+			for (int i=0; i<3; i++) {
+				colors32[tris[baseTriIdx + i]] = colorToSet;
+			}
 		}
 		mesh.colors32 = colors32;
 	}
 	
 	// Clear the selection.  Return true if we had a selection to clear,
 	// false if nothing was selected anyway.
-	public bool DeselectAll() {
+	public bool DeselectAll(MeshEditMode mode) {
 		EnsureColors();
 		bool clearedAny = false;
-		Color32 clear = Color.clear;
-		for (int i=0; i<colors32.Length; i++) {
-			clearedAny = clearedAny || colors32[i].a > 128;
-			colors32[i] = clear;
+		if (mode == MeshEditMode.Edge) {
+			Color32 black = new Color32(0,0,0,255);
+			for (int i=0; i<edgeSelected.Length; i++) if (edgeSelected[i]) {
+				edgeSelected[i] = false;
+				int baseIndex = (i / 3) * 3;
+				colors32[baseIndex] = colors32[baseIndex+1] = colors32[baseIndex+2] = black;
+				clearedAny = true;
+			}			
+		} else {
+			Color32 clear = Color.clear;
+			for (int i=0; i<colors32.Length; i++) {
+				clearedAny = clearedAny || colors32[i].a > 128;
+				colors32[i] = clear;
+			}
 		}
 		if (!clearedAny) return false;
 		mesh.colors32 = colors32;

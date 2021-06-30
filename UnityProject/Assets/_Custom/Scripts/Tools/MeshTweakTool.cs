@@ -113,7 +113,7 @@ public class MeshTweakTool : Tool
 		bool hit = FindFaceHitByTool(out meshHit, out indexHit);	// ToDo: other modes.
 		if (!hit) {
 			// We couldn't find any, so deselect all on last mesh, then bail out.
-			if (display != null) display.DeselectAll();
+			if (display != null) display.DeselectAll(mode);
 			display = null;
 			curMesh = null;
 			return;
@@ -144,8 +144,8 @@ public class MeshTweakTool : Tool
 			if (audio != null) audio.Play();
 		} else {
 			// Not previously selected: deselect all, then select thing clicked.
-			Debug.Log("Deselecting all, then selecting");
-			display.DeselectAll();
+			Debug.Log($"Deselecting all, then selecting index {curIndex} in mode {mode}");
+			display.DeselectAll(mode);
 			isSelecting = true;
 			isDeselecting = isDragging = false;
 			display.SetSelected(mode, curIndex, true);

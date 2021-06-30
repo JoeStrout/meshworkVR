@@ -62,7 +62,7 @@ public class SelectionTool : Tool
 		wasDown = isDown;
 		
 		if (handTracker.GetButtonDown(HandTracker.Button.X) && display != null) {
-			if (display.DeselectAll()) {
+			if (display.DeselectAll(mode)) {
 				audioSrc.pitch = 0.5f;
 				audioSrc.Play();	// ToDo: play this at the location of the deselected triangle, in case it's far away!
 			}
@@ -83,6 +83,8 @@ public class SelectionTool : Tool
 		SetMode((MeshEditMode)((modeNum + delta + count) % count));
 	}
 	
+	[ContextMenu("Next Mode")] void NextMode() { ShiftMode(1); }
+	
 	/// <summary>
 	/// Find the face which the tool is currently pointing at or touching.
 	/// </summary>
@@ -100,8 +102,55 @@ public class SelectionTool : Tool
 		return true;
 	}
 	
+	/// <summary>
+	/// Find the edge which the tool is currently pointing at or touching.
+	/// </summary>
+	/// <returns>true if edge found; false if no edge is hit</returns>
+	bool FindEdgeHitByTool(out MeshModel outModel, out int outEdgeIndex) {
+		outModel = null;
+		outEdgeIndex = 0;
+		RaycastHit hit;
+		if (Input.GetKeyDown(KeyCode.LeftShift)) Debug.Log($"{gameObject.name}.FindEdgeHitByTool");
+		if (!Physics.Raycast(transform.position, transform.forward, out hit, toolRayLength, 
+			selectableMask, QueryTriggerInteraction.Collide)) return false;
+		if (Input.GetKeyDown(KeyCode.LeftShift)) Debug.Log($"got hit {hit.collider} at {hit.point}, tri {hit.triangleIndex}");
+		outModel = hit.collider.GetComponentInParent<MeshModel>();
+		if (Input.GetKeyDown(KeyCode.LeftShift)) Debug.Log($"found MeshModel");
+		if (outModel == null) return false;
+		// Now we know we hit this model at hit.triangleIndex; but which edge of that triangle
+		// are we closest to?
+		outEdgeIndex = -1;
+		float bestDist = 999;
+		Vector3[] cornerPoints = outModel.TriangleWorldPos(hit.triangleIndex);
+		for (int i=0; i<3; i++) {
+			Vector3 pointA = cornerPoints[i];
+			Vector3 pointB = cornerPoints[(i+1)%3];
+			float dist = MathUtils.DistanceToLineSegment(pointA, pointB, hit.point);
+			if (Input.GetKeyDown(KeyCode.LeftShift)) Debug.Log($"distance to {pointA},{pointB} is {dist}");
+			if (outEdgeIndex < 0 || dist < bestDist) {
+				outEdgeIndex = hit.triangleIndex*3 + i;
+				bestDist = dist;
+			}
+		}
+		if (Input.GetKeyDown(KeyCode.LeftShift)) Debug.Log($"returning true with {outEdgeIndex}");
+		if (outEdgeIndex < 0) Debug.LogWarning($"outEdgeIndex = {outEdgeIndex} on {hit.collider}");
+		return true;
+	}
+	
+	bool FindIndexHitByTool(out MeshModel outModel, out int index) {
+		outModel = null; 
+		index = -1;
+		switch (mode) {
+		case MeshEditMode.Face:		return FindFaceHitByTool(out outModel, out index);
+		case MeshEditMode.Edge:		return FindEdgeHitByTool(out outModel, out index);
+		case MeshEditMode.Vertex:	return false;  // ToDo
+		}
+		return false;
+	}
+	
 	void ApplyDragMode() {
 		bool isSelected = display.IsSelected(mode, curIndex);
+		if (Input.GetKeyDown(KeyCode.LeftShift)) Debug.Log($"ApplyDragMode {dragMode} on index {curIndex} when isSelected={isSelected}");
 		if (isSelected && dragMode == DragMode.Deselecting) {
 			// Deselect!
 			display.SetSelected(mode, curIndex, false);
@@ -116,7 +165,7 @@ public class SelectionTool : Tool
 	}
 	
 	void BeginDrag() {
-		if (!FindFaceHitByTool(out curMesh, out curIndex)) {
+		if (!FindIndexHitByTool(out curMesh, out curIndex)) {
 			dragMode = DragMode.Idle;
 			return;
 		}
@@ -128,7 +177,7 @@ public class SelectionTool : Tool
 	}
 	
 	void Drag() {
-		if (FindFaceHitByTool(out curMesh, out curIndex)) {
+		if (FindIndexHitByTool(out curMesh, out curIndex)) {
 			ApplyDragMode();
 		}
 	}
