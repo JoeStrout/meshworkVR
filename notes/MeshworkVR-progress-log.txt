@@ -333,3 +333,10 @@ After some experimentation, I have settled on this solution: we set the uv2 coor
 Started integrating the edge coloring technique into the tools.  I've started with the Selection tool because it is much simpler than the tweak tool.  Ultimately, I think these need to be unified -- perhaps the tweak tool can derive from the selection tool?
 
 Current status: using the selection tool, and manually replacing the material on the test cube with MeshworkEdgeMat (which uses the custom edge shader), you can now select edges and they are properly highlighted.  The next step will be to make MeshDisplay automatically change the material based on the current mode, and then to integrate the new functionality into TweakTool (perhaps refactoring to share code with SelectionTool).
+
+
+7/05/21
+=======
+I've updated TweakTool, and moved common selection-related code into SelectionUtils.  I've also updated MeshDisplay so that it switches between the edge-coloring material and the standard material depending on the mode.  All seems to be working nicely!  You can now switch between face and edge mode, and in either case, select a set of items and then drag or scale them as desired.
+
+One refinement we will probably want to make: when selecting an edge between two triangles, it currently only selects *half* the edge (i.e. the side on the triangle actually hit by the tool).  This is strictly cosmetic, as when we move or scale we move the entire weld group at each end.  But it'd be better to show both of the overlapping edges as selected.

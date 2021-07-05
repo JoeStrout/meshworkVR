@@ -76,7 +76,7 @@ public class MeshTweakTool : Tool
 			// Extend a selection or deselection.
 			MeshModel model;
 			int index;
-			if (FindFaceHitByTool(out model, out index) && model == curMesh && index != curIndex) {
+			if (FindIndexHitByTool(out model, out index) && model == curMesh && index != curIndex) {
 				display.SetSelected(mode, index, isSelecting);
 				curIndex = index;
 			}
@@ -107,10 +107,12 @@ public class MeshTweakTool : Tool
 		SetMode((MeshEditMode)((modeNum + delta + count) % count));
 	}
 	
+	[ContextMenu("Next Mode")] void NextMode() { ShiftMode(1); }
+	
 	void StartTool() {
 		MeshModel meshHit;
 		int indexHit;
-		bool hit = FindFaceHitByTool(out meshHit, out indexHit);	// ToDo: other modes.
+		bool hit = FindIndexHitByTool(out meshHit, out indexHit);	// ToDo: other modes.
 		if (!hit) {
 			// We couldn't find any, so deselect all on last mesh, then bail out.
 			if (display != null) display.DeselectAll(mode);
@@ -134,8 +136,8 @@ public class MeshTweakTool : Tool
 			display.SetSelected(mode, curIndex, isSelecting);
 		} else if (display.IsSelected(mode, curIndex)) {
 			// An already-selected thing: start dragging.
-			Debug.Log("Dragging faces");
-			GrabFaces(curMesh, curIndex);
+			Debug.Log("Dragging in mode " + mode);
+			GrabRelevantVertices();
 			isDragging = true;
 			isSelecting = isDeselecting = false;
 			lastToolWorldPos = endPoint.position;
@@ -152,27 +154,30 @@ public class MeshTweakTool : Tool
 		}
 		
 	}
-	
-	/// <summary>
-	/// Find the face which the tool is currently pointing at or touching.
-	/// </summary>
-	/// <returns>true if face found; false if no face is hit</returns>
-	bool FindFaceHitByTool(out MeshModel outModel, out int outTriIndex) {
-		outModel = null;
-		outTriIndex = 0;
-		RaycastHit hit;
-		if (!Physics.Raycast(transform.position, transform.forward, out hit, toolRayLength, 
-			tweakableMask, QueryTriggerInteraction.Collide)) return false;
-		outModel = hit.collider.GetComponentInParent<MeshModel>();
-		if (outModel == null) return false;
-		outTriIndex = hit.triangleIndex;
-		if (outTriIndex < 0) Debug.LogWarning($"triangleIndex = {outTriIndex} on {hit.collider}");
-		return true;
-	}
-	
 
 	/// <summary>
-	/// Grab the set of faces that should be dragged along with the given (hit) triangle.
+	/// Find the index of the face, edge, or vertex (depending on our current mode)
+	/// which is hit by this tool.
+	/// </summary>
+	/// <param name="outModel">receives model containing the item hit</param>
+	/// <param name="index">receives index of the item hit</param>
+	/// <returns>true if any item is hit; false if none</returns>
+	bool FindIndexHitByTool(out MeshModel outModel, out int index) {
+		outModel = null; 
+		index = -1;
+		switch (mode) {
+		case MeshEditMode.Face:
+			return SelectionUtils.FindFaceHitByTool(transform, toolRayLength, tweakableMask, out outModel, out index);
+		case MeshEditMode.Edge:
+			return SelectionUtils.FindEdgeHitByTool(transform, toolRayLength, tweakableMask, out outModel, out index);
+		case MeshEditMode.Vertex:
+			return false;  // ToDo
+		}
+		return false;
+	}
+
+	/// <summary>
+	/// Grab the vertices of the set of faces that should be dragged along with the given (hit) triangle.
 	/// </summary>
 	/// <param name="mesh"></param>
 	/// <param name="triangleIndex"></param>
@@ -183,13 +188,22 @@ public class MeshTweakTool : Tool
 		// need to grab all the vertices in the selection.
 		var disp = mesh.GetComponent<MeshDisplay>();
 		if (disp.IsSelected(MeshEditMode.Face, triangleIndex)) {
-			mesh.FindSelectionVertices(toolRelativePositions, endPoint);
+			mesh.FindSelectionVertices(MeshEditMode.Face, toolRelativePositions, endPoint);
 		} else {
 			// If the hit triangle is not selected, then just find the vertices that
 			// are in the given "face".
 			mesh.FindFaceVertices(triangleIndex, toolRelativePositions, endPoint);			
 		}
-
+	}
+	
+	/// <summary>
+	/// Grab the set of vertices connected to our selection (in any mode).
+	/// Store their tool-relative positions in toolRelativePositions, so we can
+	/// then drag or scale them as the tool is moved by the user.
+	/// </summary>
+	void GrabRelevantVertices() {
+		toolRelativePositions.Clear();
+		curMesh.FindSelectionVertices(mode, toolRelativePositions, endPoint);			
 	}
 	
 	void Drag() {
@@ -198,12 +212,12 @@ public class MeshTweakTool : Tool
 			Vector3 delta = toolPos - dragStartToolPos;
 			Vector3 newVPos = dragStartVPos + delta;			
 			curMesh.ShiftVertexTo(curIndex, newVPos);
-		} else if (mode == MeshEditMode.Face) {
-			int i = 1;
+		} else {
+			int i = 1;	// count as we go, so we know when we've reached the last one
 			foreach (var kv in toolRelativePositions) {
 				int vidx = kv.Key;
 				Vector3 v = curMesh.transform.InverseTransformPoint(endPoint.TransformPoint(kv.Value));
-				curMesh.ShiftVertexTo(vidx, v, i == toolRelativePositions.Count);
+				curMesh.ShiftVertexTo(vidx, v, i == toolRelativePositions.Count);	// update mesh on last one
 				i++;
 			}
 		}

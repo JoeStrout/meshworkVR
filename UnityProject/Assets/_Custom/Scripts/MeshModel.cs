@@ -212,17 +212,48 @@ public class MeshModel : MonoBehaviour
 	
 	/// Add all vertices in the selection to a dictionary with the vertex index as the key, 
 	/// and the vertex position (relative to the given transform) as the value.
-	/// Note that we include only vertices of the actual selected triangles, and NOT any
-	/// other vertices welded to them.
-	public void FindSelectionVertices(Dictionary<int, Vector3> positions, Transform relativeTo) {
+	/// Note that in triangle mode, we include only vertices of the actual selected triangles,
+	/// and NOT any other vertices welded to them.
+	public void FindSelectionVertices(MeshEditMode mode, Dictionary<int, Vector3> positions, Transform relativeTo) {
 		var disp = GetComponent<MeshDisplay>();
-		for (int i=0; i<vertices.Length; i++) {
-			if (disp.IsSelected(MeshEditMode.Vertex, i)) {
+		if (mode == MeshEditMode.Edge) {
+			int edgeCount = triangles.Length;
+			for (int edgeIdx=0; edgeIdx<edgeCount; edgeIdx++) {
+				if (disp.IsSelected(MeshEditMode.Edge, edgeIdx)) {
+					int grpA, grpB;
+					GetEdgeWeldGroups(edgeIdx, out grpA, out grpB);
+					AddRelativePositionsInGroup(grpA, positions, relativeTo);
+					AddRelativePositionsInGroup(grpB, positions, relativeTo);
+				}
+			}
+		} else {
+			for (int i=0; i<vertices.Length; i++) {
+				// We're calling disp.IsSelected here in vertex mode; but note that this works for
+				// triangle mode too, since selecting a triangle implicitly selects its vertices.
+				// It does NOT work for edge mode, however.
+				if (disp.IsSelected(MeshEditMode.Vertex, i)) {
+					Vector3 v = vertices[i];
+					if (relativeTo != null && relativeTo != transform) {
+						v = relativeTo.InverseTransformPoint(transform.TransformPoint(v));
+					}
+					positions[i] = v;
+				}
+			}
+		}
+	}
+	
+	/// Add all vertices in the given weld group to a dictionary with the vertex index as the key, 
+	/// and the vertex position (relative to the given transform) as the value.
+	void AddRelativePositionsInGroup(int weldGroupNum, Dictionary<int, Vector3> positions, Transform relativeTo) {
+		if (positions.ContainsKey(weldGroupNum)) return;	// (already done, which frequently happens)
+		for (int i=0; i<vertexCount; i++) {
+			if (weldGroup[i] == weldGroupNum) {
 				Vector3 v = vertices[i];
 				if (relativeTo != null && relativeTo != transform) {
 					v = relativeTo.InverseTransformPoint(transform.TransformPoint(v));
 				}
 				positions[i] = v;
+				
 			}
 		}
 	}
@@ -338,6 +369,16 @@ public class MeshModel : MonoBehaviour
 			sb.Append($"{i}({weldGroup[i]}) ");
 		}
 		Debug.Log("Selection (after extrude): " + sb.ToString());
+	}
+	
+	/// <summary>
+	/// Get the weld groups of the two endpoints of the given edge.
+	/// </summary>
+	public void GetEdgeWeldGroups(int edgeIndex, out int groupA, out int groupB) {
+		int triBaseIndex = (edgeIndex / 3) * 3;
+		int offset = edgeIndex - triBaseIndex;
+		groupA = weldGroup[triBaseIndex + offset];
+		groupB = weldGroup[triBaseIndex + (offset + 1) % 3];
 	}
 
 	/// <summary>

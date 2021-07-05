@@ -17,10 +17,12 @@ public enum MeshEditMode {
 public class MeshDisplay : MonoBehaviour
 {
 	public Material wireframeMaterial;
+	public Material editEdgeMaterial;
 	
 	public bool showWireframe;
 	
 	public Color selectionColor = Color.cyan;
+	public MeshEditMode mode { get; private set; }
 	
 	// keeps track of which texture layer is currently selected for painting:
 	public P3dPaintableTexture selectedTexture;
@@ -29,9 +31,22 @@ public class MeshDisplay : MonoBehaviour
 	Color32[] colors32;
 	bool[] edgeSelected;	// separate boolean array to keep track of which edges are currently selected
 	
+	MeshRenderer meshRenderer;
+	Material edgeModeMat;	// material instance when editing in edge mode
+	Material otherModeMat;	// material instance in any other mode
+	
 	protected void Start() {
+
+		meshRenderer = GetComponent<MeshRenderer>();
+		var mainTex = meshRenderer.sharedMaterial.mainTexture;
+
+		edgeModeMat = new Material(editEdgeMaterial);
+		edgeModeMat.mainTexture = mainTex;
+		
+		otherModeMat = new Material(wireframeMaterial);
+		otherModeMat.mainTexture = mainTex;
+		
 		if (showWireframe) {
-			var mainTex = GetComponent<MeshRenderer>().sharedMaterial.mainTexture;
 			
 			MeshFilter mf = GetComponent<MeshFilter>();
 			Debug.Assert(mf != null);
@@ -41,8 +56,7 @@ public class MeshDisplay : MonoBehaviour
 			mf.sharedMesh = baked;
 			GetComponent<MeshCollider>().sharedMesh = baked;
 			
-			GetComponent<MeshRenderer>().material = wireframeMaterial;
-			GetComponent<MeshRenderer>().material.mainTexture = mainTex;
+			meshRenderer.material = otherModeMat;
 			Debug.Log($"{gameObject.name}: Generated {baked.name} with {baked.vertexCount} vertices to prepare for wireframe display");
 			EnsureColors();
 			mesh.colors32 = colors32;
@@ -105,8 +119,18 @@ public class MeshDisplay : MonoBehaviour
 		mesh.uv2 = uv2;
 	}
 
+	public void SetMode(MeshEditMode mode, bool forceApply=false) {
+		if (mode != this.mode || forceApply) {
+			Material correctMat = (mode == MeshEditMode.Edge ? edgeModeMat : otherModeMat);
+			Debug.Log($"Switching material on {gameObject.name} to {correctMat.name}");
+			meshRenderer.material = correctMat;
+			this.mode = mode;
+		}
+	}
+
 	// Return whether the given vertex, edge, or triangle is currently selected.
 	public bool IsSelected(MeshEditMode mode, int index) {
+		SetMode(mode);
 		EnsureColors();
 		if (mode == MeshEditMode.Face) {
 			int baseTriIdx = index * 3;
@@ -123,6 +147,7 @@ public class MeshDisplay : MonoBehaviour
 	// Select or deselect the given vertex, edge, or triangle.
 	public void SetSelected(MeshEditMode mode, int index, bool isSelected) {
 		Debug.Log($"SetSelected({mode}, {index}, {isSelected})", gameObject);
+		SetMode(mode);
 		EnsureColors();
 		if (mode == MeshEditMode.Edge) {
 			EnsureEdgeSelArray();
@@ -150,6 +175,7 @@ public class MeshDisplay : MonoBehaviour
 	// Clear the selection.  Return true if we had a selection to clear,
 	// false if nothing was selected anyway.
 	public bool DeselectAll(MeshEditMode mode) {
+		SetMode(mode);
 		EnsureColors();
 		bool clearedAny = false;
 		if (mode == MeshEditMode.Edge) {
